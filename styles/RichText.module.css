@@ -1,0 +1,30 @@
+.richTextEditorWrapper {
+  padding: 0.5em;
+  margin-top: 1em;
+  border: 1px solid #616161;
+  border-radius: 0.25em;
+}
+
+.button::before {
+  display: none;
+}
+
+.button {
+  background: #ccc;
+  color: #000;
+  margin: 5px;
+  border: 1px solid #000;
+  border-radius: 0.25em;
+  transition: 0.3s all ease-out;
+  font-size: 0.75rem;
+}
+
+.button::after {
+  display: none;
+}
+
+.button:hover,
+.button:focus {
+  background: #000;
+  color: #fff;
+}

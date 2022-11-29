@@ -111,6 +111,68 @@ button:after{
   color: rgba(255, 255, 255, 0.9);
 }
 
+/* Rich Text Editor global styles */
+.ProseMirror {
+  border: 1px solid #616161;
+  border-radius: 0.25em;
+  padding-left: 0.25em;
+  margin: 0.5em 0;
+}
+
+.ProseMirror * {
+  margin-top: 0.75em;
+}
+
+.ProseMirror ul,
+.ProseMirror ol {
+  padding: 0 1em;
+}
+
+.ProseMirror h1,
+.ProseMirror h2,
+.ProseMirror h3,
+.ProseMirror h4,
+.ProseMirror h5,
+.ProseMirror h6 {
+  line-height: 1.1;
+}
+
+.ProseMirror code {
+  background-color: rgba(#616161, 0.1);
+  color: #616161;
+}
+
+.ProseMirror pre {
+  background: #0D0D0D;
+  color: #FFF;
+  font-family: 'JetBrainsMono', monospace;
+  padding: 0.75em 1em;
+  border-radius: 0.5em;
+}
+
+.ProseMirror code {
+  color: inherit;
+  padding: 0;
+  background: none;
+  font-size: 0.8rem;
+}
+
+.ProseMirror img {
+  max-width: 100%;
+  height: auto;
+}
+
+.ProseMirror blockquote {
+  padding-left: 1em;
+  border-left: 2px solid rgba(#0D0D0D, 0.1);
+}
+
+.ProseMirror hr {
+  border: none;
+  border-top: 2px solid rgba(#0D0D0D, 0.1);
+  margin: 2em 0;
+}
+/* Rich Text Editor global styles */
 
 @media (prefers-color-scheme: dark) {
   /* html {

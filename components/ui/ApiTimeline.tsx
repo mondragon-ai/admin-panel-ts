@@ -1,6 +1,7 @@
 import Image from "next/image";
 import {FunctionComponent, useState} from "react";
 import styles from "../../styles/Main.module.css";
+import RichTextEditor from "./RichTextEditor";
 import Underline from "./Underline";
 
 const comments = [
@@ -69,12 +70,13 @@ export const ApiTimeline: FunctionComponent<any> = ({
                     }}>
                     <div 
                         className={`${styles.row}`}>
-                        <input
+                        <RichTextEditor />
+                        {/* <input
                             className={`${styles.timeline}`}
                             onChange={(e) => makeComment(e.target.value)}
                             type="text"
                             name="start"
-                            placeholder="" />
+                            placeholder="" /> */}
                     </div>
                 </div>
             </div>
