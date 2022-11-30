@@ -1,7 +1,8 @@
 import Image from "next/image";
-import { Dispatch, FunctionComponent, SetStateAction, useState } from "react";
+import React, { Dispatch, FunctionComponent, SetStateAction, useState } from "react";
 import { Card } from "../../components/ui/Card";
 import FormProgress from "../../components/ui/FormProgress";
+import RichTextEditor from "../../components/ui/RichTextEditor";
 import Underline from "../../components/ui/Underline";
 import { numberFormat } from "../../lib/helpers/formatters";
 import { deleteTag } from "../../lib/helpers/tags";
@@ -124,7 +125,7 @@ export const createProduct: FunctionComponent<Prop> = (props) => {
                     {steps && steps.map(s => { 
                         if (s.step == "STEP_ONE" && s.active ){
                             return (
-                                <StepOne setProduct={setProduct as Dispatch<SetStateAction<any>>} product={product} navForm={navForm} setIndex={setIndex} steps={steps} /> 
+                                <ProductText setProduct={setProduct as Dispatch<SetStateAction<any>>} product={product} navForm={navForm} setIndex={setIndex} steps={steps} /> 
                             )
                         }
                         if (s.step == "STEP_TWO" && s.active){
@@ -653,13 +654,14 @@ export const StepTwo: FunctionComponent<Props> = ({
 }
 
 
-export const StepOne: FunctionComponent<Props> = ({
+export const ProductText: FunctionComponent<Props> = ({
     setProduct,
     product,
     navForm,
     setIndex,
     steps
 }) => {
+    const [content, setContent] = React.useState("");
     return (
         <Card 
             card_type="CREATE"
@@ -736,6 +738,8 @@ export const StepOne: FunctionComponent<Props> = ({
                         </div>
                     </div>
                 </div>
+
+                {/* INSERT RICH TEXT EDITOR */}
                 <div className={`${styles.row}`}
                     style={{
                         marginTop: "1.5rem"
@@ -744,7 +748,8 @@ export const StepOne: FunctionComponent<Props> = ({
                         style={{
                             width: "100%"
                         }}>
-                        <textarea
+                        <RichTextEditor content={content} setContent={setContent} />
+                        {/* <textarea
                             style={{
                                 color: "white",
                                 width: "100%",
@@ -758,7 +763,7 @@ export const StepOne: FunctionComponent<Props> = ({
                                 description: e.target.value
                             })}
                             value={product.description}
-                            name="title" />
+                            name="title" /> */}
                         <label style={{ 
                             top: product.description != "" ? "-5px" : "", 
                             fontSize: product.description != "" ? "10px" : ""}}>Title</label>

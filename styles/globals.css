@@ -113,9 +113,10 @@ button:after{
 
 /* Rich Text Editor global styles */
 .ProseMirror {
+  min-height: 150px;
   border: 1px solid #616161;
   border-radius: 0.25em;
-  padding-left: 0.25em;
+  padding-left: 0.75em;
   margin: 0.5em 0;
 }
 

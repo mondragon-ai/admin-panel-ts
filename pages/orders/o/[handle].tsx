@@ -1,238 +1,988 @@
-import { FunctionComponent } from "react";
+import Image from "next/image";
+import React, { FunctionComponent, useState } from "react";
 import { Card } from "../../../components/ui/Card";
-import { DetailPageHeader } from "../../../components/ui/DetailPageHeader";
-import { LineItem } from "../../../lib/types/orders";
+import { DetailPageHeader } from "../../../components/ui/headers/DetailPageHeader";
+import RichTextEditor from "../../../components/ui/RichTextEditor";
+import Underline from "../../../components/ui/Underline";
+import { numberFormat } from "../../../lib/helpers/formatters";
+import { deleteTag } from "../../../lib/helpers/tags";
+import { Product, ProductList } from "../../../lib/types/products";
 import styles from "../../../styles/Main.module.css";
 
-import * as crypto from "crypto";
-import { VariantRow } from "../../../components/ui/VariantRow";
-import Underline from "../../../components/ui/Underline";
-import Link from "next/link";
-import { numberFormat } from "../../../lib/helpers/formatters";
-import { ApiTimeline } from "../../../components/ui/ApiTimeline";
+const product = {
+    title: "Hoodie 1776",
+    price: 12300,
+    compare_at_price: 0,
+    description: `<p>1123123<p>`,
+    quantity: 1,
+    weight: 0.5
+}
 
-const date = new Date().toString(); //.substring(0,15);
-
-const line_items: LineItem[] = [
-    {
-        title: "Hoodie - 1776",
-        status: false,
-        id: "pro_" + crypto.randomBytes(10).toString('hex'),
-        url: "",
-        price: 1000,
-        tags: [""],
-        compare_at_price: 0,
-        option1: "Large",
-        option2: " Black",
-        option3: "",
-        quantity: 1
-    },
-    {
-        title: "Hoodie - 1776",
-        status: false,
-        id: "pro_" + crypto.randomBytes(10).toString('hex'),
-        url: "",
-        price: 1000,
-        tags: [""],
-        compare_at_price: 0,
-        option1: "Large",
-        option2: " Black",
-        option3: "",
-        quantity: 3
-    }
+const t = [
+    "VIP"
 ]
 
-const first_name = "Obi";
-const last_name = "Kanobi";
+export const ProductDetail = () => {
 
-const email = "Kanobi@gobigly.com";
+    const [p, setProduct] = useState({})
+    
+    let [tags, setTags] = useState(t);
+    const [tagText, setTagState] = useState("");
 
-const addresses = [
-    {
-        line1: "420 Bigly ln",
-        line2: "",
-        city: "Denver",
-        state: "NM", 
-        zip: "72704",
-        country: "US",
-        type: "BOTH"
-    }
-]
+    const {
+        title
+    } = product;
 
-const code = "-";
-const total = 3050;
-const total_items = 0;
-const shipping_price = 599;
-const shipping_name = "Standard Shipping";
-const discount_value = 0;
-
-const payment_status = false;
-
-export const OrderDetail: FunctionComponent = () => {
     return (
         <div className={`${styles.col}`}>
             {/* Sub Header - page specific */}
             <DetailPageHeader 
-                back_route={"/orders/all"}
-                title={"Orders"}
-                special_btn={"Refund"}
-                special_btn_route={"/orders/refund"} />
+                back_route={"/carts/all"}
+                title={title}
+                special_btn={"Delete Product"}
+                special_btn_route={"/products/all"} />
             
             {/* Main container */}
             <main className={`${styles.col} ${styles.container}`}>
                 <div className={`${styles.row} ${styles.mobileContainer}`}>
+                    <div className={`${styles.col} ${styles.oneThird}`}>
+                    <TagAdvanced setProduct={setProduct} setTags={setTags} setTagState={setTagState} tags={tags} />
+                    <Card 
+                    card_type="INFO"
+                    title="Manage Images & Videos"
+                    header={""}>
+                    <div className={`${styles.col}`}>
+                        <div className={`${styles.col}`}>
 
-                    {/* Left 1/3 Column Container */}
-                    <div className={`${styles.oneThird}`}>
-
-                        <Card  
-                            width={50}
-                            title="Customer Details"
-                            header={""}
-                            subHeader={""}
-                            card_type="INFO"
-                            >
-                                <div className={`${styles.col}`}>
-                                    <div style={{ justifyContent: "flex-start",  paddingBottom: "1rem"}} className={`${styles.row}`}>
-                                        <p>{first_name} {last_name}</p>
-                                    </div>
-                                    <h5>Contact</h5>
-                                    <div style={{ paddingBottom: "1rem"}} className={`${styles.row}`}>
-                                        <p style={{paddingTop: "0rem"}}>{email}</p>
-                                        <p style={{paddingTop: "0rem"}}>📋</p>
-                                    </div>
-                                    <h5>Addressess</h5>
-                                    {
-                                        addresses && addresses.map(a => {
-                                            return (
-
-                                                <div className={`${styles.row}`}>
-                                                    <p style={{paddingTop: "0rem"}}>
-                                                        {a.line1} <br /> 
-                                                        {a.line2 ? <>a.line2 <br /></> : null} 
-                                                        {a.city} <br /> 
-                                                        {a.state} <br /> 
-                                                        {a.country} <br /> 
-                                                        {a.type} <br /> 
-                                                    </p>
-                                                    <p style={{paddingTop: "0rem"}}>📋</p>
-                                                </div> 
-                                            )
-                                        })
-                                    }
-                                </div>
-                        </Card>
-                        <Card  
-                            width={50}
-                            title="Payment Details"
-                            header={"Payment needed first."}
-                            subHeader={date}
-                            status={payment_status}
-                            card_type="PAYMENT"
-                            >
-                            <div className={`${styles.col}`}>
-
+                            {/* TOP */}
+                            <div className={`${styles.col}`}
+                                style={{width: "100%",}}>
                                 <div className={`${styles.row}`}>
-                                    <div style={{ justifyContent: "flex-start",  paddingBottom: "1rem"}} className={`${styles.row}`}>
-                                        <p>Discount</p>
+                                    <h3>Images</h3>
+                                </div>
+                                <div className={`${styles.col}`}
+                                        style={{padding: "1rem 0rem 0 0", height: "auto",}}>
+                                    <div className={`${styles.col}`}
+                                        style={{background: "", height: "100%", width: "100%", padding: "1rem 0rem 1rem 0"}}>
+                                        <div className={`${styles.col}`}>
+                                            FILE UPLOADER
+                                        </div>
                                     </div>
-                                    <div style={{ justifyContent: "flex-start",  paddingBottom: "1rem"}} className={`${styles.row}`}>
-                                        <p>{code}</p>
-                                    </div>
-                                    <div style={{ justifyContent: "flex-end",  paddingBottom: "1rem"}} className={`${styles.row}`}>
-                                        <p>{numberFormat(Number(discount_value)/100)}</p>
+                                    <div className={`${styles.row}`}
+                                        style={{justifyContent: "space-between", width: "100%", padding: "1rem 0rem 1rem 0", borderRadius: "6px"}}>
+                                        <div className={`${styles.col}`}
+                                            style={{background: "", alignItems: "flex-start", borderRadius: "6px", padding: "0"}}>
+                                            <Image 
+                                                style={{border: "0.4px solid var(--accent)", borderRadius: "6px"}}
+                                                src={"https://boltagency.ca/content/images/2020/03/placeholder-images-product-1_large.png"} 
+                                                alt=""
+                                                width={100}
+                                                height={100} />
+                                        </div>
+
+                                        <div className={`${styles.col}`}
+                                            style={{background: "", alignItems: "center", padding: "0", borderRadius: "6px"}}>
+                                            <Image 
+                                                style={{border: "0.4px solid var(--accent)", borderRadius: "6px"}}
+                                                src={"https://boltagency.ca/content/images/2020/03/placeholder-images-product-1_large.png"} 
+                                                alt=""
+                                                width={100}
+                                                height={100} />
+                                        </div>
+
+                                        <div className={`${styles.col}`}
+                                            style={{background: "", alignItems: "flex-end", borderRadius: "6px", padding: "0", }}>
+                                            <Image 
+                                                style={{border: "0.4px solid var(--accent)", borderRadius: "6px"}}
+                                                src={"https://boltagency.ca/content/images/2020/03/placeholder-images-product-1_large.png"} 
+                                                alt=""
+                                                width={100}
+                                                height={100} />
+                                        </div>
                                     </div>
                                 </div>
-
-
-                                <div className={`${styles.row}`}>
-                                    <div style={{ justifyContent: "flex-start",  paddingBottom: "1rem"}} className={`${styles.row}`}>
-                                        <p>Shipping</p>
-                                    </div>
-                                    <div style={{ justifyContent: "flex-start",  paddingBottom: "1rem"}} className={`${styles.row}`}>
-                                        <p>{shipping_name}</p>
-                                    </div>
-                                    <div style={{ justifyContent: "flex-end",  paddingBottom: "1rem"}} className={`${styles.row}`}>
-                                        <p>{numberFormat(Number(shipping_price)/100)}</p>
-                                    </div>
-                                </div>
-
-
-                                <div className={`${styles.row}`}>
-                                    <div style={{ justifyContent: "flex-start",  paddingBottom: "1rem"}} className={`${styles.row}`}>
-                                        <p>Subtotal</p>
-                                    </div>
-                                    <div style={{ justifyContent: "flex-start",  paddingBottom: "1rem"}} className={`${styles.row}`}>
-                                        <p>{total_items > 1 ? " items" : "1 item"} </p>
-                                    </div>
-                                    <div style={{ justifyContent: "flex-end",  paddingBottom: "1rem"}} className={`${styles.row}`}>
-                                        <p>{numberFormat(Number(total)/100)}</p>
-                                    </div>
-                                </div>
-                                <Underline width={100} />
-
-
-                                <div style={{
-
-                                }} className={`${styles.row}`}>
-                                    <div style={{ justifyContent: "flex-start",  paddingBottom: "1rem"}} className={`${styles.row}`}>
-                                        <p> <b> Total</b></p>
-                                    </div>
-                                    <div style={{ justifyContent: "flex-start",  paddingBottom: "1rem"}} className={`${styles.row}`}>
-                                        <p>-</p>
-                                    </div>
-                                    <div style={{ justifyContent: "flex-end",  paddingBottom: "1rem"}} className={`${styles.row}`}>
-                                        <p>{numberFormat(Number(total)/100)}</p>
-                                    </div>
-                                </div>
-
-                                {
-                                    !payment_status ? <div style={{paddingTop: "4rem"}} className={`${styles.row}`}>
-                                        <Link href={"/checkout/invoice"}><button className="altBtn">Send Invoice</button></Link>
-                                    </div> : null
-                                }
-
                             </div>
-                        </Card>
-                    </div>
 
-                    {/* Right 2/3 Column Container */}
-                    <div style={{paddingTop: "0"}} className={`${styles.twoThird} ${styles.col}`}>
-                        <Card  
-                            width={50}
-                            title="Order Details"
-                            header={"No tracking available yet."}
-                            subHeader={date}
-                            status={false}
-                            card_type="ORDER"
-                            >
-                                <div  className={`${styles.col}`}>
-                                    {
-                                        line_items && line_items.map(item => {
-                                            return (
-                                                <>
-                                                <div key={item.id} style={{padding: "1rem 0"}} className={`${styles.row}  ${styles.varRowContainer}` }>
-                                                    <VariantRow
-                                                        item={item} />
-                                                </div>
-                                                <Underline width={100} />
-                                                </>
-                                            )
-                                        })
-                                    }
-                                    <div style={{paddingTop: "4rem"}}className={`${styles.row}`}>
-                                        <Link href={"/fulfillment/create"}><button className="altBtn">Create Label</button></Link>
-                                    </div>
+                            {/* BOTTOM */}
+                            <div className={`${styles.col}`}
+                                style={{width: "100%",}}>
+                                <div className={`${styles.row}`}>
+                                    <h3>Video Links</h3>
                                 </div>
-                        </Card>
-
-                        <ApiTimeline />
+                                <div className={`${styles.formItem} ${styles.row}`}
+                                    style={{
+                                        width: "100%",
+                                        padding: "0px",
+                                        marginTop: "2rem"
+                                    }}>
+                                    <input
+                                        style={{
+                                            color: "white"
+                                        }}
+                                        onChange={(e) => setProduct({
+                                            ...product,
+                                            weight: Number(e.target.value)
+                                        })}
+                                        value={product.weight}
+                                        type="text"
+                                        name="links" />
+                                    <label style={{ 
+                                        top: product.weight  > 0 ? "-5px" : "", 
+                                        fontSize: product.weight  > 0 ? "10px" : ""}}>Video Link</label>
+                                </div>
+                                <div className={`${styles.col}`}>
+                                    <p className={`${styles.links}`} style={{marginBottom: "1rem", fontSize: "0.9rem", color: "gray"}}>
+                                        Video Links
+                                    </p>
+                                    <Underline width={100} />
+                                </div>
+                            </div>
+                        </div>  
                     </div>
-
+                </Card>
+                    </div>
+                    <div className={`${styles.col} ${styles.twoThird}`}
+                        style={{padding: 0}}>
+                        <TitleDescription setProduct={setProduct} setTags={setTags} setTagState={setTagState} tags={tags} />
+                        <OptionsVariants product={product} setProduct={setProduct} />
+                    </div>
                 </div>
             </main>
+        
         </div>
+    );
+}
+
+type TagProps = {
+    setProduct: any,
+    tags?: string[],
+    setTags?: any,
+    setTagState?: any,
+    product?: Product
+}
+
+
+export const OptionsVariants: FunctionComponent<TagProps> = ({
+    product,
+    setProduct
+}) => {
+    
+    // Order Tag State
+    let [tags, setTags] = useState(t);
+    const [tagText, setTagState] = useState("");
+
+    return (
+        <>
+        <Card 
+            card_type="INFO"
+            title="Options & Variants"
+            header={""}
+            next={"OPTIONS"}>
+            <div className={`${styles.col}`}>
+                <div className={`${styles.row}  ${styles.mobileContainer}`}
+                    style={{
+                        marginTop: "1.5rem"
+                    }}>
+                    <div className={`${styles.formItem} ${styles.row}`}
+                        style={{
+                            width: window.innerWidth > 720 ? "33%" : "100%",
+                            padding: "0 5px"
+                        }}>
+                        <input
+                            style={{
+                                color: "white"
+                            }}
+                            value={product?.quantity}
+                            type="text"
+                            name="options1" />
+                        <label style={{ 
+                            top: product?.quantity && product?.quantity > 0 ? "-5px" : "", 
+                            fontSize: product?.quantity  && product?.quantity > 0? "10px" : ""}}>Options</label>
+                    </div>
+                    <div className={`${styles.formItem} ${styles.row}`}
+                        style={{
+                            width: window.innerWidth > 720 ? "33%" : "100%",
+                            padding: "0 5px"
+                        }}>
+                        <input
+                            style={{
+                                color: "white"
+                            }}
+                            value={product?.weight}
+                            type="text"
+                            name="options1" />
+                        <label style={{ 
+                            top: product?.weight && product?.weight > 0 ? "-5px" : "", 
+                            fontSize: product?.weight && product?.weight > 0 ? "10px" : ""}}>Option Name</label>
+                    </div>
+                    <div className={`${styles.formItem} ${styles.row}`}
+                        style={{
+                            width: "33%",
+                            padding: "0 5px"
+                        }}>
+                        <p style={{padding: 0, width: "90%"}}>Option One</p>
+                        <div  style={{padding: 0, width: "10%"}} id=""> </div>
+                    </div>
+                </div>
+
+                <div className={`${styles.row}  ${styles.mobileContainer}`}
+                    style={{
+                        marginTop: "1.5rem"
+                    }}>
+                    <div className={`${styles.formItem} ${styles.row}`}
+                        style={{
+                            width: window.innerWidth > 720 ? "33%" : "100%",
+                            padding: "0 5px"
+                        }}>
+                        { 
+                            tags && tags.length > 0 ?  tags.map(v => {
+                            return <p 
+                                key={v}
+                                id={"tags"}
+                                onClick={(e) => deleteTag(e, v, setTags, setTagState,  tags)}
+                                className={`${styles.tagItem}`}>{v} <b>x</b> </p> 
+                            }) : null
+                        }
+                    </div>
+                    <div className={`${styles.formItem} ${styles.row}`}
+                        style={{
+                            width: "33%",
+                            padding: "0 5px"
+                        }}>
+                        {<p style={{padding: 0, width: "90%"}}></p>}
+                    </div>
+                    <div className={`${styles.formItem} ${styles.row}`}
+                        style={{
+                            width: "33%",
+                            padding: "0 5px"
+                        }}>
+                    </div>
+                </div>
+
+                <div className={`${styles.row}  ${styles.mobileContainer}`}
+                    style={{
+                        marginTop: "1.5rem"
+                    }}>
+                    <div className={`${styles.formItem} ${styles.row}`}
+                        style={{
+                            width: window.innerWidth > 720 ? "33%" : "100%",
+                            padding: "0 5px"
+                        }}>
+                        <input
+                            style={{
+                                color: "white"
+                            }}
+                            // onChange={(e) => }
+                            value={product?.quantity}
+                            type="text"
+                            name="options2" />
+                        <label style={{ 
+                            top: product?.quantity && product?.quantity  > 0 ? "-5px" : "", 
+                            fontSize: product?.quantity && product?.quantity > 0? "10px" : ""}}>Options</label>
+                    </div>
+                    <div className={`${styles.formItem} ${styles.row}`}
+                        style={{
+                            width: window.innerWidth > 720 ? "33%" : "100%",
+                            padding: "0 5px"
+                        }}>
+                        <input
+                            style={{
+                                color: "white"
+                            }}
+                            value={product?.weight}
+                            type="text"
+                            name="option2" />
+                        <label style={{ 
+                            top: product?.weight && product?.weight  > 0 ? "-5px" : "", 
+                            fontSize: product?.weight && product?.weight  > 0 ? "10px" : ""}}>Option Name</label>
+                    </div>
+                    <div className={`${styles.formItem} ${styles.row}`}
+                        style={{
+                            width: "33%",
+                            padding: "0 5px"
+                        }}>
+                        <p style={{padding: 0, width: "90%"}}>Option Two</p>
+                        <div  style={{padding: 0, width: "10%"}} id=""> </div>
+                    </div>
+                </div>
+
+                <div className={`${styles.row}  ${styles.mobileContainer}`}
+                    style={{
+                        marginTop: "1.5rem"
+                    }}>
+                    <div className={`${styles.formItem} ${styles.row}`}
+                        style={{
+                            width: window.innerWidth > 720 ? "33%" : "100%",
+                            padding: "0 5px"
+                        }}>
+                        { 
+                            tags && tags.length > 0 ?  tags.map(v => {
+                            return <p 
+                                key={v}
+                                id={"tags"}
+                                onClick={(e) => deleteTag(e, v, setTags, setTagState,  tags)}
+                                className={`${styles.tagItem}`}>{v} <b>x</b> </p> 
+                            }) : null
+                        }
+                    </div>
+                    <div className={`${styles.formItem} ${styles.row}`}
+                        style={{
+                            width: "33%",
+                            padding: "0 5px"
+                        }}>
+                        {<p style={{padding: 0, width: "90%"}}></p>}
+                    </div>
+                    <div className={`${styles.formItem} ${styles.row}`}
+                        style={{
+                            width: "33%",
+                            padding: "0 5px"
+                        }}>
+                    </div>
+                </div>
+
+                <div className={`${styles.row}  ${styles.mobileContainer}`}
+                    style={{
+                        marginTop: "1.5rem"
+                    }}>
+                    <div className={`${styles.formItem} ${styles.row}`}
+                        style={{
+                            width: window.innerWidth > 720 ? "33%" : "100%",
+                            padding: "0 5px"
+                        }}>
+                        <input
+                            style={{
+                                color: "white"
+                            }}
+                            value={product?.quantity}
+                            type="text"
+                            name="options3" />
+                        <label style={{ 
+                            top: product?.quantity && product?.quantity > 0 ? "-5px" : "", 
+                            fontSize: product?.quantity && product?.quantity > 0? "10px" : ""}}>Options</label>
+                    </div>
+                    <div className={`${styles.formItem} ${styles.row}`}
+                        style={{
+                            width: window.innerWidth > 720 ? "33%" : "100%",
+                            padding: "0 5px"
+                        }}>
+                        <input
+                            style={{
+                                color: "white"
+                            }}
+                            value={product?.weight }
+                            type="text"
+                            name="option3" />
+                        <label style={{ 
+                            top: product?.weight  && product?.weight  > 0 ? "-5px" : "", 
+                            fontSize: product?.weight && product?.weight  > 0 ? "10px" : ""}}>Option Name</label>
+                    </div>
+                    <div className={`${styles.formItem} ${styles.row}`}
+                        style={{
+                            width: "33%",
+                            padding: "0 5px"
+                        }}>
+                        <p style={{padding: 0, width: "90%"}}>Option Three</p>
+                        <div  style={{padding: 0, width: "10%"}} id=""> </div>
+                    </div>
+                </div>
+
+                <div className={`${styles.row}  ${styles.mobileContainer}`}
+                    style={{
+                        marginTop: "1.5rem"
+                    }}>
+                    <div className={`${styles.formItem} ${styles.row}`}
+                        style={{
+                            width: "33%",
+                            padding: "0 5px"
+                        }}>
+                        { 
+                            tags && tags.length > 0 ?  tags.map(v => {
+                            return <p 
+                                key={v}
+                                id={"tags"}
+                                onClick={(e) => deleteTag(e, v, setTags, setTagState,  tags)}
+                                className={`${styles.tagItem}`}>{v} <b>x</b> </p> 
+                            }) : null
+                        }
+                    </div>
+                    <div className={`${styles.formItem} ${styles.row}`}
+                        style={{
+                            width: "33%",
+                            padding: "0 5px"
+                        }}>
+                        {<p style={{padding: 0, width: "90%"}}></p>}
+                    </div>
+                    <div className={`${styles.formItem} ${styles.row}`}
+                        style={{
+                            width: "33%",
+                            padding: "0 5px"
+                        }}>
+                    </div>
+                </div>
+            </div>
+        </Card>
+
+        <Card 
+            card_type="INFO"
+            title="Options & Variants"
+            header={""}
+            next={"OPTIONS"}>
+            <div className={`${styles.col}`}>
+                <div className={`${styles.row}  ${styles.mobileContainer}`}
+                    style={{
+                        marginTop: "1.5rem"
+                    }}>
+                    <div className={`${styles.formItem} ${styles.row}`}
+                        style={{
+                            width: window.innerWidth > 720 ? "33%" : "100%",
+                            padding: "0 5px"
+                        }}>
+                        <input
+                            style={{
+                                color: "white"
+                            }}
+                            value={product?.quantity}
+                            type="text"
+                            name="options1" />
+                        <label style={{ 
+                            top: product?.quantity && product?.quantity > 0 ? "-5px" : "", 
+                            fontSize: product?.quantity  && product?.quantity > 0? "10px" : ""}}>Options</label>
+                    </div>
+                    <div className={`${styles.formItem} ${styles.row}`}
+                        style={{
+                            width: window.innerWidth > 720 ? "33%" : "100%",
+                            padding: "0 5px"
+                        }}>
+                        <input
+                            style={{
+                                color: "white"
+                            }}
+                            value={product?.weight}
+                            type="text"
+                            name="options1" />
+                        <label style={{ 
+                            top: product?.weight && product?.weight > 0 ? "-5px" : "", 
+                            fontSize: product?.weight && product?.weight > 0 ? "10px" : ""}}>Option Name</label>
+                    </div>
+                    <div className={`${styles.formItem} ${styles.row}`}
+                        style={{
+                            width: "33%",
+                            padding: "0 5px"
+                        }}>
+                        <p style={{padding: 0, width: "90%"}}>Option One</p>
+                        <div  style={{padding: 0, width: "10%"}} id=""> </div>
+                    </div>
+                </div>
+
+                <div className={`${styles.row}  ${styles.mobileContainer}`}
+                    style={{
+                        marginTop: "1.5rem"
+                    }}>
+                    <div className={`${styles.formItem} ${styles.row}`}
+                        style={{
+                            width: window.innerWidth > 720 ? "33%" : "100%",
+                            padding: "0 5px"
+                        }}>
+                        { 
+                            tags && tags.length > 0 ?  tags.map(v => {
+                            return <p 
+                                key={v}
+                                id={"tags"}
+                                onClick={(e) => deleteTag(e, v, setTags, setTagState,  tags)}
+                                className={`${styles.tagItem}`}>{v} <b>x</b> </p> 
+                            }) : null
+                        }
+                    </div>
+                    <div className={`${styles.formItem} ${styles.row}`}
+                        style={{
+                            width: "33%",
+                            padding: "0 5px"
+                        }}>
+                        {<p style={{padding: 0, width: "90%"}}></p>}
+                    </div>
+                    <div className={`${styles.formItem} ${styles.row}`}
+                        style={{
+                            width: "33%",
+                            padding: "0 5px"
+                        }}>
+                    </div>
+                </div>
+
+                <div className={`${styles.row}  ${styles.mobileContainer}`}
+                    style={{
+                        marginTop: "1.5rem"
+                    }}>
+                    <div className={`${styles.formItem} ${styles.row}`}
+                        style={{
+                            width: window.innerWidth > 720 ? "33%" : "100%",
+                            padding: "0 5px"
+                        }}>
+                        <input
+                            style={{
+                                color: "white"
+                            }}
+                            // onChange={(e) => }
+                            value={product?.quantity}
+                            type="text"
+                            name="options2" />
+                        <label style={{ 
+                            top: product?.quantity && product?.quantity  > 0 ? "-5px" : "", 
+                            fontSize: product?.quantity && product?.quantity > 0? "10px" : ""}}>Options</label>
+                    </div>
+                    <div className={`${styles.formItem} ${styles.row}`}
+                        style={{
+                            width: window.innerWidth > 720 ? "33%" : "100%",
+                            padding: "0 5px"
+                        }}>
+                        <input
+                            style={{
+                                color: "white"
+                            }}
+                            value={product?.weight}
+                            type="text"
+                            name="option2" />
+                        <label style={{ 
+                            top: product?.weight && product?.weight  > 0 ? "-5px" : "", 
+                            fontSize: product?.weight && product?.weight  > 0 ? "10px" : ""}}>Option Name</label>
+                    </div>
+                    <div className={`${styles.formItem} ${styles.row}`}
+                        style={{
+                            width: "33%",
+                            padding: "0 5px"
+                        }}>
+                        <p style={{padding: 0, width: "90%"}}>Option Two</p>
+                        <div  style={{padding: 0, width: "10%"}} id=""> </div>
+                    </div>
+                </div>
+
+                <div className={`${styles.row}  ${styles.mobileContainer}`}
+                    style={{
+                        marginTop: "1.5rem"
+                    }}>
+                    <div className={`${styles.formItem} ${styles.row}`}
+                        style={{
+                            width: window.innerWidth > 720 ? "33%" : "100%",
+                            padding: "0 5px"
+                        }}>
+                        { 
+                            tags && tags.length > 0 ?  tags.map(v => {
+                            return <p 
+                                key={v}
+                                id={"tags"}
+                                onClick={(e) => deleteTag(e, v, setTags, setTagState,  tags)}
+                                className={`${styles.tagItem}`}>{v} <b>x</b> </p> 
+                            }) : null
+                        }
+                    </div>
+                    <div className={`${styles.formItem} ${styles.row}`}
+                        style={{
+                            width: "33%",
+                            padding: "0 5px"
+                        }}>
+                        {<p style={{padding: 0, width: "90%"}}></p>}
+                    </div>
+                    <div className={`${styles.formItem} ${styles.row}`}
+                        style={{
+                            width: "33%",
+                            padding: "0 5px"
+                        }}>
+                    </div>
+                </div>
+
+                <div className={`${styles.row}  ${styles.mobileContainer}`}
+                    style={{
+                        marginTop: "1.5rem"
+                    }}>
+                    <div className={`${styles.formItem} ${styles.row}`}
+                        style={{
+                            width: window.innerWidth > 720 ? "33%" : "100%",
+                            padding: "0 5px"
+                        }}>
+                        <input
+                            style={{
+                                color: "white"
+                            }}
+                            value={product?.quantity}
+                            type="text"
+                            name="options3" />
+                        <label style={{ 
+                            top: product?.quantity && product?.quantity > 0 ? "-5px" : "", 
+                            fontSize: product?.quantity && product?.quantity > 0? "10px" : ""}}>Options</label>
+                    </div>
+                    <div className={`${styles.formItem} ${styles.row}`}
+                        style={{
+                            width: window.innerWidth > 720 ? "33%" : "100%",
+                            padding: "0 5px"
+                        }}>
+                        <input
+                            style={{
+                                color: "white"
+                            }}
+                            value={product?.weight }
+                            type="text"
+                            name="option3" />
+                        <label style={{ 
+                            top: product?.weight  && product?.weight  > 0 ? "-5px" : "", 
+                            fontSize: product?.weight && product?.weight  > 0 ? "10px" : ""}}>Option Name</label>
+                    </div>
+                    <div className={`${styles.formItem} ${styles.row}`}
+                        style={{
+                            width: "33%",
+                            padding: "0 5px"
+                        }}>
+                        <p style={{padding: 0, width: "90%"}}>Option Three</p>
+                        <div  style={{padding: 0, width: "10%"}} id=""> </div>
+                    </div>
+                </div>
+
+                <div className={`${styles.row}  ${styles.mobileContainer}`}
+                    style={{
+                        marginTop: "1.5rem"
+                    }}>
+                    <div className={`${styles.formItem} ${styles.row}`}
+                        style={{
+                            width: "33%",
+                            padding: "0 5px"
+                        }}>
+                        { 
+                            tags && tags.length > 0 ?  tags.map(v => {
+                            return <p 
+                                key={v}
+                                id={"tags"}
+                                onClick={(e) => deleteTag(e, v, setTags, setTagState,  tags)}
+                                className={`${styles.tagItem}`}>{v} <b>x</b> </p> 
+                            }) : null
+                        }
+                    </div>
+                    <div className={`${styles.formItem} ${styles.row}`}
+                        style={{
+                            width: "33%",
+                            padding: "0 5px"
+                        }}>
+                        {<p style={{padding: 0, width: "90%"}}></p>}
+                    </div>
+                    <div className={`${styles.formItem} ${styles.row}`}
+                        style={{
+                            width: "33%",
+                            padding: "0 5px"
+                        }}>
+                    </div>
+                </div>
+            </div>
+        </Card>
+        </>
     )
 }
 
-export default OrderDetail;
+export const TitleDescription: FunctionComponent<TagProps> = ({
+    setProduct,
+}) => {
+    const [content, setContent] = React.useState("");
+    return (
+        <Card 
+            card_type="INFO"
+            title="Title & Descriptions"
+            header={""}>
+            <div className={`${styles.col}`}>
+                <div className={`${styles.row}  ${styles.mobileContainer}`}>
+                    <div className={`${styles.formItem} ${styles.row}`}
+                        style={{
+                            width: window.innerWidth > 720 ? "50%" : "100%",
+                            padding: "0 5px"
+                        }}>
+                        <input
+                            style={{
+                                color: "white"
+                            }}
+                            onChange={(e) => setProduct({
+                                ...product,
+                                title: e.target.value,
+                            })}
+                            value={product.title}
+                            type="text"
+                            name="title" />
+                        <label style={{ 
+                            top: product.title != "" ? "-5px" : "", 
+                            fontSize: product.title != "" ? "10px" : ""}}>Title</label>
+                    </div>
+                    <div className={`${styles.formItem} ${styles.row}`}>
+                        <div className={`${styles.formItem} ${styles.row}`}
+                            style={{
+                                width: "50%",
+                                padding: "0 5px"
+                            }}>
+                            <input
+                                style={{
+                                    color: "white",
+                                    width: "100%"
+                                }}
+                                onChange={(e) => setProduct({
+                                    ...product,
+                                    price: e.target.value.replace("$", "").replace(".", "").replace(",", "")
+                                })}
+                                value={numberFormat(Number(product.price)/100)}
+                                type="text"
+                                name="price" />
+                            <label style={{ 
+                                top: product.price > 0 ? "-5px" : "", 
+                                fontSize: product.price > 0 ? "10px" : ""}}>Price </label>
+                        </div>
+                        <div className={`${styles.formItem} ${styles.row}`}
+                            style={{
+                                width: "50%",
+                                padding: "0 5px"
+                            }}>
+                            <input
+                                style={{
+                                    color: "white",
+                                    width: "100%"
+                                }}
+                                onChange={(e) => setProduct({
+                                    ...product,
+                                    compare_at_price: Number(e.target.value.replace("$", "").replace(".", "").replace(",", ""))
+                                })}
+                                value={numberFormat(Number(product.compare_at_price)/100)}
+                                type="text"
+                                name="price" />
+                            <label style={{ 
+                                top: product.compare_at_price > 0 ? "-5px" : "", 
+                                fontSize: product.compare_at_price > 0 ? "10px" : ""}}>Compare at Price </label>
+                        </div>
+                    </div>
+                </div>
+
+                {/* INSERT RICH TEXT EDITOR */}
+                <div className={`${styles.row}`}
+                    style={{
+                        marginTop: "1.5rem"
+                    }}>
+                    <div className={`${styles.formItem}`}
+                        style={{
+                            width: "100%"
+                        }}>
+                        <RichTextEditor content={content} setContent={setContent} />
+                        {/* <textarea
+                            style={{
+                                color: "white",
+                                width: "100%",
+                                height: 300,
+                                borderRadius: "6px",
+                                background: "transparent",
+                                padding: "0.8rem 0.8rem"
+                            }}
+                            onChange={(e) => setProduct({
+                                ...product,
+                                description: e.target.value
+                            })}
+                            value={product.description}
+                            name="title" /> */}
+                        <label style={{ 
+                            top: product.description != "" ? "-5px" : "", 
+                            fontSize: product.description != "" ? "10px" : ""}}>Title</label>
+                    </div>
+                </div>
+                <div className={`${styles.row}  ${styles.mobileContainer}`}
+                    style={{
+                        marginTop: "1.5rem"
+                    }}>
+                    <div className={`${styles.formItem} ${styles.row}`}
+                        style={{
+                            width: window.innerWidth > 720 ? "33%" : "100%",
+                            padding: "0 5px"
+                        }}>
+                        <input
+                            style={{
+                                color: "white"
+                            }}
+                            onChange={(e) => setProduct({
+                                ...product,
+                                quantity: Number(e.target.value)
+                            })}
+                            value={product.quantity}
+                            type="number"
+                            name="quantity" />
+                        <label style={{ 
+                            top: product.quantity  > 0 ? "-5px" : "", 
+                            fontSize: product.quantity  > 0? "10px" : ""}}>Inventory</label>
+                    </div>
+                    <div className={`${styles.formItem} ${styles.row}`}
+                        style={{
+                            width: window.innerWidth > 720 ? "33%" : "100%",
+                            padding: "0 5px"
+                        }}>
+                        <input
+                            style={{
+                                color: "white"
+                            }}
+                            onChange={(e) => setProduct({
+                                ...product,
+                                weight: Number(e.target.value)
+                            })}
+                            value={product.weight}
+                            type="number"
+                            name="weight" />
+                        <label style={{ 
+                            top: product.weight  > 0 ? "-5px" : "", 
+                            fontSize: product.weight  > 0 ? "10px" : ""}}>Weight</label>
+                    </div>
+                    <div className={`${styles.formItem} ${styles.row}`}
+                        style={{
+                            width: "33%",
+                            padding: "0 5px"
+                        }}>
+                        <p style={{padding: 0, width: "90%"}}>Digital Product</p>
+                        <div  style={{padding: 0, width: "10%"}} id=""> </div>
+                    </div>
+                </div>
+
+                <div className={`${styles.row} ${styles.mobileContainer}`}
+                    style={{
+                        marginTop: "1.5rem"
+                    }}>
+                    <div className={`${styles.formItem} ${styles.row}`}
+                        style={{
+                            width: window.innerWidth > 720 ? "33%" : "100%",
+                            padding: "0 5px"
+                        }}>
+                        <p style={{padding: 0, width: "90%"}}>Oversell Stock</p>
+                        <div  style={{padding: 0, width: "10%"}} id=""></div>
+                    </div>
+                    <div className={`${styles.formItem} ${styles.row}`}
+                        style={{
+                            width: "33%",
+                            padding: "0 5px"
+                        }}>
+                        <p style={{padding: 0, width: "90%"}}>Requires Shipping</p>
+                        <div  style={{padding: 0, width: "10%"}} id=""> </div>
+                    </div>
+                    <div className={`${styles.formItem} ${styles.row}`}
+                        style={{
+                            width: "33%",
+                            padding: "0 5px"
+                        }}>
+                    </div>
+                </div>
+            </div>
+        </Card>
+    )
+}
+export const TagAdvanced: FunctionComponent<TagProps> = ({
+    setProduct,
+    tags,
+    setTags,
+    setTagState
+}) => {
+    return (
+        <Card 
+            card_type="INFO"
+            title="Tags & Advanced Options"
+            header={""}>
+            <div className={`${styles.col}`}>
+                <div className={`${styles.col} `}
+                    style={{
+                        marginTop: "1.5rem"
+                    }}>
+                    <div className={`${styles.formItem} ${styles.row}`}
+                        style={{
+                            width: "100%",
+                            padding: "0 5px"
+                        }}>
+                        <input
+                            style={{
+                                color: "white"
+                            }}
+                            onChange={(e) => setProduct({
+                                ...product,
+                                quantity: Number(e.target.value)
+                            })}
+                            value={product.quantity}
+                            type="number"
+                            name="quantity" />
+                        <label style={{ 
+                            top: product.quantity  > 0 ? "-5px" : "", 
+                            fontSize: product.quantity  > 0? "10px" : ""}}>Tags</label>
+                    </div>
+                </div>
+
+                <div className={`${styles.row}`}
+                    style={{
+                        marginTop: "0.5rem"
+                    }}>
+                    <div className={`${styles.formItem} ${styles.row}`}
+                        style={{
+                            width: window.innerWidth > 720 ? "33%" : "100%",
+                            padding: "0 5px"
+                        }}>
+                        { 
+                            tags && tags.length > 0 ?  tags.map(v => {
+                            return <p 
+                                key={v}
+                                id={"tags"}
+                                onClick={(e) => deleteTag(e, v, setTags, setTagState,  tags)}
+                                className={`${styles.tagItem}`}>{v} <b>x</b> </p> 
+                            }) : null
+                        }
+                    </div>
+                </div>
+
+                <div className={`${styles.col} `}
+                    style={{
+                        marginTop: "1.5rem"
+                    }}>
+                    <div className={`${styles.formItem} ${styles.row}`}
+                        style={{
+                            width:"100%",
+                            padding: "0 5px"
+                        }}>
+                        <input
+                            style={{
+                                color: "white"
+                            }}
+                            onChange={(e) => setProduct({
+                                ...product,
+                                weight: Number(e.target.value)
+                            })}
+                            value={product.weight}
+                            type="number"
+                            name="weight" />
+                        <label style={{ 
+                            top: product.weight  > 0 ? "-5px" : "", 
+                            fontSize: product.weight  > 0 ? "10px" : ""}}>Categories</label>
+                    </div>
+                </div>
+
+
+                <div className={`${styles.row}`}
+                    style={{
+                        marginTop: "0.5rem"
+                    }}>
+                    <div className={`${styles.formItem} ${styles.row}`}
+                        style={{
+                            width: window.innerWidth > 720 ? "33%" : "100%",
+                            padding: "0 5px"
+                        }}>
+                        { 
+                            tags && tags.length > 0 ?  tags.map(v => {
+                            return <p 
+                                key={v}
+                                id={"tags"}
+                                onClick={(e) => deleteTag(e, v, setTags, setTagState,  tags)}
+                                className={`${styles.tagItem}`}>{v} <b>x</b> </p> 
+                            }) : null
+                        }
+                    </div>
+                </div>
+                <div className={`${styles.formItem} ${styles.row}`}
+                    style={{
+                        width: "100%",
+                        padding: "0 5px"
+                    }}>
+                    <p style={{padding: 0, width: "90%"}}>Digital Product</p>
+                    <div  style={{padding: 0, width: "10%"}} id=""> </div>
+                </div>
+            </div>
+        </Card>
+    )
+}
+
+export default ProductDetail;

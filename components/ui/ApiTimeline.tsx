@@ -1,5 +1,5 @@
 import Image from "next/image";
-import {FunctionComponent, useState} from "react";
+import React, {FunctionComponent, useState} from "react";
 import styles from "../../styles/Main.module.css";
 import RichTextEditor from "./RichTextEditor";
 import Underline from "./Underline";
@@ -14,7 +14,7 @@ const comments = [
 export const ApiTimeline: FunctionComponent<any> = ({
 
 }) => {
-    const [comment, makeComment] = useState("");
+    const [content, setContent] = React.useState("");
 
     return (
         <div className={`${styles.col} ${styles.timeline}`}>
@@ -70,7 +70,7 @@ export const ApiTimeline: FunctionComponent<any> = ({
                     }}>
                     <div 
                         className={`${styles.row}`}>
-                        <RichTextEditor />
+                        <RichTextEditor content={content} setContent={setContent} />
                         {/* <input
                             className={`${styles.timeline}`}
                             onChange={(e) => makeComment(e.target.value)}
