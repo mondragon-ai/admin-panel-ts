@@ -18,7 +18,8 @@ export const Layout: FunctionComponent<Props> = (props) => {
     return (
         <div style={{
             minHeight: "100vh",
-            background: "var(--darkBackground)"
+            background: "var(--darkBackground)",
+            height: "auto"
         }} className={`${styles.row} `}>
             <div
                 style={{
@@ -43,7 +44,7 @@ export const Layout: FunctionComponent<Props> = (props) => {
                 style={{
                     justifyContent: "space-between",
                     display: (window.innerWidth > 700) ?  "" : !openState ?   "none" : "",
-                    height: "" + window.innerHeight + "px"
+                    height: "auto"
                 }}>
                 <div 
                     style={{

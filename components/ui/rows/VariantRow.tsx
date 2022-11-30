@@ -1,11 +1,11 @@
 
-import { LineItem } from "../../lib/types/orders";
-import styles from "../../styles/Main.module.css";
+import { LineItem } from "../../../lib/types/orders";
+import styles from "../../../styles/Main.module.css";
 
 import Image from "next/image";
 import React from "react";
-import Underline from "./Underline";
-import { numberFormat } from "../../lib/helpers/formatters";
+import Underline from "../Underline";
+import { numberFormat } from "../../../lib/helpers/formatters";
 
 type Props = {
     item: LineItem

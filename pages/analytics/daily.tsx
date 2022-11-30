@@ -1,7 +1,6 @@
 import Link from "next/link";
-import AllItemHeader from "../../components/ui/AllItemHeader";
 import { Card } from "../../components/ui/Card";
-import { numberFormat, percentageFormatter } from "../../lib/helpers/formatters";
+import { numberFormat } from "../../lib/helpers/formatters";
 import styles from "../../styles/Main.module.css";
 
 const TOTAL_SALES = "420069.89";
@@ -36,7 +35,7 @@ const TOTAL_CHECKOUTS_TAPCART = "2123.04";
 
 
 import * as crypto from "crypto";
-import { AnalyticsHeader } from "../../components/ui/AnalyticsHeader";
+import { AnalyticsHeader } from "../../components/ui/headers/AnalyticsHeader";
 import Underline from "../../components/ui/Underline";
 
 const TOP_SELLERS = [

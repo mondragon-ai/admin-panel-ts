@@ -1,6 +1,6 @@
 import { Dispatch, FunctionComponent, SetStateAction } from "react";
-import { filterActive, filterAll } from "../../lib/helpers/ActiveFilter";
-import styles from "../../styles/Main.module.css";
+import { filterActive, filterAll } from "../../../lib/helpers/ActiveFilter";
+import styles from "../../../styles/Main.module.css";
 
 interface Props {
     list: any[],

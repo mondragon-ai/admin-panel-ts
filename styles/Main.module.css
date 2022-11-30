@@ -672,10 +672,17 @@
     font-size: 15px;
   }
 
+  .links:hover,
   .topSellers:hover {
     color: var(--accent);
   }
 
+  .links:hover {
+    color: var(--accent) !important;
+  }
+  .links {
+    cursor: pointer;
+  }
 
 
 
@@ -684,6 +691,10 @@
     .sideBar {
       display: flex !important;
     }
+  }
+
+  .reverseCol {
+    flex-direction: column-reverse;
   }
 
   .grid {
@@ -734,6 +745,7 @@
   align-content: center;
   flex-direction: row;
  }
+
   /* 
     =============================================================================================================
       MOBILE
@@ -757,7 +769,7 @@
     }
 
     .allItemHeader > div:nth-last-child(2) {
-      width: 100%;
+      width: 60%;
     }
     
     .allItemHeader > div:nth-last-child(1) {
@@ -930,6 +942,19 @@
     .rowOneMobile span,
     .rowTwoMobile span {
       font-size: 0.9rem !important;
+    }
+
+    .optionsCol {
+      flex-direction: column-reverse !important;
+    }
+  
+    .optionsCol > div {
+      /* padding: 1rem 0 !important; */
+      width: 100% !important;
+    }
+
+    .optionsCol p {
+      padding-left: 1.2rem !important;
     }
 
   }

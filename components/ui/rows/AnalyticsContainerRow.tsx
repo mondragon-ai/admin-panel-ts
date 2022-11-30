@@ -1,22 +1,31 @@
 import Link from "next/link";
 import { FunctionComponent } from "react";
-import { numberFormat } from "../../lib/helpers/formatters";
-import { Product } from "../../lib/types/products";
+// import { Product } from "../../../lib/types/products";
 
 // styling
-import styles from "../../styles/Main.module.css";
-import Underline from "./Underline";
+import styles from "../../../styles/Main.module.css";
+// import Underline from "../Underline";
 
-export interface ColFromList {
-    width: string,
-    html: string,
-    id: number
+export interface Props {
+    colOneTop: string,
+    colOneBottom: string,
+    colTwoTop: string,
+    colTwoBottom: boolean,
+    colThree: string,
+    colFour: string
+    id: string
 }
 
-export const ProductContainerRow: FunctionComponent<any>  = ({p}) => {
+export const AnalyticsContainerRow: FunctionComponent<Props>  = ({
+    id,
+    colOneTop,
+    colOneBottom,
+    colTwoTop,
+    colTwoBottom,
+    colThree,
+    colFour
+}) => {
 
-    const PRODUCT: Product = p;
-    const { title, status, options, price, collections, tags } = PRODUCT;
 
     return (
         <Link 
@@ -26,9 +35,9 @@ export const ProductContainerRow: FunctionComponent<any>  = ({p}) => {
                 padding: "1rem 0",
                 color: "gray"
             }}
-            key={p.id}
+            key={id}
             className={`${styles.row}`}
-            href={`/products/${p.id}`}>
+            href={`/analytics/funnels/${id}`}>
             <div 
                 style={{
                     justifyContent: "flex-start",
@@ -36,7 +45,7 @@ export const ProductContainerRow: FunctionComponent<any>  = ({p}) => {
                     // padding: "1rem 0",
                     color: "gray"
                 }}
-                key={p.id}
+                key={id}
                 className={`${styles.row}`}>
                 <div 
                     style={{
@@ -54,14 +63,14 @@ export const ProductContainerRow: FunctionComponent<any>  = ({p}) => {
                     <span 
                         style={{
                             fontSize: "1rem",
-                        }}>{title}</span>
+                        }}>{colOneTop}</span>
                     <div 
                         style={{
                             fontSize: "1rem",
                             justifyContent: "flex-start"
                         }}
                         className={`${styles.row}`}>
-                        {options?.map((option, i) => (<p key={option} className={`${styles.rowSubHead}`}>{option} {i != options.length-1 ? ", " : ""}</p>) )}
+                        <p>First Page Sales Rate: {colOneBottom}</p>
                     </div>
                 </div>
                 <div 
@@ -73,8 +82,8 @@ export const ProductContainerRow: FunctionComponent<any>  = ({p}) => {
                     <span 
                     style={{
                         fontSize: "1rem"
-                    }}>{numberFormat(Number(price))}</span>
-                    {status ? <p
+                    }}>{colTwoTop}</span>
+                    {colTwoBottom ? <p
                         style={{
                             background: "#aff2af",
                             border: "1px solid #7aff7a",
@@ -88,7 +97,7 @@ export const ProductContainerRow: FunctionComponent<any>  = ({p}) => {
                         overflow: "hidden"
                     }} 
                     className={`${styles.row} ${styles.noneMobile}`}>
-                    {collections?.map((collection, i) => (<p key={collection} className={`${styles.tagRowItem}`}>{collection}{i != collections.length-1 ? ", " : ""}</p>) )}
+                    <p>{colThree}</p>
                 </div>
                 <div 
                     style={{
@@ -96,7 +105,7 @@ export const ProductContainerRow: FunctionComponent<any>  = ({p}) => {
                         justifyContent: "flex-start"
                     }} 
                     className={`${styles.row} ${styles.noneMobile}`}>
-                    {tags?.map((tag, i) => (<p key={tag}>{tag}{i != tags.length-1 ? ", " : ""}</p>) )}
+                    <p>{colFour}</p>
                 </div>
             </div>
         </Link>

@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import AllItemHeader from '../components/ui/AllItemHeader'
+import AllItemHeader from '../components/ui/headers/AllItemHeader'
 import styles from '../styles/Main.module.css'
 
 // Fonts

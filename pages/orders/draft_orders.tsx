@@ -34,7 +34,7 @@ import styles from "../../styles/Main.module.css";
 
 // export default AllOrders;
 
-import AllItemHeader from "../../components/ui/AllItemHeader";
+import AllItemHeader from "../../components/ui/headers/AllItemHeader";
 import { FunctionComponent, useState } from "react";
 import {
     faFilter,
@@ -42,14 +42,14 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     ProductContainerRow
-} from "../../components/ui/ProductContainerRow";
+} from "../../components/ui/rows/ProductContainerRow";
 import {
     ItemContainerHeader
-} from "../../components/ui/ItemContainerHeader";
+} from "../../components/ui/headers/ItemContainerHeader";
 import Underline from "../../components/ui/Underline";
 import * as crypto from "crypto"
-import { MainRowContainerHeader } from "../../components/ui/MainRowContainerHeader";
-import { MainRowContainer } from "../../components/ui/MainRowContainer";
+import { MainRowContainerHeader } from "../../components/ui/headers/MainRowContainerHeader";
+import { MainRowContainer } from "../../components/ui/rows/MainRowContainer";
 import { Carts } from "../../lib/types/orders";
 
 const orders: Carts[] = [
@@ -134,7 +134,7 @@ export default function  AllCart(props: Prop) {
                                     <div key={p.id} className={`${styles.col} ${styles.itemRow}`}>
                                         <Underline width={100} />
                                         <MainRowContainer
-                                            href={`/orders/draft_orders/${p.id}`} 
+                                            href={`/orders/d/${p.id}`} 
                                             id={p.id}
                                             colOneTop={p.title}
                                             colOneBottom={p.first_name + " " + p.last_name}

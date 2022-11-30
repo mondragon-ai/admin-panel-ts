@@ -1,13 +1,13 @@
 import { faFilter } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
-import AllItemHeader from "../../components/ui/AllItemHeader";
-import { ItemContainerHeader } from "../../components/ui/ItemContainerHeader";
-import { CustomerContainerRow } from "../../components/ui/CustomerContainerRow";
+import AllItemHeader from "../../components/ui/headers/AllItemHeader";
+import { ItemContainerHeader } from "../../components/ui/headers/ItemContainerHeader";
+import { CustomerContainerRow } from "../../components/ui/rows/CustomerContainerRow";
 import Underline from "../../components/ui/Underline";
 import styles from "../../styles/Main.module.css";
 import { Customer } from "../../lib/types/customers";
-import { MainRowContainerHeader } from "../../components/ui/MainRowContainerHeader";
+import { MainRowContainerHeader } from "../../components/ui/headers/MainRowContainerHeader";
 
 interface Prop {
     itemTxt: string

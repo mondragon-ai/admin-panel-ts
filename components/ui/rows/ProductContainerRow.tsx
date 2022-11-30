@@ -1,31 +1,22 @@
 import Link from "next/link";
 import { FunctionComponent } from "react";
-import { Product } from "../../lib/types/products";
+import { numberFormat } from "../../../lib/helpers/formatters";
+import { Product } from "../../../lib/types/products";
 
 // styling
-import styles from "../../styles/Main.module.css";
-import Underline from "./Underline";
+import styles from "../../../styles/Main.module.css";
+import Underline from "../Underline";
 
-export interface Props {
-    colOneTop: string,
-    colOneBottom: string,
-    colTwoTop: string,
-    colTwoBottom: boolean,
-    colThree: string,
-    colFour: string
-    id: string
+export interface ColFromList {
+    width: string,
+    html: string,
+    id: number
 }
 
-export const AnalyticsContainerRow: FunctionComponent<Props>  = ({
-    id,
-    colOneTop,
-    colOneBottom,
-    colTwoTop,
-    colTwoBottom,
-    colThree,
-    colFour
-}) => {
+export const ProductContainerRow: FunctionComponent<any>  = ({p}) => {
 
+    const PRODUCT: Product = p;
+    const { title, status, options, price, collections, tags } = PRODUCT;
 
     return (
         <Link 
@@ -35,9 +26,9 @@ export const AnalyticsContainerRow: FunctionComponent<Props>  = ({
                 padding: "1rem 0",
                 color: "gray"
             }}
-            key={id}
+            key={p.id}
             className={`${styles.row}`}
-            href={`/analytics/funnels/${id}`}>
+            href={`/products/p/${p.id}`}>
             <div 
                 style={{
                     justifyContent: "flex-start",
@@ -45,7 +36,7 @@ export const AnalyticsContainerRow: FunctionComponent<Props>  = ({
                     // padding: "1rem 0",
                     color: "gray"
                 }}
-                key={id}
+                key={p.id}
                 className={`${styles.row}`}>
                 <div 
                     style={{
@@ -63,14 +54,14 @@ export const AnalyticsContainerRow: FunctionComponent<Props>  = ({
                     <span 
                         style={{
                             fontSize: "1rem",
-                        }}>{colOneTop}</span>
+                        }}>{title}</span>
                     <div 
                         style={{
                             fontSize: "1rem",
                             justifyContent: "flex-start"
                         }}
                         className={`${styles.row}`}>
-                        <p>First Page Sales Rate: {colOneBottom}</p>
+                        {options?.map((option, i) => (<p key={option} className={`${styles.rowSubHead}`}>{option} {i != options.length-1 ? ", " : ""}</p>) )}
                     </div>
                 </div>
                 <div 
@@ -82,8 +73,8 @@ export const AnalyticsContainerRow: FunctionComponent<Props>  = ({
                     <span 
                     style={{
                         fontSize: "1rem"
-                    }}>{colTwoTop}</span>
-                    {colTwoBottom ? <p
+                    }}>{numberFormat(Number(price))}</span>
+                    {status ? <p
                         style={{
                             background: "#aff2af",
                             border: "1px solid #7aff7a",
@@ -97,7 +88,7 @@ export const AnalyticsContainerRow: FunctionComponent<Props>  = ({
                         overflow: "hidden"
                     }} 
                     className={`${styles.row} ${styles.noneMobile}`}>
-                    <p>{colThree}</p>
+                    {collections?.map((collection, i) => (<p key={collection} className={`${styles.tagRowItem}`}>{collection}{i != collections.length-1 ? ", " : ""}</p>) )}
                 </div>
                 <div 
                     style={{
@@ -105,7 +96,7 @@ export const AnalyticsContainerRow: FunctionComponent<Props>  = ({
                         justifyContent: "flex-start"
                     }} 
                     className={`${styles.row} ${styles.noneMobile}`}>
-                    <p>{colFour}</p>
+                    {tags?.map((tag, i) => (<p key={tag}>{tag}{i != tags.length-1 ? ", " : ""}</p>) )}
                 </div>
             </div>
         </Link>

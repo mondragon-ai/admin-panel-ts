@@ -1,33 +1,47 @@
-
 import Link from "next/link";
 import { FunctionComponent } from "react";
-import { numberFormat } from "../../lib/helpers/formatters";
-import { Customer } from "../../lib/types/customers";
-import styles from "../../styles/Main.module.css";
+import { Product, Scheudle } from "../../../lib/types/products";
 
-export const CustomerContainerRow: FunctionComponent<any> = ({c}) => {
-    const CUSTOMER: Customer = c;
-    const {
-        id,
-        first_name,
-        last_name,
-        email,
-        status,
-        tags,
-        total_orders,
-        total_value
-    } = CUSTOMER;
+// styling
+import styles from "../../../styles/Main.module.css";
+import Underline from "../Underline";
+
+export interface Props {
+    colOneTop: string,
+    colOneBottom: string,
+    colTwoTop: string | number,
+    colTwoBottom: boolean,
+    colThree: Scheudle | string,
+    colFour: string | string[]
+    id: string,
+    href: string
+}
+
+export const MainRowContainer: FunctionComponent<Props>  = ({
+    id,
+    colOneTop,
+    colOneBottom,
+    colTwoTop,
+    colTwoBottom,
+    colThree,
+    colFour,
+    href
+}) => {
+
+    console.log(colThree)
+
 
     return (
-        <Link href={`/customers/${id}`} 
-            key={id}
+        <Link 
             style={{
                 justifyContent: "flex-start",
                 alignItems: "center",
                 padding: "1rem 0",
                 color: "gray"
             }}
-            className={`${styles.row}`}>
+            key={id}
+            className={`${styles.row}`}
+            href={`${href}`}>
             <div 
                 style={{
                     justifyContent: "flex-start",
@@ -35,6 +49,7 @@ export const CustomerContainerRow: FunctionComponent<any> = ({c}) => {
                     // padding: "1rem 0",
                     color: "gray"
                 }}
+                key={id}
                 className={`${styles.row}`}>
                 <div 
                     style={{
@@ -52,14 +67,14 @@ export const CustomerContainerRow: FunctionComponent<any> = ({c}) => {
                     <span 
                         style={{
                             fontSize: "1rem",
-                        }}>{first_name + " " + last_name}</span>
+                        }}>{colOneTop}</span>
                     <div 
                         style={{
-                            fontSize: "0.7rem",
+                            fontSize: "1rem",
                             justifyContent: "flex-start"
                         }}
-                        className={`${styles.row} `}>
-                        <span>{email}</span>
+                        className={`${styles.row}`}>
+                        <p> {colOneBottom}</p>
                     </div>
                 </div>
                 <div 
@@ -71,16 +86,13 @@ export const CustomerContainerRow: FunctionComponent<any> = ({c}) => {
                     <span 
                     style={{
                         fontSize: "1rem"
-                    }}>{total_orders}</span>
-                    {
-                        status ? 
-                        <p style={{
+                    }}>{colTwoTop}</span>
+                    {colTwoBottom ? <p
+                        style={{
                             background: "#aff2af",
                             border: "1px solid #7aff7a",
                             color: "gray"
-                        }} className={`${styles.statusSubHead} `}>Active</p> : 
-                        <p className={`${styles.statusSubHead}`}>Drafted</p>
-                    }
+                        }} className={`${styles.statusSubHead}`}>Active</p> : <p className={`${styles.statusSubHead}`}>Drafted</p> }
                 </div>
                 <div 
                     style={{
@@ -89,7 +101,17 @@ export const CustomerContainerRow: FunctionComponent<any> = ({c}) => {
                         overflow: "hidden"
                     }} 
                     className={`${styles.row} ${styles.noneMobile}`}>
-                    {numberFormat(Number(total_value))}
+                    {typeof(colThree) == "string" ?  <p>{colThree == "" ? "-" : colThree}</p>  : 
+                        colThree.trial > 0 ?  <p>{
+                            colThree.frequency + " " + 
+                            colThree.trial 
+                        }</p>   : colThree.frequency == "DAILY" ||
+                            colThree.frequency == "ANNUALLY" || 
+                            colThree.frequency == "MONTHLY" ?  <p>{
+                            colThree.frequency + " " + 
+                            colThree.date 
+                        }</p> : <div>TEST</div> }
+                    {/* <p>{colThree}</p> */}
                 </div>
                 <div 
                     style={{
@@ -97,10 +119,9 @@ export const CustomerContainerRow: FunctionComponent<any> = ({c}) => {
                         justifyContent: "flex-start"
                     }} 
                     className={`${styles.row} ${styles.noneMobile}`}>
-                    {tags?.map((tag, i) => (<p>{tag}{i != tags.length-1 ? ", " : ""}</p>) )}
+                    {typeof(colFour) != "string" ? colFour?.map((tag, i) => (<p key={tag}>{tag}{i != colFour.length-1 ? ", " : ""}</p>) ) : <p>{colFour}</p>}
                 </div>
             </div>
-
         </Link>
     )
-};
+}

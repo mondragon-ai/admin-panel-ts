@@ -1,5 +1,5 @@
 import styles from "../../styles/Main.module.css";
-import AllItemHeader from "../../components/ui/AllItemHeader";
+import AllItemHeader from "../../components/ui/headers/AllItemHeader";
 import { Dispatch, FunctionComponent, SetStateAction, useState } from "react";
 import {
     faFilter,
@@ -7,15 +7,15 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     ProductContainerRow
-} from "../../components/ui/ProductContainerRow";
+} from "../../components/ui/rows/ProductContainerRow";
 import {
     ItemContainerHeader
-} from "../../components/ui/ItemContainerHeader";
+} from "../../components/ui/headers/ItemContainerHeader";
 import { Product } from "../../lib/types/products";
 import Underline from "../../components/ui/Underline";
 import * as crypto from "crypto"
 import { filterActive, filterAll } from "../../lib/helpers/ActiveFilter";
-import { MainRowContainerHeader } from "../../components/ui/MainRowContainerHeader";
+import { MainRowContainerHeader } from "../../components/ui/headers/MainRowContainerHeader";
 
 const products: Product[] = [
     {
@@ -25,7 +25,8 @@ const products: Product[] = [
         price: "$68.00",
         collections: ["SALE", "Shirts"],
         tags: ["VIP_ONLY"],
-        options: ["Color", "Size"]
+        options: ["Color", "Size"],
+        quantity: 2
     },
     {
         title: "Desantis Land Hoodie",
@@ -34,7 +35,8 @@ const products: Product[] = [
         price: "$72.00",
         collections: ["Best Sellers", "Hoodie"],
         tags: ["VIP_ONLY" ],
-        options: ["Color", "Size"]
+        options: ["Color", "Size"],
+        quantity: 1
     }
 ]
 

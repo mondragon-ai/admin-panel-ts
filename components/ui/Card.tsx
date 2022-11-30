@@ -65,7 +65,8 @@ export const Card: React.FC<CardHeaderProps> = ({
     state
 }) => {
     return (
-        <div className={`${styles.card}`}>
+        <div className={`${styles.card}`}
+            >
             {
                 card_type == "ORDER" || card_type == "PAYMENT" ?  
                     <OrderHeader status={status} header={header} subHeader={subHeader as string} title={title} width={width} card_type={card_type}/> : 
@@ -94,7 +95,11 @@ export const Card: React.FC<CardHeaderProps> = ({
                         title={title}
                         width={width} />
             }
-            <main className={`${styles.col} ${styles.cardMain}`}>
+            <main className={`${styles.col} ${styles.cardMain}`}
+                style={{
+                    overflowX: "scroll",
+                    paddingTop: "5px"
+                }}>
                 {children}
             </main>
         </div>
@@ -447,7 +452,7 @@ export const InfoHeader: React.FC<CardHeaderProps> = ({
                         style={{
                             fontSize: window.innerWidth > 720 ? 25 : "3vh",
                             lineHeight: window.innerWidth > 720 ? "" : "",
-                        }}>{title + " <--- "} </h5>
+                        }}>{title + ""} </h5>
                     </div>
                     <div 
                         style={{

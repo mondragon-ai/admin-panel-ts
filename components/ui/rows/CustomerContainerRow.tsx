@@ -1,47 +1,33 @@
+
 import Link from "next/link";
 import { FunctionComponent } from "react";
-import { Product, Scheudle } from "../../lib/types/products";
+import { numberFormat } from "../../../lib/helpers/formatters";
+import { Customer } from "../../../lib/types/customers";
+import styles from "../../../styles/Main.module.css";
 
-// styling
-import styles from "../../styles/Main.module.css";
-import Underline from "./Underline";
-
-export interface Props {
-    colOneTop: string,
-    colOneBottom: string,
-    colTwoTop: string | number,
-    colTwoBottom: boolean,
-    colThree: Scheudle | string,
-    colFour: string | string[]
-    id: string,
-    href: string
-}
-
-export const MainRowContainer: FunctionComponent<Props>  = ({
-    id,
-    colOneTop,
-    colOneBottom,
-    colTwoTop,
-    colTwoBottom,
-    colThree,
-    colFour,
-    href
-}) => {
-
-    console.log(colThree)
-
+export const CustomerContainerRow: FunctionComponent<any> = ({c}) => {
+    const CUSTOMER: Customer = c;
+    const {
+        id,
+        first_name,
+        last_name,
+        email,
+        status,
+        tags,
+        total_orders,
+        total_value
+    } = CUSTOMER;
 
     return (
-        <Link 
+        <Link href={`/customers/${id}`} 
+            key={id}
             style={{
                 justifyContent: "flex-start",
                 alignItems: "center",
                 padding: "1rem 0",
                 color: "gray"
             }}
-            key={id}
-            className={`${styles.row}`}
-            href={`${href}`}>
+            className={`${styles.row}`}>
             <div 
                 style={{
                     justifyContent: "flex-start",
@@ -49,7 +35,6 @@ export const MainRowContainer: FunctionComponent<Props>  = ({
                     // padding: "1rem 0",
                     color: "gray"
                 }}
-                key={id}
                 className={`${styles.row}`}>
                 <div 
                     style={{
@@ -67,14 +52,14 @@ export const MainRowContainer: FunctionComponent<Props>  = ({
                     <span 
                         style={{
                             fontSize: "1rem",
-                        }}>{colOneTop}</span>
+                        }}>{first_name + " " + last_name}</span>
                     <div 
                         style={{
-                            fontSize: "1rem",
+                            fontSize: "0.7rem",
                             justifyContent: "flex-start"
                         }}
-                        className={`${styles.row}`}>
-                        <p> {colOneBottom}</p>
+                        className={`${styles.row} `}>
+                        <span>{email}</span>
                     </div>
                 </div>
                 <div 
@@ -86,13 +71,16 @@ export const MainRowContainer: FunctionComponent<Props>  = ({
                     <span 
                     style={{
                         fontSize: "1rem"
-                    }}>{colTwoTop}</span>
-                    {colTwoBottom ? <p
-                        style={{
+                    }}>{total_orders}</span>
+                    {
+                        status ? 
+                        <p style={{
                             background: "#aff2af",
                             border: "1px solid #7aff7a",
                             color: "gray"
-                        }} className={`${styles.statusSubHead}`}>Active</p> : <p className={`${styles.statusSubHead}`}>Drafted</p> }
+                        }} className={`${styles.statusSubHead} `}>Active</p> : 
+                        <p className={`${styles.statusSubHead}`}>Drafted</p>
+                    }
                 </div>
                 <div 
                     style={{
@@ -101,17 +89,7 @@ export const MainRowContainer: FunctionComponent<Props>  = ({
                         overflow: "hidden"
                     }} 
                     className={`${styles.row} ${styles.noneMobile}`}>
-                    {typeof(colThree) == "string" ?  <p>{colThree == "" ? "-" : colThree}</p>  : 
-                        colThree.trial > 0 ?  <p>{
-                            colThree.frequency + " " + 
-                            colThree.trial 
-                        }</p>   : colThree.frequency == "DAILY" ||
-                            colThree.frequency == "ANNUALLY" || 
-                            colThree.frequency == "MONTHLY" ?  <p>{
-                            colThree.frequency + " " + 
-                            colThree.date 
-                        }</p> : <div>TEST</div> }
-                    {/* <p>{colThree}</p> */}
+                    {numberFormat(Number(total_value))}
                 </div>
                 <div 
                     style={{
@@ -119,9 +97,10 @@ export const MainRowContainer: FunctionComponent<Props>  = ({
                         justifyContent: "flex-start"
                     }} 
                     className={`${styles.row} ${styles.noneMobile}`}>
-                    {typeof(colFour) != "string" ? colFour?.map((tag, i) => (<p key={tag}>{tag}{i != colFour.length-1 ? ", " : ""}</p>) ) : <p>{colFour}</p>}
+                    {tags?.map((tag, i) => (<p>{tag}{i != tags.length-1 ? ", " : ""}</p>) )}
                 </div>
             </div>
+
         </Link>
     )
-}
+};

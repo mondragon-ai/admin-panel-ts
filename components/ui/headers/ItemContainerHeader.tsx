@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react";
-import styles from "../../styles/Main.module.css";
+import styles from "../../../styles/Main.module.css";
 
 export const ItemContainerHeader: FunctionComponent<any> = ({
     rowOneUpper,

@@ -1,11 +1,13 @@
 export interface Product {
-    id: string,
-    title?: string,
+    id?: string,
+    title: string,
     status?: boolean,
-    price?: string,
+    price?: string | number,
     collections?: string[],
     tags?: string[],
     options?: string[]
+    quantity: number,
+    weight?: number
 }
 
 export interface Bundle {

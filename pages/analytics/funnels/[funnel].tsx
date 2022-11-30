@@ -1,5 +1,5 @@
 import styles from "../../../styles/Main.module.css";
-import {AnalyticsHeader} from "../../../components/ui/AnalyticsHeader";
+import {AnalyticsHeader} from "../../../components/ui/headers/AnalyticsHeader";
 import { FunnelStats } from "../../../components/ui/FunnelStats";
 import { GetServerSideProps } from "next";
 import { impoweredRequest } from "../../../lib/helpers/requests";
