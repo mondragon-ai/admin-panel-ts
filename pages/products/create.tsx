@@ -7,6 +7,9 @@ import Underline from "../../components/ui/Underline";
 import { numberFormat } from "../../lib/helpers/formatters";
 import { deleteTag } from "../../lib/helpers/tags";
 import styles from "../../styles/Main.module.css";
+import { ProductVariantRow } from "./p/[handle]";
+
+import * as crypto from "crypto";
 
 const t = [
     "VIP"
@@ -25,6 +28,7 @@ type Props = {
         quantity: number;
         weight: number;
         options?: [{}];
+        videos: any[]
     }>>,
     product: {
         title: string;
@@ -33,6 +37,7 @@ type Props = {
         compare_at_price: number;
         quantity: number;
         weight: number;
+        videos: any[]
     },
     navForm?: Dispatch<SetStateAction<string>>,
     setTags?: Dispatch<SetStateAction<string[]>>,
@@ -100,6 +105,13 @@ export const createProduct: FunctionComponent<Prop> = (props) => {
             {options1: [""]},
             {options2: [""]},
             {options3: [""]},
+        ],
+        videos: [
+            {
+                id: "vid_" + crypto.randomBytes(10).toString("hex"),
+                url: "",
+                type: "YOUTUBE"
+            }
         ]
     });
 
@@ -170,64 +182,67 @@ export const StepFour: FunctionComponent<Props> = ({
             title="Manage Images & Videos"
             header={""}
             next={"SAVE"}
+            // body={}
+            // method={}
+            // resource={}
             prev={"STEP_THREE"}
             setIndex={setIndex}
             steps={steps}>
             <div className={`${styles.col}`}>
-                <div className={`${styles.row} ${styles.mobileContainer}`}>
+                <div className={`${styles.col}`}>
 
-                    {/* Left */}
+                    {/* TOP */}
                     <div className={`${styles.col}`}
-                        style={{width: window.innerWidth > 720 ? "70%" : "100%",}}>
+                        style={{width: "100%",}}>
                         <div className={`${styles.row}`}>
                             <h3>Images</h3>
                         </div>
-                        <div className={`${styles.row}  ${styles.mobileContainer}`}
-                                style={{padding: "1rem 1rem 0 0", height: "auto",}}>
+                        <div className={`${styles.col}`}
+                                style={{padding: "1rem 0rem 0 0", height: "auto",}}>
                             <div className={`${styles.col}`}
-                                style={{background: "", height: "100%", width:  window.innerWidth > 720 ? "25%" : "100%", padding: "1rem 1rem 1rem 0"}}>
+                                style={{background: "", height: "100%", width: "100%", padding: "1rem 0rem 1rem 0"}}>
                                 <div className={`${styles.col}`}>
                                     FILE UPLOADER
                                 </div>
                             </div>
                             <div className={`${styles.row}`}
-                                style={{background: "", width:  window.innerWidth > 720 ? "75%" : "100%", padding: "1rem 1rem 1rem 0"}}>
+                                style={{justifyContent: "space-between", width: "100%", padding: "1rem 0rem 1rem 0", borderRadius: "6px"}}>
                                 <div className={`${styles.col}`}
-                                    style={{background: "", alignItems: "center", padding: "0"}}>
-                                   <Image 
-                                        style={{border: "0.4px solid var(--accent)"}}
+                                    style={{background: "", alignItems: "flex-start", borderRadius: "6px", padding: "0"}}>
+                                    <Image 
+                                        style={{border: "0.4px solid var(--accent)", borderRadius: "6px"}}
                                         src={"https://boltagency.ca/content/images/2020/03/placeholder-images-product-1_large.png"} 
                                         alt=""
-                                        width={60}
-                                        height={60} />
+                                        width={100}
+                                        height={100} />
                                 </div>
 
                                 <div className={`${styles.col}`}
-                                    style={{background: "", alignItems: "center", padding: "0"}}>
-                                   <Image 
-                                        style={{border: "0.4px solid var(--accent)"}}
+                                    style={{background: "", alignItems: "center", padding: "0", borderRadius: "6px"}}>
+                                    <Image 
+                                        style={{border: "0.4px solid var(--accent)", borderRadius: "6px"}}
                                         src={"https://boltagency.ca/content/images/2020/03/placeholder-images-product-1_large.png"} 
                                         alt=""
-                                        width={60}
-                                        height={60} />
+                                        width={100}
+                                        height={100} />
                                 </div>
 
                                 <div className={`${styles.col}`}
-                                    style={{background: "", alignItems: "center", padding: "0"}}>
-                                   <Image 
-                                        style={{border: "0.4px solid var(--accent)"}}
+                                    style={{background: "", alignItems: "flex-end", borderRadius: "6px", padding: "0", }}>
+                                    <Image 
+                                        style={{border: "0.4px solid var(--accent)", borderRadius: "6px"}}
                                         src={"https://boltagency.ca/content/images/2020/03/placeholder-images-product-1_large.png"} 
                                         alt=""
-                                        width={60}
-                                        height={60} />
+                                        width={100}
+                                        height={100} />
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    {/* Right */}
+                    {/* BOTTOM */}
                     <div className={`${styles.col}`}
-                        style={{width:window.innerWidth > 720 ? "30%" : "100%",}}>
+                        style={{width: "100%",}}>
                         <div className={`${styles.row}`}>
                             <h3>Video Links</h3>
                         </div>
@@ -243,18 +258,25 @@ export const StepFour: FunctionComponent<Props> = ({
                                 }}
                                 onChange={(e) => setProduct({
                                     ...product,
-                                    weight: Number(e.target.value)
+                                    videos: [
+                                        {
+                                            ...product.videos,
+                                            id: "vid_" + crypto.randomBytes(10).toString("hex"),
+                                            url: "",
+                                            type: "YOUTUBE"
+                                        }
+                                    ]
                                 })}
-                                value={product.weight}
-                                type="number"
-                                name="weight" />
+                                value={product.videos[0].id}
+                                type="text"
+                                name="links" />
                             <label style={{ 
-                                top: product.weight  > 0 ? "-5px" : "", 
-                                fontSize: product.weight  > 0 ? "10px" : ""}}>Video Link</label>
+                                top: product.videos[0].id  !== "" ? "-5px" : "", 
+                                fontSize: product.videos[0].id  !== "" ? "10px" : ""}}>Video Link</label>
                         </div>
                         <div className={`${styles.col}`}>
-                            <p style={{marginBottom: "1rem", fontSize: "0.9rem"}}>
-                                Video Links
+                            <p className={`${styles.links}`} style={{marginBottom: "1rem", fontSize: "0.9rem", color: "gray"}}>
+                                https://www.youtube.com owjnwhebgkjwe rgkjw ekrjgb wke gk
                             </p>
                             <Underline width={100} />
                         </div>
@@ -279,7 +301,21 @@ export const StepThree: FunctionComponent<Props> = ({
     let [tags, setTags] = useState(t);
     const [tagText, setTagState] = useState("");
 
+    const [variants, setVariants] = useState([
+        {
+            id: "var_" + crypto.randomBytes(10).toString('hex'),
+            option1: "Blue",
+            option2: "hoodie",
+        },
+        {
+            id: "var_" + crypto.randomBytes(10).toString('hex'),
+            option1: "Black",
+            option2: "hoodie",
+        }
+    ]);
+
     return (
+        <>
         <Card 
             card_type="CREATE"
             title="Options & Variants"
@@ -293,7 +329,7 @@ export const StepThree: FunctionComponent<Props> = ({
             setIndex={setIndex}
             steps={steps}>
             <div className={`${styles.col}`}>
-                <div className={`${styles.row}  ${styles.mobileContainer}`}
+                <div className={`${styles.row}  ${styles.mobileContainer} ${styles.optionsCol}`}
                     style={{
                         marginTop: "1.5rem"
                     }}>
@@ -306,12 +342,12 @@ export const StepThree: FunctionComponent<Props> = ({
                             style={{
                                 color: "white"
                             }}
-                            value={product.quantity}
+                            value={""}
                             type="text"
                             name="options1" />
                         <label style={{ 
-                            top: product.quantity  > 0 ? "-5px" : "", 
-                            fontSize: product.quantity  > 0? "10px" : ""}}>Options</label>
+                            top: product?.quantity && product?.quantity > 0 ? "-5px" : "", 
+                            fontSize: product?.quantity  && product?.quantity > 0? "10px" : ""}}>Options</label>
                     </div>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
@@ -322,12 +358,12 @@ export const StepThree: FunctionComponent<Props> = ({
                             style={{
                                 color: "white"
                             }}
-                            value={product.weight}
+                            value={product?.weight}
                             type="text"
                             name="options1" />
                         <label style={{ 
-                            top: product.weight  > 0 ? "-5px" : "", 
-                            fontSize: product.weight  > 0 ? "10px" : ""}}>Option Name</label>
+                            top: product?.weight && product?.weight > 0 ? "-5px" : "", 
+                            fontSize: product?.weight && product?.weight > 0 ? "10px" : ""}}>Option Name</label>
                     </div>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
@@ -341,7 +377,7 @@ export const StepThree: FunctionComponent<Props> = ({
 
                 <div className={`${styles.row}  ${styles.mobileContainer}`}
                     style={{
-                        marginTop: "1.5rem"
+                        marginTop: window.innerWidth > 720 ? "1.5rem" : "",
                     }}>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
@@ -373,9 +409,9 @@ export const StepThree: FunctionComponent<Props> = ({
                     </div>
                 </div>
 
-                <div className={`${styles.row}  ${styles.mobileContainer}`}
+                <div className={`${styles.row}  ${styles.mobileContainer} ${styles.optionsCol}`}
                     style={{
-                        marginTop: "1.5rem"
+                        marginTop: window.innerWidth > 720 ? "1.5rem" : "",
                     }}>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
@@ -387,12 +423,12 @@ export const StepThree: FunctionComponent<Props> = ({
                                 color: "white"
                             }}
                             // onChange={(e) => }
-                            value={product.quantity}
+                            value={product?.quantity}
                             type="text"
                             name="options2" />
                         <label style={{ 
-                            top: product.quantity  > 0 ? "-5px" : "", 
-                            fontSize: product.quantity  > 0? "10px" : ""}}>Options</label>
+                            top: product?.quantity && product?.quantity  > 0 ? "-5px" : "", 
+                            fontSize: product?.quantity && product?.quantity > 0? "10px" : ""}}>Options</label>
                     </div>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
@@ -403,12 +439,12 @@ export const StepThree: FunctionComponent<Props> = ({
                             style={{
                                 color: "white"
                             }}
-                            value={product.weight}
+                            value={product?.weight}
                             type="text"
                             name="option2" />
                         <label style={{ 
-                            top: product.weight  > 0 ? "-5px" : "", 
-                            fontSize: product.weight  > 0 ? "10px" : ""}}>Option Name</label>
+                            top: product?.weight && product?.weight  > 0 ? "-5px" : "", 
+                            fontSize: product?.weight && product?.weight  > 0 ? "10px" : ""}}>Option Name</label>
                     </div>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
@@ -422,7 +458,7 @@ export const StepThree: FunctionComponent<Props> = ({
 
                 <div className={`${styles.row}  ${styles.mobileContainer}`}
                     style={{
-                        marginTop: "1.5rem"
+                        marginTop:window.innerWidth > 720 ? "1.5rem" : "",
                     }}>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
@@ -454,46 +490,46 @@ export const StepThree: FunctionComponent<Props> = ({
                     </div>
                 </div>
 
-                <div className={`${styles.row}  ${styles.mobileContainer}`}
+                <div className={`${styles.row}  ${styles.mobileContainer} ${styles.optionsCol}`}
                     style={{
-                        marginTop: "1.5rem"
+                        marginTop: window.innerWidth > 720 ? "1.5rem" : "",
                     }}>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
                             width: window.innerWidth > 720 ? "33%" : "100%",
-                            padding: "0 5px"
+                            padding: window.innerWidth > 720 ? "0 5px" : ""
                         }}>
                         <input
                             style={{
                                 color: "white"
                             }}
-                            value={product.quantity}
+                            value={product?.quantity}
                             type="text"
                             name="options3" />
                         <label style={{ 
-                            top: product.quantity  > 0 ? "-5px" : "", 
-                            fontSize: product.quantity  > 0? "10px" : ""}}>Options</label>
+                            top: product?.quantity && product?.quantity > 0 ? "-5px" : "", 
+                            fontSize: product?.quantity && product?.quantity > 0? "10px" : ""}}>Options</label>
                     </div>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
                             width: window.innerWidth > 720 ? "33%" : "100%",
-                            padding: "0 5px"
+                            padding: window.innerWidth > 720 ? "0 5px" : ""
                         }}>
                         <input
                             style={{
                                 color: "white"
                             }}
-                            value={product.weight}
+                            value={product?.weight }
                             type="text"
                             name="option3" />
                         <label style={{ 
-                            top: product.weight  > 0 ? "-5px" : "", 
-                            fontSize: product.weight  > 0 ? "10px" : ""}}>Option Name</label>
+                            top: product?.weight  && product?.weight  > 0 ? "-5px" : "", 
+                            fontSize: product?.weight && product?.weight  > 0 ? "10px" : ""}}>Option Name</label>
                     </div>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
                             width: "33%",
-                            padding: "0 5px"
+                            padding: window.innerWidth > 720 ? "0 5px" : ""
                         }}>
                         <p style={{padding: 0, width: "90%"}}>Option Three</p>
                         <div  style={{padding: 0, width: "10%"}} id=""> </div>
@@ -502,7 +538,7 @@ export const StepThree: FunctionComponent<Props> = ({
 
                 <div className={`${styles.row}  ${styles.mobileContainer}`}
                     style={{
-                        marginTop: "1.5rem"
+                        marginTop: window.innerWidth > 720 ? "1.5rem" : "",
                     }}>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
@@ -535,6 +571,31 @@ export const StepThree: FunctionComponent<Props> = ({
                 </div>
             </div>
         </Card>
+        
+        <Card 
+            card_type="INFO"
+            title="Variants"
+            header={""}
+            next={"OPTIONS"}>
+            <div className={`${styles.col}`}>
+                {
+                    variants && variants.map(v => {
+                        return (
+                            <div key={v.id} className={`${styles.col}`}
+                                style={{
+                                    width: "auto",
+                                    minWidth: "100%"
+                                }}>
+                                <ProductVariantRow />
+                                <Underline width={100} />
+                            </div>
+                        )
+                    })
+                }
+            </div>
+        </Card>
+       </>
+        
     )
 }
 
@@ -815,7 +876,7 @@ export const ProductText: FunctionComponent<Props> = ({
                     </div>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
-                            width: "33%",
+                            width: window.innerWidth > 720 ? "33%" : "100%",
                             padding: "0 5px"
                         }}>
                         <p style={{padding: 0, width: "90%"}}>Digital Product</p>
@@ -825,7 +886,7 @@ export const ProductText: FunctionComponent<Props> = ({
 
                 <div className={`${styles.row} ${styles.mobileContainer}`}
                     style={{
-                        marginTop: "1.5rem"
+                        marginTop: window.innerWidth > 720 ? "1.5rem" : "",
                     }}>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
@@ -837,7 +898,7 @@ export const ProductText: FunctionComponent<Props> = ({
                     </div>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
-                            width: "33%",
+                            width: window.innerWidth > 720 ? "33%" : "100%",
                             padding: "0 5px"
                         }}>
                         <p style={{padding: 0, width: "90%"}}>Requires Shipping</p>
@@ -845,7 +906,7 @@ export const ProductText: FunctionComponent<Props> = ({
                     </div>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
-                            width: "33%",
+                            width: window.innerWidth > 720 ? "33%" : "100%",
                             padding: "0 5px"
                         }}>
                     </div>
