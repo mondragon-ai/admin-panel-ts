@@ -9,6 +9,8 @@ import styles from "../../styles/Main.module.css";
 import { ProductVariantRow } from "./p/[handle]";
 
 import * as crypto from "crypto";
+import { Product } from "../../lib/types/products";
+import ImageUploading from "react-images-uploading";
 
 const t = [
     "VIP"
@@ -19,25 +21,8 @@ interface Prop {
 }
 
 type Props = {
-    setProduct:  Dispatch<SetStateAction<{
-        title: string;
-        price: number;
-        description: string;
-        compare_at_price: number;
-        quantity: number;
-        weight: number;
-        options?: [{}];
-        videos: any[]
-    }>>,
-    product: {
-        title: string;
-        price: number;
-        description: string;
-        compare_at_price: number;
-        quantity: number;
-        weight: number;
-        videos: any[]
-    },
+    setProduct:  Dispatch<SetStateAction<Product>>,
+    product: Product,
     navForm?: Dispatch<SetStateAction<string>>,
     setTags?: Dispatch<SetStateAction<string[]>>,
     setTagState?: Dispatch<SetStateAction<string>>,
@@ -65,7 +50,7 @@ const s = [
     {
         required: true,
         complete: false,
-        active: true,
+        active: false,
         title: "Product",
         step: "STEP_ONE"
     },
@@ -86,23 +71,31 @@ const s = [
     {
         required: false,
         complete: false,
-        active: false,
+        active: true,
         title: "Media",
         step: "STEP_FOUR"
     }
 ]
 const p = {
-    title: "Hoodie 1776",
-    price: 300,
+    title: "1776 Hoodie",
+    status: false,
+    id: crypto.randomBytes(10).toString("hex"),
+    price: 6840,
+    collections: ["SALE", "Shirts"],
+    tags: ["VIP_ONLY"],
+    options: {
+        options1: ["Blue", "Red", "Black"],
+        options2: ["Large", "Medium", "Small"],
+        options3: [],
+
+    },
+    quantity: 20,
     description: "description here",
     compare_at_price: 0,
-    quantity: 10,
     weight: 0.5,
-    options: [
-        {options1: [""]},
-        {options2: [""]},
-        {options3: [""]},
-    ],
+    is_digital: false,
+    sell_overstock: true,
+    requires_shipping: false,
     videos: [
         {
             id: "vid_" + crypto.randomBytes(10).toString("hex"),
@@ -110,11 +103,6 @@ const p = {
             type: "YOUTUBE"
         }
     ],
-    is_digital: false,
-    sell_overstock: true,
-    requires_shipping: false,
-    tags: [],
-    categories: []
 }
 
 export const createProduct: FunctionComponent<Prop> = (props) => {
@@ -131,7 +119,7 @@ export const createProduct: FunctionComponent<Prop> = (props) => {
 
     const [formStep, navForm] = useState("STEP_TWO")
 
-    console.log(product.price)
+    console.log(product)
 
     return (
         <div className={`${styles.col}`}>
@@ -153,7 +141,7 @@ export const createProduct: FunctionComponent<Prop> = (props) => {
                             return (
                                 <ProductText
                                     setProduct={setProduct as Dispatch<SetStateAction<any>>} 
-                                    product={product}
+                                    product={product as any}
                                     navForm={navForm}
                                     setIndex={setIndex}
                                     steps={steps}
@@ -165,7 +153,7 @@ export const createProduct: FunctionComponent<Prop> = (props) => {
                             return (
                                 <StepTwo
                                     setProduct={setProduct as Dispatch<SetStateAction<any>>}
-                                    product={product}
+                                    product={product as any}
                                     navForm={navForm}
                                     setIndex={setIndex}
                                     steps={steps}
@@ -177,7 +165,7 @@ export const createProduct: FunctionComponent<Prop> = (props) => {
                             return (
                                 <StepThree
                                     setProduct={setProduct as Dispatch<SetStateAction<any>>}
-                                    product={product}
+                                    product={product as any}
                                     navForm={navForm}
                                     setIndex={setIndex}
                                     steps={steps}
@@ -188,7 +176,7 @@ export const createProduct: FunctionComponent<Prop> = (props) => {
                             return (
                                 <StepFour
                                     setProduct={setProduct as Dispatch<SetStateAction<any>>}
-                                    product={product}
+                                    product={product as any}
                                     navForm={navForm}
                                     setIndex={setIndex}
                                     steps={steps}
@@ -204,6 +192,226 @@ export const createProduct: FunctionComponent<Prop> = (props) => {
     ) 
 }
 
+export type ImgProps = {
+    images: any[]
+}
+
+export const ImageContainer: FunctionComponent<ImgProps> = ({images}) => {
+
+    // console.log(images)
+
+    if (images.length == 0) {
+        return <div className={`${styles.col} `}>
+        <Image
+            src={"https://boltagency.ca/content/images/2020/03/placeholder-images-product-1_large.png"}
+            height={100}
+            width={100}
+            style={{backgroundColor: "none"}}
+            alt={""}
+            />
+    </div>;
+    }
+
+    const singleImg = <div className={`${styles.col} `}>
+                <Image
+                    src={images[0] ? images[images.length-1] : "https://boltagency.ca/content/images/2020/03/placeholder-images-product-1_large.png"}
+                    height={100}
+                    width={100}
+                    style={{backgroundColor: "none"}}
+                    alt={""}
+                    />
+            </div>
+
+    const othereImg = images?.map((v,i) => {
+
+        return(
+            <div 
+                key={v} 
+                className={``}>
+                    {i < images.length-1 ? <Image
+                    src={i < images.length-1 ? v : ""}
+                    height={100}
+                    width={100}
+                    style={{backgroundColor: "none"}}
+                    alt={""}
+                    /> : null}
+            </div>
+        )
+    })
+
+    return (
+        <div className={`${styles.col}`}>
+            {singleImg}
+            <div className={`${styles.row} ${styles.othereImgContainer}`}>
+                {images.length > 1 ? othereImg : null}
+            </div>
+        </div>
+    )
+}
+
+// export function AddImage({
+//     maxNumber,
+//     product_id
+// }) {
+    
+
+//     const [images, setImages] = useState([]);
+//     const [addImage, toggleImg] = useState(false)
+
+//     const [percent, setPercent] = useState(0);
+//     const [alt_text, setAlt] = useState("");
+//     const uploadImg = () => {
+//         if (!images[0]) {
+//             alert("Please choose a file first!")
+//         };
+     
+//         // console.log(images[0]);
+
+//         // call FB storage bucket
+//         const storageRef = ref(storage, `/images/test/${images[0]?.file?.name}`)
+//         const uploadTask = uploadBytesResumable(storageRef, images[0]?.file);
+     
+//         // 
+//         uploadTask.on(
+//             "state_changed",
+//             (snapshot) => {
+//                 const percent = Math.round(
+//                     (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+//                 );
+     
+//                 // update progress
+//                 setPercent(percent);
+//             },
+//             (err) => console.log(err),
+//             () => {
+//                 // download url
+//                 getDownloadURL(uploadTask.snapshot.ref).then( async (url) => {
+//                     // console.log(url);
+
+//                     // Send to DB via api/ Fetch data from external API
+//                     const res = await fetch(`https://us-central1-shopify-recharge-352914.cloudfunctions.net/platform/products/add/images`,{
+//                         method: 'POST',
+//                         headers: { 'Content-Type': 'application/json' },
+//                         body: JSON.stringify({ 
+//                             FB_MERCHANT_UUID: 'QilaBD5FGdnF9iX5K9k7',
+//                             product_uuid: `pro_${handle}`,
+//                             image_data: {
+//                                 src: url, 
+//                                 alt_text: alt_text
+//                             }
+//                         })
+//                     });
+
+//                     // 
+//                     if (res.ok) {
+//                         setPercent(0);
+//                         toggleImg(!addImage);
+//                         const data = await res.json();
+
+//                         console.log(data);
+//                         alert("SUCCESS")
+//                     };
+//                 });
+//             }
+//         ); 
+//     }
+
+//     return (
+//         <div  className={`${styles.col} ${styles.moduleBkg}`}>
+//             <div className={`${styles.col}  ${styles.card} ${styles.module}`}>
+//                 <header className={`${styles.row} ${styles.justifyBtwn}`}>
+//                     <h4>Add Image Details Here</h4>
+//                     <h4 onClick={() => toggleImg(!addImage)} className={`${styles.closeBtn}`}>Close</h4>
+//                 </header>
+//                 <ImageUploading
+//                     onChange={onChange}
+//                     multiple
+//                     value={images}
+//                     maxNumber={maxNumber}
+//                     dataURLKey="data_url"
+//                 >
+
+//                     {({
+//                         imageList,
+//                         onImageUpload,
+//                         onImageRemoveAll,
+//                         onImageUpdate,
+//                         onImageRemove,
+//                         isDragging,
+//                         dragProps,
+//                         }) => (
+//                     // write your building UI
+//                     <div className={styles.upload__image_wrapper}>
+//                         <div className={styles.row}>
+//                             {imageList.length > 0 ? 
+//                                 <div className={styles.featureContainer}>
+//                                     <div className={styles.imageItem}>
+//                                         <Image
+//                                             src={imageList[0]['data_url']}
+//                                             height={100}
+//                                             width={100}
+//                                             style={{backgroundColor: "black"}}
+//                                         />
+//                                         <div className={styles.imgBtnWrappers}>
+//                                             <button onClick={() => onImageUpdate(0)}>♲</button>
+//                                             <button onClick={() => onImageRemove(0)}>🚮</button>
+//                                         </div>
+//                                     </div>
+//                                 </div> : 
+//                                 <div className={styles.featureContainer}>
+//                                     <div className={styles.imageItem}>
+//                                         <Image
+//                                             src={'https://boltagency.ca/content/images/2020/03/placeholder-images-product-1_large.png'}
+//                                             height={100}
+//                                             width={100}
+//                                             style={{backgroundColor: "none"}}
+//                                         />
+//                                     </div>
+//                                 </div>
+//                             }
+
+//                             <div className={`${styles.col} ${styles.addImage}`}>
+//                                 <label htmlFor="title">
+//                                     <p>Alt Text</p>
+//                                     <input
+//                                         type="text"
+//                                         id="title"
+//                                         name="title"
+//                                         placeholder={"Alt Title Text Here...."}
+//                                         onChange={(e) => setAlt(e.target.value)} />
+//                                 </label>
+
+//                                 <div>
+//                                     <button
+//                                     style={isDragging ? { color: 'red' } : undefined}
+//                                     onClick={onImageUpload}
+//                                     {...dragProps}
+//                                     >
+//                                         Select or Drag Image
+//                                     📸
+//                                     </button>
+//                                     {/* &nbsp; */}
+//                                     { imageList.length > 0 ? <button onClick={() => uploadImg()}>Upload Image </button> : null}
+//                                 </div>
+//                                 <div className={styles.progressbarContainer}>
+//                                     <div
+//                                         className={styles.progressbar}
+//                                         style={{
+//                                             width: `${percent}%`
+//                                         }}></div>
+//                                 </div>
+//                             </div>
+//                         </div>
+//                     </div>
+//                     )}
+
+//                 </ImageUploading>
+//             </div>
+//         </div> 
+//     )
+// }
+
+
 export const StepFour: FunctionComponent<Props> = ({
     setProduct,
     product,
@@ -211,6 +419,9 @@ export const StepFour: FunctionComponent<Props> = ({
     setIndex,
     steps
 }) => {
+
+    const [images, setImages] = useState([]);
+    const [addImage, toggleImg] = useState(false)
     
     // Order Tag State
     let [tags, setTags] = useState(t);
@@ -222,12 +433,11 @@ export const StepFour: FunctionComponent<Props> = ({
             title="Manage Images & Videos"
             header={""}
             next={"SAVE"}
-            // body={}
-            // method={}
-            // resource={}
             prev={"STEP_THREE"}
             setIndex={setIndex}
-            steps={steps}>
+            steps={steps}
+            product={product}
+            setProduct={setProduct}>
             <div className={`${styles.col}`}>
                 <div className={`${styles.col}`}>
 
@@ -242,7 +452,8 @@ export const StepFour: FunctionComponent<Props> = ({
                             <div className={`${styles.col}`}
                                 style={{background: "", height: "100%", width: "100%", padding: "1rem 0rem 1rem 0"}}>
                                 <div className={`${styles.col}`}>
-                                    FILE UPLOADER
+                                    {/* <ImageContainer images={images} /> */}
+                                    {/* {addImage ? <AddImage handle={handle} onChange={onChange} images={images} addImage={addImage} maxNumber toggleImg={toggleImg} />: null} */}
                                 </div>
                             </div>
                             <div className={`${styles.row}`}
@@ -337,41 +548,15 @@ export const StepThree: FunctionComponent<Props> = ({
 }) => {
     
     
-    // Order Tag State
-    let [tags, setTags] = useState<{
-        tags: string[],
-        collections: string[]
-    }>({
-        tags: [],
-        collections: []
-    });
     const [tagText, setTagState] = useState<{
-        tags: string,
-        collections: string
+        options1: string,
+        options2: string,
+        options3: string
     }>({
-        tags: "",
-        collections: ""
+        options1: "",
+        options2: "",
+        options3: ""
     });
-
-    const updateProductState = () => {
-        setProduct({
-            ...product,
-
-        })
-    }
-
-    const [variants, setVariants] = useState([
-        {
-            id: "var_" + crypto.randomBytes(10).toString('hex'),
-            option1: "Blue",
-            option2: "hoodie",
-        },
-        {
-            id: "var_" + crypto.randomBytes(10).toString('hex'),
-            option1: "Black",
-            option2: "hoodie",
-        }
-    ]);
 
     return (
         <>
@@ -386,7 +571,9 @@ export const StepThree: FunctionComponent<Props> = ({
             // resource={}
             prev={"STEP_TWO"}
             setIndex={setIndex}
-            steps={steps}>
+            steps={steps}
+            product={product}
+            setProduct={setProduct}>
             <div className={`${styles.col}`}>
                 <div className={`${styles.row}  ${styles.mobileContainer} ${styles.optionsCol}`}
                     style={{
@@ -401,12 +588,17 @@ export const StepThree: FunctionComponent<Props> = ({
                             style={{
                                 color: "white"
                             }}
-                            value={""}
-                            type="text"
-                            name="options1" />
+                            id={"options1"}
+                            onKeyDown={(e) => addTags(e, product?.option1 as string, setProduct, setTagState, product, tagText)}
+                            onChange={(e) => setTagState({
+                                ...tagText,
+                                options1: e.target.value
+                            })}
+                            value={tagText.options1}
+                            type="text"/>
                         <label style={{ 
-                            top: product?.quantity && product?.quantity > 0 ? "-5px" : "", 
-                            fontSize: product?.quantity  && product?.quantity > 0? "10px" : ""}}>Options</label>
+                            top: tagText.options1 && tagText.options1 !== "" ? "-5px" : "", 
+                            fontSize: tagText.options1 && tagText.options1 !== "" ? "10px" : ""}}>Options</label>
                     </div>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
@@ -417,12 +609,16 @@ export const StepThree: FunctionComponent<Props> = ({
                             style={{
                                 color: "white"
                             }}
-                            value={product?.weight}
+                            onChange={(e) => setProduct({
+                                ...product,
+                                option1: e.target.value
+                            })}
+                            value={product?.option1}
                             type="text"
                             name="options1" />
                         <label style={{ 
-                            top: product?.weight && product?.weight > 0 ? "-5px" : "", 
-                            fontSize: product?.weight && product?.weight > 0 ? "10px" : ""}}>Option Name</label>
+                            top: product?.option1 && product?.option1 !== "" ? "-5px" : "", 
+                            fontSize: product?.option1 && product?.option1 !== "" ? "10px" : ""}}>Option Name</label>
                     </div>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
@@ -435,20 +631,18 @@ export const StepThree: FunctionComponent<Props> = ({
                 </div>
 
                 <div className={`${styles.row}  ${styles.mobileContainer}`}
-                    style={{
-                        marginTop: window.innerWidth > 720 ? "1.5rem" : "",
-                    }}>
+                    style={{ marginTop: window.innerWidth > 720 ? "1.5rem" : "" }}>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
                             width: window.innerWidth > 720 ? "33%" : "100%",
                             padding: "0 5px"
                         }}>
                         { 
-                            tags && tags.tags.length > 0 ?  tags.tags.map(v => {
+                            product.options.options1 && product.options.options1.length > 0 ?  product.options.options1.map(v => {
                             return <p 
                                 key={v}
-                                id={"tags"}
-                                onClick={(e) => deleteTag(e, v, setTags, setTagState, tags, tagText)}
+                                id={"options1"}
+                                onClick={(e) => deleteTag(e, v, setProduct, setTagState, product, tagText)}
                                 className={`${styles.tagItem}`}>{v} <b>x</b> </p> 
                             }) : null
                         }
@@ -460,51 +654,57 @@ export const StepThree: FunctionComponent<Props> = ({
                         }}>
                         {<p style={{padding: 0, width: "90%"}}></p>}
                     </div>
+
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
                             width: "33%",
                             padding: "0 5px"
                         }}>
                     </div>
+
                 </div>
 
                 <div className={`${styles.row}  ${styles.mobileContainer} ${styles.optionsCol}`}
-                    style={{
-                        marginTop: window.innerWidth > 720 ? "1.5rem" : "",
-                    }}>
+                    style={{ marginTop: window.innerWidth > 720 ? "1.5rem" : "" }}>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
                             width: window.innerWidth > 720 ? "33%" : "100%",
                             padding: "0 5px"
                         }}>
-                        <input
-                            style={{
-                                color: "white"
-                            }}
-                            // onChange={(e) => }
-                            value={product?.quantity}
+                        <input style={{ color: "white"}}
+                            id={"options2"}
+                            onKeyDown={(e) => addTags(e, product?.option2 as string, setProduct, setTagState, product, tagText)}
+                            onChange={(e) => setTagState({
+                                ...tagText,
+                                options2: e.target.value
+                            })}
+                            value={tagText.options2}
                             type="text"
                             name="options2" />
                         <label style={{ 
-                            top: product?.quantity && product?.quantity  > 0 ? "-5px" : "", 
-                            fontSize: product?.quantity && product?.quantity > 0? "10px" : ""}}>Options</label>
+                            top: product?.option2 && product?.option2 !== "" ? "-5px" : "", 
+                            fontSize: product?.option2 && product?.option2 !== "" ? "10px" : ""}}>Options</label>
                     </div>
+
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
                             width: window.innerWidth > 720 ? "33%" : "100%",
                             padding: "0 5px"
                         }}>
                         <input
-                            style={{
-                                color: "white"
-                            }}
-                            value={product?.weight}
+                            style={{ color: "white" }}
+                            onChange={(e) => setProduct({
+                                ...product,
+                                option2: e.target.value
+                            })}
+                            value={product?.option2}
                             type="text"
                             name="option2" />
                         <label style={{ 
-                            top: product?.weight && product?.weight  > 0 ? "-5px" : "", 
-                            fontSize: product?.weight && product?.weight  > 0 ? "10px" : ""}}>Option Name</label>
+                            top: product?.option2 && product?.option2 !== "" ? "-5px" : "", 
+                            fontSize: product?.option2 && product?.option2 !== "" ? "10px" : ""}}>Option Name</label>
                     </div>
+
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
                             width: "33%",
@@ -513,23 +713,22 @@ export const StepThree: FunctionComponent<Props> = ({
                         <p style={{padding: 0, width: "90%"}}>Option Two</p>
                         <div  style={{padding: 0, width: "10%"}} id=""> </div>
                     </div>
+
                 </div>
 
                 <div className={`${styles.row}  ${styles.mobileContainer}`}
-                    style={{
-                        marginTop:window.innerWidth > 720 ? "1.5rem" : "",
-                    }}>
+                    style={{ marginTop:window.innerWidth > 720 ? "1.5rem" : "" }}>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
                             width: window.innerWidth > 720 ? "33%" : "100%",
                             padding: "0 5px"
                         }}>
                         { 
-                            tags && tags.collections.length > 0 ?  tags.collections.map(v => {
+                            product.options.options2 && product.options.options2.length > 0 ?  product.options.options2.map(v => {
                             return <p 
                                 key={v}
-                                id={"tags"}
-                                onClick={(e) => deleteTag(e, v, setTags, setTagState,  tags, tagText)}
+                                id={"options2"}
+                                onClick={(e) => deleteTag(e, v, setProduct, setTagState, product, tagText)}
                                 className={`${styles.tagItem}`}>{v} <b>x</b> </p> 
                             }) : null
                         }
@@ -541,6 +740,7 @@ export const StepThree: FunctionComponent<Props> = ({
                         }}>
                         {<p style={{padding: 0, width: "90%"}}></p>}
                     </div>
+
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
                             width: "33%",
@@ -550,9 +750,7 @@ export const StepThree: FunctionComponent<Props> = ({
                 </div>
 
                 <div className={`${styles.row}  ${styles.mobileContainer} ${styles.optionsCol}`}
-                    style={{
-                        marginTop: window.innerWidth > 720 ? "1.5rem" : "",
-                    }}>
+                    style={{ marginTop: window.innerWidth > 720 ? "1.5rem" : "" }}>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
                             width: window.innerWidth > 720 ? "33%" : "100%",
@@ -562,12 +760,18 @@ export const StepThree: FunctionComponent<Props> = ({
                             style={{
                                 color: "white"
                             }}
-                            value={product?.quantity}
+                            id="options3" 
+                            onKeyDown={(e) => addTags(e, product?.option3 as string, setProduct, setTagState, product, tagText)}
+                            onChange={(e) => setTagState({
+                                ...tagText,
+                                options3: e.target.value
+                            })}
+                            value={product?.option3}
                             type="text"
-                            name="options3" />
+                            name="option3" />
                         <label style={{ 
-                            top: product?.quantity && product?.quantity > 0 ? "-5px" : "", 
-                            fontSize: product?.quantity && product?.quantity > 0? "10px" : ""}}>Options</label>
+                            top: product?.option3 && product?.option3 !== "" ? "-5px" : "", 
+                            fontSize: product?.option3 && product?.option3 !== "" ? "10px" : ""}}>Options</label>
                     </div>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
@@ -578,12 +782,11 @@ export const StepThree: FunctionComponent<Props> = ({
                             style={{
                                 color: "white"
                             }}
-                            value={product?.weight }
-                            type="text"
-                            name="option3" />
+                            value={product?.option3 }
+                            type="text" />
                         <label style={{ 
-                            top: product?.weight  && product?.weight  > 0 ? "-5px" : "", 
-                            fontSize: product?.weight && product?.weight  > 0 ? "10px" : ""}}>Option Name</label>
+                            top: product?.option3 && product?.option3 !== "" ? "-5px" : "", 
+                            fontSize: product?.option3 && product?.option3 !== "" ? "10px" : ""}}>Option Name</label>
                     </div>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
@@ -605,11 +808,11 @@ export const StepThree: FunctionComponent<Props> = ({
                             padding: "0 5px"
                         }}>
                         { 
-                            tags && tags.collections.length > 0 ?  tags.collections.map(v => {
+                            product.options.options3 && product.options.options3.length > 0 ?  product.options.options3.map(v => {
                             return <p 
                                 key={v}
-                                id={"tags"}
-                                onClick={(e) => deleteTag(e, v, setTags, setTagState,  tags, tagText)}
+                                id={"options3"}
+                                onClick={(e) => deleteTag(e, v, setProduct, setTagState, product, tagText)}
                                 className={`${styles.tagItem}`}>{v} <b>x</b> </p> 
                             }) : null
                         }
@@ -638,14 +841,14 @@ export const StepThree: FunctionComponent<Props> = ({
             next={"OPTIONS"}>
             <div className={`${styles.col}`}>
                 {
-                    variants && variants.map(v => {
+                    product.variants && product.variants.map(v => {
                         return (
-                            <div key={v.id} className={`${styles.col}`}
+                            <div key={v.variant_id} className={`${styles.col}`}
                                 style={{
                                     width: "auto",
                                     minWidth: "100%"
                                 }}>
-                                <ProductVariantRow />
+                                <ProductVariantRow variant={v} />
                                 <Underline width={100} />
                             </div>
                         )
@@ -667,15 +870,8 @@ export const StepTwo: FunctionComponent<Props> = ({
     checkboxes,
     setCheckboxes,
 }) => {
-    
-    // Order Tag State
-    let [tags, setTags] = useState<{
-        tags: string[],
-        collections: string[]
-    }>({
-        tags: [],
-        collections: []
-    });
+
+
     const [tagText, setTagState] = useState<{
         tags: string,
         collections: string
@@ -683,13 +879,6 @@ export const StepTwo: FunctionComponent<Props> = ({
         tags: "",
         collections: ""
     });
-
-    const updateProductState = () => {
-        setProduct({
-            ...product,
-
-        })
-    }
 
     return (
         <Card 
@@ -715,7 +904,7 @@ export const StepTwo: FunctionComponent<Props> = ({
                                 color: "white"
                             }}
                             id={"tags"}
-                            onKeyDown={(e) => addTags(e, tagText.tags, setTags, setTagState,  tags, tagText)}
+                            onKeyDown={(e) => addTags(e, tagText.tags, setProduct, setTagState,  product, tagText)}
                             onChange={(e) => setTagState({
                                 ...tagText,
                                 tags: e.target.value
@@ -737,34 +926,59 @@ export const StepTwo: FunctionComponent<Props> = ({
                                 color: "white"
                             }}
                             id={"collections"}
-                            onKeyDown={(e) => addTags(e, tagText.collections, setTags, setTagState,  tags, tagText)}
+                            onKeyDown={(e) => addTags(e, tagText.tags, setProduct, setTagState,  product, tagText)}
                             onChange={(e) => setTagState({
                                 ...tagText,
                                 collections: e.target.value
                             })}
                             value={tagText.collections}
                             type="text"
-                            name="collecitons" />
+                            name="collections" />
                         <label style={{ 
                             top:  tagText.collections !== ""  ? "-5px" : "", 
                             fontSize:  tagText.collections !== ""  ? "10px" : ""}}>Collections</label>
                     </div>
-                    <div className={`${styles.formItem} ${styles.row}`}
-                        style={{
-                            width: window.innerWidth > 720 ? "33%" : "100%",
-                            padding: "0 5px"
-                        }}>
-                        <p style={{padding: 0, width: "90%"}}>High Risk</p>
-                        <div  style={{padding: 0, width: "10%"}} id=""> 
-                            <div onClick={() => setCheckboxes({...checkboxes, high_risk: !checkboxes.high_risk}) as Dispatch<any>}
+
+                    <div className={`${styles.col}`}
+                            style={{
+                                width: window.innerWidth > 720 ? "33%" : "100%",
+                                padding: "0 5px"
+                            }}>
+                        <div className={`${styles.formItem} ${styles.row}`}>
+                            <input
                                 style={{
-                                background: checkboxes.high_risk ? "white" : "red",
-                                height: "15px",
-                                width: "15px",
-                                borderRadius: "2px",
-                                border: checkboxes.high_risk ? "0.5px solid red" : "0.5px solid white"
-                            }} id="">
-                                <div></div>
+                                    color: "white"
+                                }}
+                                id={"collections"}
+                                onChange={(e) => setProduct({
+                                    ...product,
+                                    sku: e.target.value
+                                })}
+                                value={product.sku}
+                                type="text"
+                                name="collections" />
+                            <label style={{ 
+                                top:  product.sku !== ""  ? "-5px" : "", 
+                                fontSize:  product.sku !== ""  ? "10px" : ""}}>SKU | BARCODE</label>
+                        </div>
+
+                        <div className={`${styles.formItem} ${styles.row}`}
+                            style={{
+                                width: window.innerWidth > 720 ? "33%" : "100%",
+                                padding: "0 5px"
+                            }}>
+                            <p style={{padding: 0, width: "90%"}}>High Risk</p>
+                            <div  style={{padding: 0, width: "10%"}} id=""> 
+                                <div onClick={() => setCheckboxes({...checkboxes, high_risk: !checkboxes.high_risk}) as Dispatch<any>}
+                                    style={{
+                                    background: checkboxes.high_risk ? "white" : "red",
+                                    height: "15px",
+                                    width: "15px",
+                                    borderRadius: "2px",
+                                    border: checkboxes.high_risk ? "0.5px solid red" : "0.5px solid white"
+                                }} id="">
+                                    <div></div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -780,11 +994,11 @@ export const StepTwo: FunctionComponent<Props> = ({
                             padding: "0 5px"
                         }}>
                         { 
-                            tags.tags && tags.tags.length > 0 ?  tags.tags.map(v => {
+                            product.tags && product.tags.length > 0 ?  product.tags.map(v => {
                             return <p 
                                 key={v}
                                 id={"tags"}
-                                onClick={(e) => deleteTag(e, v, setTags, setTagState,  tags, tagText)}
+                                onClick={(e) => deleteTag(e, v, setProduct, setTagState, product, tagText)}
                                 className={`${styles.tagItem}`}>{v} <b>x</b> </p> 
                             }) : null
                         }
@@ -795,11 +1009,11 @@ export const StepTwo: FunctionComponent<Props> = ({
                             padding: "0 5px"
                         }}>
                         { 
-                            tags.collections && tags.collections.length > 0 ?  tags.collections.map(v => {
+                            product?.collections && product.collections.length > 0 ?  product.collections.map(v => {
                             return <p 
                                 key={v}
                                 id={"collections"}
-                                onClick={(e) => deleteTag(e, v, setTags, setTagState,  tags, tagText)}
+                                onClick={(e) => deleteTag(e, v, setProduct, setTagState, product, tagText)}
                                 className={`${styles.tagItem}`}>{v} <b>x</b> </p> 
                             }) : null
                         }
@@ -897,8 +1111,8 @@ export const ProductText: FunctionComponent<Props> = ({
                                 type="text"
                                 name="price" />
                             <label style={{ 
-                                top: product.compare_at_price > 0 ? "-5px" : "", 
-                                fontSize: product.compare_at_price > 0 ? "10px" : ""}}>Compare at Price </label>
+                                top: product.compare_at_price && product.compare_at_price > 0 ? "-5px" : "", 
+                                fontSize: product.compare_at_price && product.compare_at_price > 0 ? "10px" : ""}}>Compare at Price </label>
                         </div>
                     </div>
                 </div>
@@ -973,8 +1187,8 @@ export const ProductText: FunctionComponent<Props> = ({
                             type="number"
                             name="weight" />
                         <label style={{ 
-                            top: product.weight  > 0 ? "-5px" : "", 
-                            fontSize: product.weight  > 0 ? "10px" : ""}}>Weight</label>
+                            top: product.weight && product.weight  > 0 ? "-5px" : "", 
+                            fontSize: product.weight && product.weight  > 0 ? "10px" : ""}}>Weight</label>
                     </div>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{

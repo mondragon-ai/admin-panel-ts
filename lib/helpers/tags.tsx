@@ -1,13 +1,20 @@
 import { Dispatch, SetStateAction } from "react";
+import { Product } from "../types/products";
 
 // Delete tags
 export const deleteTag = (
     e: any,
     value: string,
-    setTags: Dispatch<SetStateAction<any>>,
+    setProduct: Dispatch<SetStateAction<any>>,
     setTagState: Dispatch<SetStateAction<any>>,
-    tags: {tags: string[],collections: string[]},
-    tagText?: {tags: string,collections: string,}
+    product: Product,
+    tagText?: {
+        tags?: string,
+        collections?: string,
+        options1?: string,
+        options2?: string,
+        options3?: string,
+    }
 ) => {
 
     let new_list = [];
@@ -16,11 +23,11 @@ export const deleteTag = (
 
         case "tags":
             console.log("tags");
-            new_list = tags.tags.filter((v) => { return v != value});
-
-            setTags({
-                ...tags,
-                tags: new_list
+            new_list =  product?.tags?.filter((v) => { return v != value}) as string[];
+    
+            setProduct({
+                ...product,
+                tags: [...(new_list) as string[]]
             });
             setTagState({
                 ...tagText,
@@ -30,18 +37,73 @@ export const deleteTag = (
 
         case "collections":
             console.log("collections");
-            new_list = tags.collections.filter((v) => { return v != value});
+            new_list = product?.collections?.filter((v) => { return v != value}) as string[];
 
-            
-            setTags({
-                ...tags,
-                collections: new_list
+            setProduct({
+                ...product,
+                collections: [...(new_list) as string[]]
             });
             setTagState({
                 ...tagText,
                 collections: ""
             });
             break;
+
+
+        case "options1":
+            console.log("collections");
+            new_list = product?.options?.options1?.filter((v) => { return v != value}) as string[];
+
+            setProduct({
+                ...product,
+                options: {
+                    ...product.options,
+                    options1: [...(new_list) as string[]]
+                }
+            });
+            setTagState({
+                ...tagText,
+                options1: ""
+            });
+            break;
+
+
+        case "options2":
+            console.log("collections");
+            new_list = product?.options?.options2?.filter((v) => { return v != value}) as string[];
+
+            setProduct({
+                ...product,
+                options: {
+                    ...product.options,
+                    options2: [...(new_list) as string[]]
+                }
+            });
+            setTagState({
+                ...tagText,
+                options2: ""
+            });
+            break;
+        
+
+
+        case "options3":
+            console.log("collections");
+            new_list = product?.options?.options3?.filter((v) => { return v != value}) as string[];
+
+            setProduct({
+                ...product,
+                options: {
+                    ...product.options,
+                    options3: [...(new_list) as string[]]
+                }
+            });
+            setTagState({
+                ...tagText,
+                options3: ""
+            });
+            break;
+    
     
         default:
 
@@ -53,10 +115,16 @@ export const deleteTag = (
 export const addTags = (
     e: any,
     value: string,
-    setTags: Dispatch<SetStateAction<any>>,
+    setProduct: Dispatch<SetStateAction<any>>,
     setTagState: Dispatch<SetStateAction<any>>,
-    tags: {tags: string[],collections: string[]},
-    tagText?: {tags: string,collections: string,}
+    product: Product,
+    tagText?: {
+        tags?: string,
+        collections?: string,
+        options1?: string,
+        options2?: string,
+        options3?: string,
+    }
 ) => {
 
     console.log(" ===> ADD TAGS")
@@ -68,11 +136,11 @@ export const addTags = (
             case "tags":
                 console.log("tags");
                 console.log(value);
-                console.log(tags)
+                console.log(product.tags)
     
-                setTags({
-                    ...tags,
-                    tags: [...tags.tags, value]
+                setProduct({
+                    ...product,
+                    tags: [...(product?.tags) as string[], e.target?.value]
                 });
                 setTagState({
                     ...tagText,
@@ -83,16 +151,68 @@ export const addTags = (
             case "collections":
                 console.log("collections");
                 console.log(value);
-                
-                setTags({
-                    ...tags,
-                    collections: [...tags.collections, value]
+                console.log(product.collections)
+    
+                setProduct({
+                    ...product,
+                    collections: [...(product?.collections) as string[], e.target?.value]
                 });
                 setTagState({
                     ...tagText,
                     collections: ""
                 });
                 break;
+
+
+            case "options1":
+                console.log("collections");
+
+                setProduct({
+                    ...product,
+                    options: {
+                        ...product.options,
+                        options1: [...(product.options.options1) as string[], e.target?.value]
+                    }
+                });
+                setTagState({
+                    ...tagText,
+                    options1: ""
+                });
+                break;
+
+
+            case "options2":
+                console.log("collections");
+
+                setProduct({
+                    ...product,
+                    options: {
+                        ...product.options,
+                        options2: [...(product.options.options2) as string[], e.target?.value]
+                    }
+                });
+                setTagState({
+                    ...tagText,
+                    options2: ""
+                });
+                break;
+
+            case "options3":
+                console.log("collections");
+
+                setProduct({
+                    ...product,
+                    options: {
+                        ...product.options,
+                        options3: [...(product.options.options3) as string[], e.target?.value]
+                    }
+                });
+                setTagState({
+                    ...tagText,
+                    options3: ""
+                });
+                break;
+        
         
             default:
     

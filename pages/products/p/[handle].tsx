@@ -6,24 +6,37 @@ import { DetailPageHeader } from "../../../components/ui/headers/DetailPageHeade
 import Underline from "../../../components/ui/Underline";
 import { numberFormat } from "../../../lib/helpers/formatters";
 import { deleteTag } from "../../../lib/helpers/tags";
-import { Product, ProductList } from "../../../lib/types/products";
+import { Product, ProductList, Variant } from "../../../lib/types/products";
 import styles from "../../../styles/Main.module.css";
 
-const product = {
-    title: "Hoodie 1776",
-    price: 12300,
+const product: Product = {
+    title: "Desantis Land Hoodie",
+    status: true,
+    id: crypto.randomBytes(10).toString("hex"),
+    price: 6840,
+    collections: ["SALE", "Shirts"],
+    tags: ["VIP_ONLY"],
+    options: {
+        options1: ["Color", "Size"],
+        options2: ["Color", "Size"],
+        options3: ["Color", "Size"],
+
+    },
+    quantity: 20,
+    description: "description here",
     compare_at_price: 0,
-    description: `<p>1123123<p>`,
-    quantity: 1,
     weight: 0.5,
+    is_digital: false,
+    sell_overstock: true,
+    requires_shipping: false,
     videos: [
         {
             id: "vid_" + crypto.randomBytes(10).toString("hex"),
             url: "",
             type: "YOUTUBE"
         }
-    ]
-}
+    ],
+} as Product;
 
 const t = [
     "VIP"
@@ -278,7 +291,7 @@ export const OptionsVariants: FunctionComponent<TagProps> = ({
                             return <p 
                                 key={v}
                                 id={"tags"}
-                                onClick={(e) => deleteTag(e, v, setTags, setTagState, tags, )}
+                                onClick={(e) => deleteTag(e, v, setTags, setTagState, product as Product, tagText)}
                                 className={`${styles.tagItem}`}>{v} <b>x</b> </p> 
                             }) : null
                         }
@@ -359,7 +372,7 @@ export const OptionsVariants: FunctionComponent<TagProps> = ({
                             return <p 
                                 key={v}
                                 id={"tags"}
-                                onClick={(e) => deleteTag(e, v, setTags, setTagState, tags)}
+                                onClick={(e) => deleteTag(e, v, setTags, setTagState, product as Product, tagText)}
                                 className={`${styles.tagItem}`}>{v} <b>x</b> </p> 
                             }) : null
                         }
@@ -439,7 +452,7 @@ export const OptionsVariants: FunctionComponent<TagProps> = ({
                             return <p 
                                 key={v}
                                 id={"tags"}
-                                onClick={(e) => deleteTag(e, v, setTags, setTagState,  tags, tagText)}
+                                onClick={(e) => deleteTag(e, v, setTags, setTagState, product as Product, tagText)}
                                 className={`${styles.tagItem}`}>{v} <b>x</b> </p> 
                             }) : null
                         }
@@ -468,14 +481,14 @@ export const OptionsVariants: FunctionComponent<TagProps> = ({
             next={"OPTIONS"}>
             <div className={`${styles.col}`}>
                 {
-                    variants && variants.map(v => {
+                    product?.variants && product?.variants.map(v => {
                         return (
-                            <div key={v.id} className={`${styles.col}`}
+                            <div key={v.variant_id} className={`${styles.col}`}
                                 style={{
                                     width: "auto",
                                     minWidth: "100%"
                                 }}>
-                                <ProductVariantRow />
+                                <ProductVariantRow variant={v} />
                                 <Underline width={100} />
                             </div>
                         )
@@ -488,7 +501,12 @@ export const OptionsVariants: FunctionComponent<TagProps> = ({
     )
 }
 
-export const ProductVariantRow = () => {
+type VarRow = {
+    variant: Variant
+}
+
+export const ProductVariantRow: FunctionComponent<VarRow> = ({variant}) => {
+
     return (
         <div className={`${styles.col}`}
                 style={{
@@ -517,7 +535,9 @@ export const ProductVariantRow = () => {
                         width: "35%",
                         padding: "0 5px"
                     }}>
-                    <h5>Blue</h5>
+                    <h5>{variant?.option1 && variant?.option1}</h5>
+                    <h5>{variant?.option2 && variant?.option2}</h5>
+                    <h5>{variant?.option3 && variant?.option3}</h5>
                 </div>
                 <div className={`${styles.formItem} ${styles.row}`}
                     style={{
@@ -529,12 +549,12 @@ export const ProductVariantRow = () => {
                             color: "white",
                             width: "100%",
                         }}
-                        value={product?.quantity}
-                        type="number"
+                        value={numberFormat(Number(variant.price)/100)}
+                        type="text"
                         name="var_price" />
                     <label style={{ 
-                        top: product?.quantity && product?.quantity > 0 ? "-5px" : "", 
-                        fontSize: product?.quantity  && product?.quantity > 0? "10px" : ""}}>Price</label>
+                        top: variant?.price && variant?.price > 0 ? "-5px" : "", 
+                        fontSize: variant?.price  && variant?.price > 0? "10px" : ""}}>Price</label>
                 </div>
                 <div className={`${styles.formItem} ${styles.row}`}
                     style={{
@@ -546,12 +566,12 @@ export const ProductVariantRow = () => {
                             color: "white",
                             width: "100%",
                         }}
-                        value={product?.quantity}
+                        value={variant?.quantity}
                         type="number"
                         name="var_quantity" />
                     <label style={{ 
-                        top: product?.quantity && product?.quantity > 0 ? "-5px" : "", 
-                        fontSize: product?.quantity  && product?.quantity > 0? "10px" : ""}}>Quantity</label>
+                        top: variant?.quantity && variant?.quantity > 0 ? "-5px" : "", 
+                        fontSize: variant?.quantity  && variant?.quantity > 0? "10px" : ""}}>Quantity</label>
                 </div>
                 <div className={`${styles.formItem} ${styles.row}`}
                     style={{
@@ -563,12 +583,12 @@ export const ProductVariantRow = () => {
                             color: "white",
                             width: "100%",
                         }}
-                        value={product?.quantity}
+                        value={variant?.sku}
                         type="text"
                         name="sku" />
                     <label style={{ 
-                        top: product?.quantity && product?.quantity > 0 ? "-5px" : "", 
-                        fontSize: product?.quantity  && product?.quantity > 0? "10px" : ""}}>SKU</label>
+                        top: variant?.quantity && variant?.quantity > 0 ? "-5px" : "", 
+                        fontSize: variant?.quantity  && variant?.quantity > 0? "10px" : ""}}>SKU</label>
                 </div>
                 <div className={`${styles.formItem} ${styles.row}`}
                     style={{
@@ -652,8 +672,8 @@ export const TitleDescription: FunctionComponent<TagProps> = ({
                                 type="text"
                                 name="price" />
                             <label style={{ 
-                                top: product.compare_at_price > 0 ? "-5px" : "", 
-                                fontSize: product.compare_at_price > 0 ? "10px" : ""}}>Compare at Price </label>
+                                top: product?.compare_at_price  && product?.compare_at_price > 0 ? "-5px" : "", 
+                                fontSize: product?.compare_at_price  && product?.compare_at_price > 0 ? "10px" : ""}}>Compare at Price </label>
                         </div>
                     </div>
                 </div>
@@ -728,8 +748,8 @@ export const TitleDescription: FunctionComponent<TagProps> = ({
                             type="number"
                             name="weight" />
                         <label style={{ 
-                            top: product.weight  > 0 ? "-5px" : "", 
-                            fontSize: product.weight  > 0 ? "10px" : ""}}>Weight</label>
+                            top: product.weight && product.weight  > 0 ? "-5px" : "", 
+                            fontSize: product.weight && product.weight  > 0 ? "10px" : ""}}>Weight</label>
                     </div>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
@@ -774,19 +794,9 @@ export const TitleDescription: FunctionComponent<TagProps> = ({
 }
 export const TagAdvanced: FunctionComponent<TagProps> = ({
     setProduct,
-    // tags,
-    // setTags,
-    // setTagState
+    product
 }) => {
     
-    // Order Tag State
-    let [tags, setTags] = useState<{
-        tags: string[],
-        collections: string[]
-    }>({
-        tags: [],
-        collections: []
-    });
     const [tagText, setTagState] = useState<{
         tags: string,
         collections: string
@@ -794,13 +804,6 @@ export const TagAdvanced: FunctionComponent<TagProps> = ({
         tags: "",
         collections: ""
     });
-
-    const updateProductState = () => {
-        setProduct({
-            ...product,
-
-        })
-    }
 
     return (
         <Card 
@@ -825,12 +828,12 @@ export const TagAdvanced: FunctionComponent<TagProps> = ({
                                 ...product,
                                 quantity: Number(e.target.value)
                             })}
-                            value={product.quantity}
+                            value={product?.quantity}
                             type="number"
                             name="quantity" />
                         <label style={{ 
-                            top: product.quantity  > 0 ? "-5px" : "", 
-                            fontSize: product.quantity  > 0? "10px" : ""}}>Tags</label>
+                            top: product?.quantity && product?.quantity  > 0 ? "-5px" : "", 
+                            fontSize: product?.quantity && product?.quantity  > 0? "10px" : ""}}>Tags</label>
                     </div>
                 </div>
 
@@ -844,11 +847,11 @@ export const TagAdvanced: FunctionComponent<TagProps> = ({
                             padding: "0 5px"
                         }}>
                         { 
-                            tags && tags.tags.length > 0 ?  tags.tags.map(v => {
+                            product && product.tags.length > 0 ?  product.tags.map(v => {
                             return <p 
                                 key={v}
                                 id={"tags"}
-                                onClick={(e) => deleteTag(e, v, setTags, setTagState,  tags,)}
+                                onClick={(e) => deleteTag(e, v, setProduct, setTagState,  product, tagText)}
                                 className={`${styles.tagItem}`}>{v} <b>x</b> </p> 
                             }) : null
                         }
@@ -872,12 +875,12 @@ export const TagAdvanced: FunctionComponent<TagProps> = ({
                                 ...product,
                                 weight: Number(e.target.value)
                             })}
-                            value={product.weight}
+                            value={product?.weight}
                             type="number"
                             name="weight" />
                         <label style={{ 
-                            top: product.weight  > 0 ? "-5px" : "", 
-                            fontSize: product.weight  > 0 ? "10px" : ""}}>Categories</label>
+                            top: product?.weight && product.weight  > 0 ? "-5px" : "", 
+                            fontSize: product?.weight &&product.weight  > 0 ? "10px" : ""}}>Categories</label>
                     </div>
                 </div>
 
@@ -892,11 +895,11 @@ export const TagAdvanced: FunctionComponent<TagProps> = ({
                             padding: "0 5px"
                         }}>
                         { 
-                            tags && tags.collections.length > 0 ?  tags.collections.map(v => {
+                            product && product.collections.length > 0 ?  product.collections.map(v => {
                             return <p 
                                 key={v}
                                 id={"tags"}
-                                onClick={(e) => deleteTag(e, v, setTags, setTagState,  tags)}
+                                onClick={(e) => deleteTag(e, v, setProduct, setTagState, product, tagText)}
                                 className={`${styles.tagItem}`}>{v} <b>x</b> </p> 
                             }) : null
                         }

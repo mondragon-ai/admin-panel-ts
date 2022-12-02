@@ -61,7 +61,7 @@ export const ProductContainerRow: FunctionComponent<any>  = ({p}) => {
                             justifyContent: "flex-start"
                         }}
                         className={`${styles.row}`}>
-                        {options?.map((option, i) => (<p key={option} className={`${styles.rowSubHead}`}>{option} {i != options.length-1 ? ", " : ""}</p>) )}
+                        {options?.options1.map((option, i) => (<p key={option} className={`${styles.rowSubHead}`}>{option} {i != options.options1.length-1 ? ", " : ""}</p>) )}
                     </div>
                 </div>
                 <div 

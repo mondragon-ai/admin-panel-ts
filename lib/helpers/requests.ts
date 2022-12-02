@@ -10,7 +10,8 @@ export const impoweredRequest = async (
         const response = await fetch(url, {
             method: method != "" ? method : "GET",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "impowered-api-key": "9izyr03rp1czh8gzmf7mpr9ecrkbqq"
             }
         });
         result = await response.json();
@@ -18,7 +19,8 @@ export const impoweredRequest = async (
         const response = await fetch(url, {
             method: method != "" ? method : "GET",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "impowered-api-key": "9izyr03rp1czh8gzmf7mpr9ecrkbqq"
             },
             body: JSON.stringify(data)
         });

@@ -22,21 +22,57 @@ const products: Product[] = [
         title: "1776 Hoodie",
         status: false,
         id: crypto.randomBytes(10).toString("hex"),
-        price: "$68.00",
+        price: 6840,
         collections: ["SALE", "Shirts"],
         tags: ["VIP_ONLY"],
-        options: ["Color", "Size"],
-        quantity: 2
+        options: {
+            options1: ["Color", "Size"],
+            options2: ["Color", "Size"],
+            options3: ["Color", "Size"],
+    
+        },
+        quantity: 20,
+        description: "description here",
+        compare_at_price: 0,
+        weight: 0.5,
+        is_digital: false,
+        sell_overstock: true,
+        requires_shipping: false,
+        videos: [
+            {
+                id: "vid_" + crypto.randomBytes(10).toString("hex"),
+                url: "",
+                type: "YOUTUBE"
+            }
+        ],
     },
     {
-        title: "Desantis Land Hoodie",
-        status: true,
+        title: "1776 Hoodie",
+        status: false,
         id: crypto.randomBytes(10).toString("hex"),
-        price: "$72.00",
-        collections: ["Best Sellers", "Hoodie"],
-        tags: ["VIP_ONLY" ],
-        options: ["Color", "Size"],
-        quantity: 1
+        price: 6840,
+        collections: ["SALE", "Shirts"],
+        tags: ["VIP_ONLY"],
+        options: {
+            options1: ["Color", "Size"],
+            options2: ["Color", "Size"],
+            options3: ["Color", "Size"],
+    
+        },
+        quantity: 20,
+        description: "description here",
+        compare_at_price: 0,
+        weight: 0.5,
+        is_digital: false,
+        sell_overstock: true,
+        requires_shipping: false,
+        videos: [
+            {
+                id: "vid_" + crypto.randomBytes(10).toString("hex"),
+                url: "",
+                type: "YOUTUBE"
+            }
+        ],
     }
 ]
 
