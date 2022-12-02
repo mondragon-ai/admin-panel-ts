@@ -4,7 +4,7 @@ import { Card } from "../../components/ui/Card";
 import FormProgress from "../../components/ui/FormProgress";
 import Underline from "../../components/ui/Underline";
 import { numberFormat } from "../../lib/helpers/formatters";
-import { deleteTag } from "../../lib/helpers/tags";
+import { addTags, deleteTag } from "../../lib/helpers/tags";
 import styles from "../../styles/Main.module.css";
 import { ProductVariantRow } from "./p/[handle]";
 
@@ -56,63 +56,78 @@ type Props = {
         title: string;
         step: string;
     }[],
-    state?: any
+    state?: any;
+    checkboxes?: any;
+    setCheckboxes?: any;
 }
  
+const s = [
+    {
+        required: true,
+        complete: false,
+        active: true,
+        title: "Product",
+        step: "STEP_ONE"
+    },
+    {
+        required: true,
+        complete: false,
+        active: false,
+        title: "Advanced",
+        step: "STEP_TWO"
+    },
+    {
+        required: true,
+        complete: false,
+        active: false,
+        title: "Variants",
+        step: "STEP_THREE"
+    },
+    {
+        required: false,
+        complete: false,
+        active: false,
+        title: "Media",
+        step: "STEP_FOUR"
+    }
+]
+const p = {
+    title: "Hoodie 1776",
+    price: 300,
+    description: "description here",
+    compare_at_price: 0,
+    quantity: 10,
+    weight: 0.5,
+    options: [
+        {options1: [""]},
+        {options2: [""]},
+        {options3: [""]},
+    ],
+    videos: [
+        {
+            id: "vid_" + crypto.randomBytes(10).toString("hex"),
+            url: "",
+            type: "YOUTUBE"
+        }
+    ],
+    is_digital: false,
+    sell_overstock: true,
+    requires_shipping: false,
+    tags: [],
+    categories: []
+}
 
 export const createProduct: FunctionComponent<Prop> = (props) => {
 
-    const [steps, setIndex] = useState([
-        {
-            required: true,
-            complete: false,
-            active: false,
-            title: "Product",
-            step: "STEP_ONE"
-        },
-        {
-            required: false,
-            complete: false,
-            active: false,
-            title: "Advanced",
-            step: "STEP_TWO"
-        },
-        {
-            required: true,
-            complete: false,
-            active: false,
-            title: "Variants",
-            step: "STEP_THREE"
-        },
-        {
-            required: true,
-            complete: false,
-            active: true,
-            title: "Media",
-            step: "STEP_FOUR"
-        }
-    ]);
+    const [steps, setIndex] = useState(s);
 
-    const [product, setProduct] = useState({
-        title: "Hoodie 1776",
-        price: 300,
-        description: "description here",
-        compare_at_price: 0,
-        quantity: 10,
-        weight: 0.5,
-        options: [
-            {options1: [""]},
-            {options2: [""]},
-            {options3: [""]},
-        ],
-        videos: [
-            {
-                id: "vid_" + crypto.randomBytes(10).toString("hex"),
-                url: "",
-                type: "YOUTUBE"
-            }
-        ]
-    });
+    const [product, setProduct] = useState(p);
+
+    const [checkboxes, setCheckboxes] = useState({
+        is_digital: false,
+        sell_overstock: true,
+        requires_shipping: false
+    })
 
     const [formStep, navForm] = useState("STEP_TWO")
 
@@ -136,22 +151,48 @@ export const createProduct: FunctionComponent<Prop> = (props) => {
                     {steps && steps.map(s => { 
                         if (s.step == "STEP_ONE" && s.active ){
                             return (
-                                <ProductText setProduct={setProduct as Dispatch<SetStateAction<any>>} product={product} navForm={navForm} setIndex={setIndex} steps={steps} /> 
+                                <ProductText
+                                    setProduct={setProduct as Dispatch<SetStateAction<any>>} 
+                                    product={product}
+                                    navForm={navForm}
+                                    setIndex={setIndex}
+                                    steps={steps}
+                                    checkboxes={checkboxes}
+                                    setCheckboxes={setCheckboxes} /> 
                             )
                         }
                         if (s.step == "STEP_TWO" && s.active){
                             return (
-                                <StepTwo setProduct={setProduct as Dispatch<SetStateAction<any>>} product={product} navForm={navForm} setIndex={setIndex} steps={steps} /> 
+                                <StepTwo
+                                    setProduct={setProduct as Dispatch<SetStateAction<any>>}
+                                    product={product}
+                                    navForm={navForm}
+                                    setIndex={setIndex}
+                                    steps={steps}
+                                    checkboxes={checkboxes}
+                                    setCheckboxes={setCheckboxes} /> 
                             )
                         }
                         if (s.step == "STEP_THREE" && s.active ){
                             return (
-                                <StepThree setProduct={setProduct as Dispatch<SetStateAction<any>>} product={product} navForm={navForm} setIndex={setIndex} steps={steps} state={product} />
+                                <StepThree
+                                    setProduct={setProduct as Dispatch<SetStateAction<any>>}
+                                    product={product}
+                                    navForm={navForm}
+                                    setIndex={setIndex}
+                                    steps={steps}
+                                    state={product} />
                             )
                         }
                         if (s.step == "STEP_FOUR" && s.active ){
                             return (
-                                <StepFour setProduct={setProduct as Dispatch<SetStateAction<any>>} product={product} navForm={navForm} setIndex={setIndex} steps={steps} state={product} />
+                                <StepFour
+                                    setProduct={setProduct as Dispatch<SetStateAction<any>>}
+                                    product={product}
+                                    navForm={navForm}
+                                    setIndex={setIndex}
+                                    steps={steps}
+                                    state={product} />
                             )
                         }
                     })}
@@ -286,7 +327,6 @@ export const StepFour: FunctionComponent<Props> = ({
     )
 }
 
-
 export const StepThree: FunctionComponent<Props> = ({
     setProduct,
     product,
@@ -296,9 +336,29 @@ export const StepThree: FunctionComponent<Props> = ({
     state
 }) => {
     
+    
     // Order Tag State
-    let [tags, setTags] = useState(t);
-    const [tagText, setTagState] = useState("");
+    let [tags, setTags] = useState<{
+        tags: string[],
+        collections: string[]
+    }>({
+        tags: [],
+        collections: []
+    });
+    const [tagText, setTagState] = useState<{
+        tags: string,
+        collections: string
+    }>({
+        tags: "",
+        collections: ""
+    });
+
+    const updateProductState = () => {
+        setProduct({
+            ...product,
+
+        })
+    }
 
     const [variants, setVariants] = useState([
         {
@@ -384,11 +444,11 @@ export const StepThree: FunctionComponent<Props> = ({
                             padding: "0 5px"
                         }}>
                         { 
-                            tags && tags.length > 0 ?  tags.map(v => {
+                            tags && tags.tags.length > 0 ?  tags.tags.map(v => {
                             return <p 
                                 key={v}
                                 id={"tags"}
-                                onClick={(e) => deleteTag(e, v, setTags, setTagState,  tags)}
+                                onClick={(e) => deleteTag(e, v, setTags, setTagState, tags, tagText)}
                                 className={`${styles.tagItem}`}>{v} <b>x</b> </p> 
                             }) : null
                         }
@@ -465,11 +525,11 @@ export const StepThree: FunctionComponent<Props> = ({
                             padding: "0 5px"
                         }}>
                         { 
-                            tags && tags.length > 0 ?  tags.map(v => {
+                            tags && tags.collections.length > 0 ?  tags.collections.map(v => {
                             return <p 
                                 key={v}
                                 id={"tags"}
-                                onClick={(e) => deleteTag(e, v, setTags, setTagState,  tags)}
+                                onClick={(e) => deleteTag(e, v, setTags, setTagState,  tags, tagText)}
                                 className={`${styles.tagItem}`}>{v} <b>x</b> </p> 
                             }) : null
                         }
@@ -545,11 +605,11 @@ export const StepThree: FunctionComponent<Props> = ({
                             padding: "0 5px"
                         }}>
                         { 
-                            tags && tags.length > 0 ?  tags.map(v => {
+                            tags && tags.collections.length > 0 ?  tags.collections.map(v => {
                             return <p 
                                 key={v}
                                 id={"tags"}
-                                onClick={(e) => deleteTag(e, v, setTags, setTagState,  tags)}
+                                onClick={(e) => deleteTag(e, v, setTags, setTagState,  tags, tagText)}
                                 className={`${styles.tagItem}`}>{v} <b>x</b> </p> 
                             }) : null
                         }
@@ -598,18 +658,38 @@ export const StepThree: FunctionComponent<Props> = ({
     )
 }
 
-
 export const StepTwo: FunctionComponent<Props> = ({
     setProduct,
     product,
     navForm,
     setIndex,
-    steps
+    steps,
+    checkboxes,
+    setCheckboxes,
 }) => {
     
     // Order Tag State
-    let [tags, setTags] = useState(t);
-    const [tagText, setTagState] = useState("");
+    let [tags, setTags] = useState<{
+        tags: string[],
+        collections: string[]
+    }>({
+        tags: [],
+        collections: []
+    });
+    const [tagText, setTagState] = useState<{
+        tags: string,
+        collections: string
+    }>({
+        tags: "",
+        collections: ""
+    });
+
+    const updateProductState = () => {
+        setProduct({
+            ...product,
+
+        })
+    }
 
     return (
         <Card 
@@ -634,16 +714,18 @@ export const StepTwo: FunctionComponent<Props> = ({
                             style={{
                                 color: "white"
                             }}
-                            onChange={(e) => setProduct({
-                                ...product,
-                                quantity: Number(e.target.value)
+                            id={"tags"}
+                            onKeyDown={(e) => addTags(e, tagText.tags, setTags, setTagState,  tags, tagText)}
+                            onChange={(e) => setTagState({
+                                ...tagText,
+                                tags: e.target.value
                             })}
-                            value={product.quantity}
-                            type="number"
-                            name="quantity" />
+                            value={tagText.tags}
+                            type="text"
+                            name="tags" />
                         <label style={{ 
-                            top: product.quantity  > 0 ? "-5px" : "", 
-                            fontSize: product.quantity  > 0? "10px" : ""}}>Tags</label>
+                            top: tagText.tags !== "" ? "-5px" : "", 
+                            fontSize: tagText.tags !== "" ? "10px" : ""}}>Tags</label>
                     </div>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
@@ -654,24 +736,37 @@ export const StepTwo: FunctionComponent<Props> = ({
                             style={{
                                 color: "white"
                             }}
-                            onChange={(e) => setProduct({
-                                ...product,
-                                weight: Number(e.target.value)
+                            id={"collections"}
+                            onKeyDown={(e) => addTags(e, tagText.collections, setTags, setTagState,  tags, tagText)}
+                            onChange={(e) => setTagState({
+                                ...tagText,
+                                collections: e.target.value
                             })}
-                            value={product.weight}
-                            type="number"
-                            name="weight" />
+                            value={tagText.collections}
+                            type="text"
+                            name="collecitons" />
                         <label style={{ 
-                            top: product.weight  > 0 ? "-5px" : "", 
-                            fontSize: product.weight  > 0 ? "10px" : ""}}>Categories</label>
+                            top:  tagText.collections !== ""  ? "-5px" : "", 
+                            fontSize:  tagText.collections !== ""  ? "10px" : ""}}>Collections</label>
                     </div>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
                             width: window.innerWidth > 720 ? "33%" : "100%",
                             padding: "0 5px"
                         }}>
-                        <p style={{padding: 0, width: "90%"}}>Digital Product</p>
-                        <div  style={{padding: 0, width: "10%"}} id=""> </div>
+                        <p style={{padding: 0, width: "90%"}}>High Risk</p>
+                        <div  style={{padding: 0, width: "10%"}} id=""> 
+                            <div onClick={() => setCheckboxes({...checkboxes, high_risk: !checkboxes.high_risk}) as Dispatch<any>}
+                                style={{
+                                background: checkboxes.high_risk ? "white" : "red",
+                                height: "15px",
+                                width: "15px",
+                                borderRadius: "2px",
+                                border: checkboxes.high_risk ? "0.5px solid red" : "0.5px solid white"
+                            }} id="">
+                                <div></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -685,21 +780,29 @@ export const StepTwo: FunctionComponent<Props> = ({
                             padding: "0 5px"
                         }}>
                         { 
-                            tags && tags.length > 0 ?  tags.map(v => {
+                            tags.tags && tags.tags.length > 0 ?  tags.tags.map(v => {
                             return <p 
                                 key={v}
                                 id={"tags"}
-                                onClick={(e) => deleteTag(e, v, setTags, setTagState,  tags)}
+                                onClick={(e) => deleteTag(e, v, setTags, setTagState,  tags, tagText)}
                                 className={`${styles.tagItem}`}>{v} <b>x</b> </p> 
                             }) : null
                         }
                     </div>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
-                            width: "33%",
+                            width: window.innerWidth > 720 ? "33%" : "100%",
                             padding: "0 5px"
                         }}>
-                        {<p style={{padding: 0, width: "90%"}}></p>}
+                        { 
+                            tags.collections && tags.collections.length > 0 ?  tags.collections.map(v => {
+                            return <p 
+                                key={v}
+                                id={"collections"}
+                                onClick={(e) => deleteTag(e, v, setTags, setTagState,  tags, tagText)}
+                                className={`${styles.tagItem}`}>{v} <b>x</b> </p> 
+                            }) : null
+                        }
                     </div>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
@@ -719,7 +822,9 @@ export const ProductText: FunctionComponent<Props> = ({
     product,
     navForm,
     setIndex,
-    steps
+    steps,
+    checkboxes,
+    setCheckboxes
 }) => {
     return (
         <Card 
@@ -821,10 +926,10 @@ export const ProductText: FunctionComponent<Props> = ({
                                 description: e.target.value
                             })}
                             value={product.description}
-                            name="title" />
+                            name="description" />
                         <label style={{ 
                             top: product.description != "" ? "-5px" : "", 
-                            fontSize: product.description != "" ? "10px" : ""}}>Title</label>
+                            fontSize: product.description != "" ? "10px" : ""}}>Description</label>
                     </div>
                 </div>
                 <div className={`${styles.row}  ${styles.mobileContainer}`}
@@ -877,7 +982,19 @@ export const ProductText: FunctionComponent<Props> = ({
                             padding: "0 5px"
                         }}>
                         <p style={{padding: 0, width: "90%"}}>Digital Product</p>
-                        <div  style={{padding: 0, width: "10%"}} id=""> </div>
+                        <div className={`${styles.formItem} ${styles.row}`}
+                            style={{padding: 0, width: "10%"}} id="">
+                            <div onClick={() => setCheckboxes({...checkboxes, is_digital: !checkboxes.is_digital}) as Dispatch<any>}
+                                style={{
+                                background: checkboxes.is_digital ? "white" : "red",
+                                height: "15px",
+                                width: "15px",
+                                borderRadius: "2px",
+                                border: checkboxes.is_digital ? "0.5px solid red" : "0.5px solid white"
+                            }} id="">
+                                <div></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -891,7 +1008,18 @@ export const ProductText: FunctionComponent<Props> = ({
                             padding: "0 5px"
                         }}>
                         <p style={{padding: 0, width: "90%"}}>Oversell Stock</p>
-                        <div  style={{padding: 0, width: "10%"}} id=""></div>
+                        <div  style={{padding: 0, width: "10%"}} id="">
+                            <div onClick={() => setCheckboxes({...checkboxes, sell_overstock: !checkboxes.sell_overstock}) as Dispatch<any>}
+                                style={{
+                                background: checkboxes.sell_overstock ? "white" : "red",
+                                height: "15px",
+                                width: "15px",
+                                borderRadius: "2px",
+                                border: checkboxes.sell_overstock ? "0.5px solid red" : "0.5px solid white"
+                            }} id="">
+                                <div></div>
+                            </div>
+                        </div>
                     </div>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
@@ -899,7 +1027,18 @@ export const ProductText: FunctionComponent<Props> = ({
                             padding: "0 5px"
                         }}>
                         <p style={{padding: 0, width: "90%"}}>Requires Shipping</p>
-                        <div  style={{padding: 0, width: "10%"}} id=""> </div>
+                        <div  style={{padding: 0, width: "10%"}} id="">
+                            <div onClick={() => setCheckboxes({...checkboxes, requires_shipping: !checkboxes.requires_shipping}) as Dispatch<any>}
+                                style={{
+                                background: checkboxes.requires_shipping ? "white" : "red",
+                                height: "15px",
+                                width: "15px",
+                                borderRadius: "2px",
+                                border: checkboxes.requires_shipping ? "0.5px solid red" : "0.5px solid white"
+                            }} id="">
+                                <div></div>
+                            </div>
+                        </div>
                     </div>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{

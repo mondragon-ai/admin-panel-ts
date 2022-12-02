@@ -117,12 +117,10 @@ export const CreateHeader: React.FC<CardHeaderProps> = ({
     steps,
     state,
 }) => {
-    console.log(steps);
+
 
     const handleNav = (s: string) => {
         let list: any[] = [];
-        console.log(s)
-        console.log(steps)
 
         steps?.forEach((step, i) => {
             if (step.step === s) {
@@ -149,7 +147,6 @@ export const CreateHeader: React.FC<CardHeaderProps> = ({
                 ]
             }
         })
-        console.log(list)
 
         if  (setIndex) setIndex(list);
        
@@ -161,7 +158,6 @@ export const CreateHeader: React.FC<CardHeaderProps> = ({
         resource: string,
         body: any,
     ) => {
-        console.log(resource + "\n" + body)
         const response = await impoweredRequest(url + resource,"POST",body);
         console.log("198: HANDLE CREATE -->\n", response)
     }
@@ -291,7 +287,6 @@ export const DefaultHeader: React.FC<CardHeaderProps> = ({
     subHeader,
     width
 }) => {
-    console.log(typeof(subHeader))
     return (
         <header className={`${styles.col}`}>
             <div className={`${styles.col}`}>
@@ -350,8 +345,6 @@ export const OrderHeader: React.FC<CardHeaderProps> = ({
     header,
     card_type
 }) => {
-
-    console.log(header);
     return (
         <header 
             style={{
@@ -433,7 +426,6 @@ export const InfoHeader: React.FC<CardHeaderProps> = ({
     width,
     header
 }) => {
-    console.log(header);
     return (
         <header 
             style={{

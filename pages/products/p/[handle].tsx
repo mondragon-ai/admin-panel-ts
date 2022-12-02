@@ -179,10 +179,29 @@ export const OptionsVariants: FunctionComponent<TagProps> = ({
     setProduct
 }) => {
     
+    
     // Order Tag State
-    let [tags, setTags] = useState(t);
-    const [tagText, setTagState] = useState("");
+    let [tags, setTags] = useState<{
+        tags: string[],
+        collections: string[]
+    }>({
+        tags: [],
+        collections: []
+    });
+    const [tagText, setTagState] = useState<{
+        tags: string,
+        collections: string
+    }>({
+        tags: "",
+        collections: ""
+    });
 
+    const updateProductState = () => {
+        setProduct({
+            ...product,
+
+        })
+    }
     const [variants, setVariants] = useState([
         {
             id: "var_" + crypto.randomBytes(10).toString('hex'),
@@ -255,11 +274,11 @@ export const OptionsVariants: FunctionComponent<TagProps> = ({
                             padding: "0 5px"
                         }}>
                         { 
-                            tags && tags.length > 0 ?  tags.map(v => {
+                            tags && tags.collections.length > 0 ?  tags.collections.map(v => {
                             return <p 
                                 key={v}
                                 id={"tags"}
-                                onClick={(e) => deleteTag(e, v, setTags, setTagState,  tags)}
+                                onClick={(e) => deleteTag(e, v, setTags, setTagState, tags, )}
                                 className={`${styles.tagItem}`}>{v} <b>x</b> </p> 
                             }) : null
                         }
@@ -336,11 +355,11 @@ export const OptionsVariants: FunctionComponent<TagProps> = ({
                             padding: "0 5px"
                         }}>
                         { 
-                            tags && tags.length > 0 ?  tags.map(v => {
+                            tags && tags.tags.length > 0 ?  tags.tags.map(v => {
                             return <p 
                                 key={v}
                                 id={"tags"}
-                                onClick={(e) => deleteTag(e, v, setTags, setTagState,  tags)}
+                                onClick={(e) => deleteTag(e, v, setTags, setTagState, tags)}
                                 className={`${styles.tagItem}`}>{v} <b>x</b> </p> 
                             }) : null
                         }
@@ -416,11 +435,11 @@ export const OptionsVariants: FunctionComponent<TagProps> = ({
                             padding: "0 5px"
                         }}>
                         { 
-                            tags && tags.length > 0 ?  tags.map(v => {
+                            tags && tags.tags.length > 0 ?  tags.tags.map(v => {
                             return <p 
                                 key={v}
                                 id={"tags"}
-                                onClick={(e) => deleteTag(e, v, setTags, setTagState,  tags)}
+                                onClick={(e) => deleteTag(e, v, setTags, setTagState,  tags, tagText)}
                                 className={`${styles.tagItem}`}>{v} <b>x</b> </p> 
                             }) : null
                         }
@@ -755,10 +774,34 @@ export const TitleDescription: FunctionComponent<TagProps> = ({
 }
 export const TagAdvanced: FunctionComponent<TagProps> = ({
     setProduct,
-    tags,
-    setTags,
-    setTagState
+    // tags,
+    // setTags,
+    // setTagState
 }) => {
+    
+    // Order Tag State
+    let [tags, setTags] = useState<{
+        tags: string[],
+        collections: string[]
+    }>({
+        tags: [],
+        collections: []
+    });
+    const [tagText, setTagState] = useState<{
+        tags: string,
+        collections: string
+    }>({
+        tags: "",
+        collections: ""
+    });
+
+    const updateProductState = () => {
+        setProduct({
+            ...product,
+
+        })
+    }
+
     return (
         <Card 
             card_type="INFO"
@@ -801,11 +844,11 @@ export const TagAdvanced: FunctionComponent<TagProps> = ({
                             padding: "0 5px"
                         }}>
                         { 
-                            tags && tags.length > 0 ?  tags.map(v => {
+                            tags && tags.tags.length > 0 ?  tags.tags.map(v => {
                             return <p 
                                 key={v}
                                 id={"tags"}
-                                onClick={(e) => deleteTag(e, v, setTags, setTagState,  tags)}
+                                onClick={(e) => deleteTag(e, v, setTags, setTagState,  tags,)}
                                 className={`${styles.tagItem}`}>{v} <b>x</b> </p> 
                             }) : null
                         }
@@ -849,7 +892,7 @@ export const TagAdvanced: FunctionComponent<TagProps> = ({
                             padding: "0 5px"
                         }}>
                         { 
-                            tags && tags.length > 0 ?  tags.map(v => {
+                            tags && tags.collections.length > 0 ?  tags.collections.map(v => {
                             return <p 
                                 key={v}
                                 id={"tags"}
