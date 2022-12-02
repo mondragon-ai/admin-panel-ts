@@ -11,7 +11,7 @@ import { ProductVariantRow } from "./p/[handle]";
 
 import * as crypto from "crypto";
 import { Product } from "../../lib/types/products";
-import ImageUploading from "react-images-uploading";
+// import ImageUploading from "react-images-uploading";
 
 const t = [
     "VIP"
