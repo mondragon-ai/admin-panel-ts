@@ -10,6 +10,8 @@ import {
 } from '@next/font/google';
 import { numberFormat, percentageFormatter } from "../../lib/helpers/formatters";
 import { impoweredRequest } from "../../lib/helpers/requests";
+import { createVariantsFromOptions } from "../../lib/helpers/products";
+import { Product } from "../../lib/types/products";
 
 
 const saira = Saira_Extra_Condensed({
@@ -41,7 +43,9 @@ export interface CardHeaderProps {
         title: string;
         step: string;
     }[],
-    state?: any
+    state?: any,
+    product?: Product,
+    setProduct?: Dispatch<SetStateAction<any>>,
 }
   
 
@@ -62,7 +66,9 @@ export const Card: React.FC<CardHeaderProps> = ({
     prev,
     setIndex,
     steps,
-    state
+    state,
+    product,
+    setProduct
 }) => {
     return (
         <div className={`${styles.card}`}
@@ -88,7 +94,9 @@ export const Card: React.FC<CardHeaderProps> = ({
                             step: string;
                         }[]>> }
                         steps={steps}
-                        state={state} /> :
+                        state={state} 
+                        product={product}
+                        setProduct={setProduct} /> :
                     <DefaultHeader 
                         header={header}
                         subHeader={subHeader as string}
@@ -116,13 +124,12 @@ export const CreateHeader: React.FC<CardHeaderProps> = ({
     setIndex,
     steps,
     state,
+    product,
+    setProduct
 }) => {
-    console.log(steps);
 
     const handleNav = (s: string) => {
         let list: any[] = [];
-        console.log(s)
-        console.log(steps)
 
         steps?.forEach((step, i) => {
             if (step.step === s) {
@@ -149,7 +156,6 @@ export const CreateHeader: React.FC<CardHeaderProps> = ({
                 ]
             }
         })
-        console.log(list)
 
         if  (setIndex) setIndex(list);
        
@@ -159,19 +165,23 @@ export const CreateHeader: React.FC<CardHeaderProps> = ({
 
     const handleSave = async (
         resource: string,
-        body: any,
+        product: any,
     ) => {
-        console.log(resource + "\n" + body)
-        const response = await impoweredRequest(url + resource,"POST",body);
+        console.log("198: HANDLE CREATE  - PRODUCT-->\n", product)
+        const response = await impoweredRequest(url + resource, "POST",{ product: product});
         console.log("198: HANDLE CREATE -->\n", response)
     }
 
     const createVariants = async (
-        resource: string,
-        body: any,
+        product: Product,
+        setProduct: Dispatch<SetStateAction<any>>,
     ) => {
         // console.log(resource + "\n" + body)
-        // const response = await impoweredRequest(url + resource,"POST",body);
+        const variants = createVariantsFromOptions(product, product.options.options1, product.options.options2, product.options.options3)
+        setProduct({
+            ...product,
+            variants: variants ? variants : []
+        })
         console.log("198: VARIANTS -->\n")
     }
 
@@ -213,7 +223,7 @@ export const CreateHeader: React.FC<CardHeaderProps> = ({
                                 }}  
                                 className={`${styles.tag}`}>Next</p> : null}
                             {next === "SAVE" ? <p 
-                                onClick={() =>  handleSave(resource, data)}
+                                onClick={() =>  handleSave(resource, product as Product)}
                                 style={{
                                     marginLeft: "0.5rem",
                                     backgroundColor:  "rgb(138, 242, 138)",
@@ -233,7 +243,7 @@ export const CreateHeader: React.FC<CardHeaderProps> = ({
                                 }}  
                                 className={`${styles.tag}`}>Next</p> 
                                 <p 
-                                onClick={() =>  createVariants(resource, data)}
+                                onClick={() =>  createVariants(product as Product, setProduct as Dispatch<SetStateAction<any>>)}
                                 style={{
                                     marginLeft: "0.5rem",
                                     backgroundColor:  "rgb(138, 242, 138)",
@@ -241,7 +251,7 @@ export const CreateHeader: React.FC<CardHeaderProps> = ({
                                     lineHeight: window.innerWidth > 720 ? "" : "",
                                     cursor: "pointer"
                                 }}  
-                                className={`${styles.tag}`}>Create</p></>: null}
+                                className={`${styles.tag}`}>Update</p></>: null}
                     </div>
                 </div>
                 <div 
@@ -291,7 +301,6 @@ export const DefaultHeader: React.FC<CardHeaderProps> = ({
     subHeader,
     width
 }) => {
-    console.log(typeof(subHeader))
     return (
         <header className={`${styles.col}`}>
             <div className={`${styles.col}`}>
@@ -350,8 +359,6 @@ export const OrderHeader: React.FC<CardHeaderProps> = ({
     header,
     card_type
 }) => {
-
-    console.log(header);
     return (
         <header 
             style={{
@@ -433,7 +440,6 @@ export const InfoHeader: React.FC<CardHeaderProps> = ({
     width,
     header
 }) => {
-    console.log(header);
     return (
         <header 
             style={{

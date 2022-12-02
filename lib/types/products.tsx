@@ -1,14 +1,54 @@
 export interface Product {
-    id?: string,
-    title: string,
-    status?: boolean,
-    price?: string | number,
-    collections?: string[],
-    tags?: string[],
-    options?: string[]
-    quantity: number,
-    weight?: number
+    title: string;
+    price: number;
+    description?: string;
+    compare_at_price?: number;
+    quantity: number;
+    weight?: number;
+    status: boolean;
+    id: string;
+    is_digital?: boolean;
+    sell_overstock?: boolean;
+    requires_shipping?: boolean;
+    tags: string[],
+    collections: string[],
+    option1?: string,
+    option2?: string,
+    option3?: string,
+    options: {
+        options1: string[],
+        options2: string[],
+        options3: string[]
+    },
+    videos: [
+        {
+            id: string,
+            url: string,
+            type: "YOUTUBE" | "VIMEO"
+        }
+    ],
+    variants?: Variant[],
+    sku?: string,
 }
+
+
+export interface Variant 
+  {
+    product_id?: string,
+    variant_id?: string,
+    sku?: string,
+    compare_at?: number,
+    price?: number,
+    option1?: string,
+    option2?: string,
+    option3?: string,
+    quantity?: number,
+    status?: boolean,
+    updated_at?: any,
+    created_at?: any
+    image_url?: string,
+    inventory?: number
+  }
 
 export interface Bundle {
     id: string,
