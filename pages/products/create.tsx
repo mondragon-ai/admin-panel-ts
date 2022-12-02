@@ -1,7 +1,8 @@
 import Image from "next/image";
-import { Dispatch, FunctionComponent, SetStateAction, useState } from "react";
+import React, { Dispatch, FunctionComponent, SetStateAction, useState } from "react";
 import { Card } from "../../components/ui/Card";
 import FormProgress from "../../components/ui/FormProgress";
+import RichTextEditor from "../../components/ui/RichTextEditor";
 import Underline from "../../components/ui/Underline";
 import { numberFormat } from "../../lib/helpers/formatters";
 import { addTags, deleteTag } from "../../lib/helpers/tags";
@@ -10,7 +11,7 @@ import { ProductVariantRow } from "./p/[handle]";
 
 import * as crypto from "crypto";
 import { Product } from "../../lib/types/products";
-import ImageUploading from "react-images-uploading";
+// import ImageUploading from "react-images-uploading";
 
 const t = [
     "VIP"
@@ -1040,6 +1041,7 @@ export const ProductText: FunctionComponent<Props> = ({
     checkboxes,
     setCheckboxes
 }) => {
+    const [content, setContent] = React.useState("");
     return (
         <Card 
             card_type="CREATE"
@@ -1126,7 +1128,8 @@ export const ProductText: FunctionComponent<Props> = ({
                         style={{
                             width: "100%"
                         }}>
-                        <textarea
+                        <RichTextEditor content={content} setContent={setContent} />
+                        {/* <textarea
                             style={{
                                 color: "white",
                                 width: "100%",
@@ -1140,7 +1143,8 @@ export const ProductText: FunctionComponent<Props> = ({
                                 description: e.target.value
                             })}
                             value={product.description}
-                            name="description" />
+                            name="description" />*/
+                        }
                         <label style={{ 
                             top: product.description != "" ? "-5px" : "", 
                             fontSize: product.description != "" ? "10px" : ""}}>Description</label>
