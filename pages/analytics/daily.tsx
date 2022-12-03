@@ -145,7 +145,7 @@ export const Daily: FunctionComponent<DailyAnalyticsProp> = ({daily}) => {
 
                     <div style={{paddingTop: "1rem"}} className={`${styles.row} ${styles.mobileContainer} ${styles.analyticCard}`}>
                         <div className={`${styles.col} ${styles.oneThird}`}>
-                        <Card title='Viewed The Most' header={top_sellers && top_sellers[0].title}>
+                        <Card title='Viewed The Most' header={top_sellers[0] && top_sellers[0].title}>
                             <div className={styles.col}>
                             <div style={{paddingTop: "1rem", alignItems: "flex-end"}} className={`${styles.row}`}>
                                 <p style={{width: "50%", fontWeight: "100"}}>
@@ -203,7 +203,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
     console.log(" ==> SERVER SIDE");
     console.log(result);
 
-    if (!result) {
+    if (!result || result == undefined) {
         throw new Error("Product list error");
     }
 
