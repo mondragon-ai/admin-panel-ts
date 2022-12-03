@@ -490,21 +490,22 @@ export const OptionsVariants: FunctionComponent<TagProps> = ({
             title="Variants"
             header={""}
             next={"OPTIONS"}>
-            <div className={`${styles.col}`}>
-                {
-                    product?.variants && product?.variants.map(v => {
-                        return (
-                            <div key={v.variant_id} className={`${styles.col}`}
-                                style={{
-                                    width: "auto",
-                                    minWidth: "100%"
-                                }}>
-                                <ProductVariantRow variant={v} />
-                                <Underline width={100} />
-                            </div>
-                        )
-                    })
-                }
+            <div className={`${styles.col}`} style={{overflowX: "scroll"}}>
+                <div className={`${styles.col}`} >
+                    {
+                        product?.variants && product?.variants.map(v => {
+                            return (
+                                <div key={v.variant_id} className={`${styles.col}`}
+                                    style={{
+                                        width: "auto",
+                                        minWidth: "100%"
+                                    }}>
+                                    <ProductVariantRow variant={v} />
+                                </div>
+                            )
+                        })
+                    }
+                </div>
             </div>
         </Card>
         
@@ -516,6 +517,8 @@ type VarRow = {
     variant: Variant
 }
 
+const width = window.innerWidth > 720 ? 100 : 300;
+
 export const ProductVariantRow: FunctionComponent<VarRow> = ({variant}) => {
 
     return (
@@ -523,6 +526,7 @@ export const ProductVariantRow: FunctionComponent<VarRow> = ({variant}) => {
                 style={{
                     width:  window.innerWidth > 720 ? "100%" : "300%",
                 }}>
+            <Underline width={width} />
             <div className={`${styles.row}`}
                 style={{
                     marginTop: "1.5rem",

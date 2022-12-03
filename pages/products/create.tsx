@@ -855,7 +855,6 @@ export const StepThree: FunctionComponent<Props> = ({
                                     minWidth: "100%"
                                 }}>
                                 <ProductVariantRow variant={v} />
-                                <Underline width={100} />
                             </div>
                         )
                     })

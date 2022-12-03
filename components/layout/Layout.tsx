@@ -14,6 +14,8 @@ type Props = {
 export const Layout: FunctionComponent<Props> = (props) => {
     const [openState, toggleMenu] = useState(false);
 
+    console.log(window.innerWidth > 720);
+    console.log(window.innerWidth);
     
     return (
         <div style={{
@@ -23,14 +25,14 @@ export const Layout: FunctionComponent<Props> = (props) => {
         }} className={`${styles.row} `}>
             <div
                 style={{
-                    display: window.innerWidth < 720 && openState ? "" : "none",
+                    display: window.innerWidth > 720 ?  "" : !openState ?   "none" : "",
                     height: window.innerWidth < 720 ? "" + (window.innerHeight + 600) + "px" : "" + (window.innerHeight) + "px",
                     minHeight: "" + window.innerHeight + "px",
                 }} 
                 className={styles.mainLayout}></div>
             <div
                 style={{
-                    display: window.innerWidth < 720 && openState ? "" : "none",
+                    display: window.innerWidth > 720 ?  "" : !openState ?   "none" : "",
                     height: window.innerWidth < 720 ? "" + (window.innerHeight + 600) + "px" : "" + (window.innerHeight) + "px",
                     minHeight: "" + window.innerHeight + "px",
                 }} 
@@ -43,7 +45,7 @@ export const Layout: FunctionComponent<Props> = (props) => {
                 className={`${styles.col} ${styles.mainContainer}`}
                 style={{
                     justifyContent: "space-between",
-                    display: window.innerWidth < 720 && !openState ? "" : "none",
+                    display: window.innerWidth > 720 ?  "flex" : openState ?   "none" : "",
                     height: "auto"
                 }}>
                 <div 

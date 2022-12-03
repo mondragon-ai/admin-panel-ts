@@ -49,7 +49,7 @@ export const Menu: FunctionComponent<Props> = ({openState, toggleMenu}) => {
         <nav 
             className={`${styles.col} ${styles.sideBar} `} 
             style={{
-                marginLeft: window.innerWidth < 720 && !openState ? "-600px" : "0",
+                marginLeft: window.innerWidth > 720 ?  "0" : !openState ?   "-600px" : "0",
                 height: window.innerHeight < 720 ? "" + (window.innerHeight + 600) + "px" : "" + (window.innerHeight) + "px",
                 minHeight: "" + window.innerHeight + "px",
             }}>

@@ -73,7 +73,7 @@ export const ProductContainerRow: FunctionComponent<any>  = ({p}) => {
                     <span 
                     style={{
                         fontSize: "1rem"
-                    }}>{numberFormat(Number(price))}</span>
+                    }}>{numberFormat(Number(price)/100)}</span>
                     {status ? <p
                         style={{
                             background: "#aff2af",

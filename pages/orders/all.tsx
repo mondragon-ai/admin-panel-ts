@@ -137,7 +137,7 @@ export default function  AllOrders(props: Prop) {
                                             id={p.id}
                                             colOneTop={p.title}
                                             colOneBottom={p.first_name + " " + p.last_name}
-                                            colTwoTop={p.total_price}
+                                            colTwoTop={Number(p.total_price) /100}
                                             colTwoBottom={p.status}
                                             colThree={p.email}
                                             colFour={p.tags} />

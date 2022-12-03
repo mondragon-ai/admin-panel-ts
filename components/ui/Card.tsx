@@ -71,8 +71,7 @@ export const Card: React.FC<CardHeaderProps> = ({
     setProduct
 }) => {
     return (
-        <div className={`${styles.card}`}
-            >
+        <div className={`${styles.card}`}>
             {
                 card_type == "ORDER" || card_type == "PAYMENT" ?  
                     <OrderHeader status={status} header={header} subHeader={subHeader as string} title={title} width={width} card_type={card_type}/> : 
@@ -104,10 +103,7 @@ export const Card: React.FC<CardHeaderProps> = ({
                         width={width} />
             }
             <main className={`${styles.col} ${styles.cardMain}`}
-                style={{
-                    overflowX: "scroll",
-                    paddingTop: "5px"
-                }}>
+                style={{paddingTop: "5px"}}>
                 {children}
             </main>
         </div>
