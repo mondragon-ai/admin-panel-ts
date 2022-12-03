@@ -3,15 +3,16 @@ import {FunctionComponent, useState} from "react";
 import styles from "../../styles/Main.module.css";
 import Underline from "./Underline";
 
-const comments = [
+type TimelineProps = {
+    comments?:
     {
-        content: "Order Created",
-        date: new Date().toString()
-    }
-]
+        date: string,
+        content: string
+    }[]
+}
 
-export const ApiTimeline: FunctionComponent<any> = ({
-
+export const ApiTimeline: FunctionComponent<TimelineProps> = ({
+    comments
 }) => {
     const [comment, makeComment] = useState("");
 

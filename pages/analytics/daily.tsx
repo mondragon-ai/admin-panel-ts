@@ -11,13 +11,15 @@ import { AnalyticsHeader } from "../../components/ui/headers/AnalyticsHeader";
 import { GetServerSideProps } from "next";
 import { impoweredRequest } from "../../lib/helpers/requests";
 import { Analytics } from "../../lib/types/analytics";
-import { FunctionComponent } from "react";
+import { FunctionComponent, useState } from "react";
 
 export type DailyAnalyticsProp = {
     daily: Analytics
 }
 
 export const Daily: FunctionComponent<DailyAnalyticsProp> = ({daily}) => {
+
+    const [analytics, setAnalytics] = useState(daily)
 
     const {
         total_daily_carts,
@@ -36,9 +38,7 @@ export const Daily: FunctionComponent<DailyAnalyticsProp> = ({daily}) => {
         daily_aov,
         top_sellers,
         prev_daily_aov,
-    } = daily
-
-    console.log(top_sellers)
+    } = analytics
 
 
     const cartRate = Math.round((Number(total_daily_carts ? total_daily_carts : 0) / Number(total_daily_sessions ? total_daily_sessions : 1))*1000) / 100;

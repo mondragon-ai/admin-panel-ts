@@ -49,8 +49,8 @@ export const Menu: FunctionComponent<Props> = ({openState, toggleMenu}) => {
         <nav 
             className={`${styles.col} ${styles.sideBar} `} 
             style={{
-                marginLeft: openState ? "-600px" : "0",
-                height: window.innerHeight < 720 ? "" + (window.innerHeight + 200) + "px" : "" + (window.innerHeight) + "px",
+                marginLeft: window.innerWidth < 720 && !openState ? "-600px" : "0",
+                height: window.innerHeight < 720 ? "" + (window.innerHeight + 600) + "px" : "" + (window.innerHeight) + "px",
                 minHeight: "" + window.innerHeight + "px",
             }}>
             <header className={`${styles.col} ${styles.topHeaderMobile}`}>
@@ -70,7 +70,8 @@ export const Menu: FunctionComponent<Props> = ({openState, toggleMenu}) => {
             </header>
             <div 
                 style={{
-                    height: "" + window.innerHeight + "px"
+                    height: "100%",
+                    justifyContent: "space-between",
                 }}
                 className={`${styles.col} ${styles.menu} `}>
                 <ul className={`${styles.col}`}>
@@ -79,6 +80,7 @@ export const Menu: FunctionComponent<Props> = ({openState, toggleMenu}) => {
                     </li>
                     <li className={`${styles.col}`}>
                         <Link  
+                            onClick={(e) => toggleMenu(!openState)}
                             className={`${styles.row}`}
                             style={{
                                 borderLeft: router.pathname == "/" ? "4px solid white" : "4px solid transparent"
@@ -97,6 +99,7 @@ export const Menu: FunctionComponent<Props> = ({openState, toggleMenu}) => {
                     </li>
                     <li className={`${styles.col}`}>
                         <Link  
+                            onClick={(e) => toggleMenu(!openState)}
                             className={`${styles.row}`}
                             style={{
                                 borderLeft: router.pathname == "/analytics/daily" ? "4px solid white" : "4px solid transparent",
@@ -116,7 +119,8 @@ export const Menu: FunctionComponent<Props> = ({openState, toggleMenu}) => {
                         </Link>
                         <ul className={`${styles.col}`}>
                             <li className={`${styles.col} ${styles.indentedMenuItem}`}>
-                                <Link  
+                                <Link
+                                    onClick={(e) => toggleMenu(!openState)}
                                     className={`${styles.row}`}
                                     href={'/analytics/funnels/all'}>
                                     <div className={`${styles.row} ${styles.menuItem} `}>
@@ -137,6 +141,7 @@ export const Menu: FunctionComponent<Props> = ({openState, toggleMenu}) => {
                     </li>
                     <li className={`${styles.row}`}>
                         <Link  
+                            onClick={(e) => toggleMenu(!openState)}
                             className={`${styles.row}`}
                             style={{
                                 borderLeft: router.pathname.includes("/discounts") ? "4px solid white" : "4px solid transparent"
@@ -155,10 +160,11 @@ export const Menu: FunctionComponent<Props> = ({openState, toggleMenu}) => {
                         </Link>
                     </li>
                     <li className={`${styles.col}`}>
-                        <Link  
+                        <Link
+                            onClick={(e) => toggleMenu(!openState)}
                             className={`${styles.row}`}
                             style={{
-                                borderLeft: router.pathname.includes("/products") ? "4px solid white" : "4px solid transparent"
+                                borderLeft: router.pathname == "/products/all" ? "4px solid white" : "4px solid transparent"
                             }}
                             href={'/products/all'}>
                             <div className={`${styles.row} ${styles.menuItem} `}>
@@ -174,7 +180,8 @@ export const Menu: FunctionComponent<Props> = ({openState, toggleMenu}) => {
                         </Link>
                         <ul className={`${styles.col}`}>
                             <li className={`${styles.col} ${styles.indentedMenuItem}`}>
-                                <Link  
+                                <Link
+                                    onClick={(e) => toggleMenu(!openState)}
                                     className={`${styles.row}`}
                                     href={'/products/subscriptions'}>
                                     <div className={`${styles.row} ${styles.menuItem} `}>
@@ -192,7 +199,8 @@ export const Menu: FunctionComponent<Props> = ({openState, toggleMenu}) => {
                                 </Link>
                             </li>
                             <li className={`${styles.col} ${styles.indentedMenuItem}`}>
-                                <Link  
+                                <Link
+                                    onClick={(e) => toggleMenu(!openState)}
                                     className={`${styles.row}`}
                                     href={'/products/bundles'}>
                                     <div className={`${styles.row} ${styles.menuItem} `}>
@@ -210,7 +218,8 @@ export const Menu: FunctionComponent<Props> = ({openState, toggleMenu}) => {
                                 </Link>
                             </li>
                             <li className={`${styles.col} ${styles.indentedMenuItem}`}>
-                                <Link  
+                                <Link
+                                    onClick={(e) => toggleMenu(!openState)}
                                     className={`${styles.row}`}
                                     href={'/products/collections'}>
                                     <div className={`${styles.row} ${styles.menuItem} `}>
@@ -228,7 +237,8 @@ export const Menu: FunctionComponent<Props> = ({openState, toggleMenu}) => {
                                 </Link>
                             </li>
                             <li className={`${styles.col} ${styles.indentedMenuItem}`}>
-                                <Link  
+                                <Link
+                                    onClick={(e) => toggleMenu(!openState)}
                                     className={`${styles.row}`}
                                     href={'/products/gift_cards'}>
                                     <div className={`${styles.row} ${styles.menuItem} `}>
@@ -248,7 +258,8 @@ export const Menu: FunctionComponent<Props> = ({openState, toggleMenu}) => {
                         </ul>
                     </li>
                     <li className={`${styles.col}`}>
-                        <Link  
+                        <Link
+                            onClick={(e) => toggleMenu(!openState)}
                             className={`${styles.row}`}
                             style={{
                                 borderLeft: router.pathname.includes("/customers") ? "4px solid white" : "4px solid transparent"
@@ -267,7 +278,8 @@ export const Menu: FunctionComponent<Props> = ({openState, toggleMenu}) => {
                         </Link>
                     </li>
                     <li className={`${styles.col}`}>
-                        <Link  
+                        <Link
+                            onClick={(e) => toggleMenu(!openState)}
                             className={`${styles.row}`}
                             style={{
                                 borderLeft: router.pathname.includes("/orders") ? "4px solid white" : "4px solid transparent"
@@ -286,7 +298,8 @@ export const Menu: FunctionComponent<Props> = ({openState, toggleMenu}) => {
                         </Link>
                         <ul className={`${styles.col}`}>
                             <li className={`${styles.col} ${styles.indentedMenuItem}`}>
-                                <Link  
+                                <Link
+                                    onClick={(e) => toggleMenu(!openState)}
                                     className={`${styles.row}`}
                                     href={'/orders/carts'}>
                                     <div className={`${styles.row} ${styles.menuItem} `}>
@@ -304,7 +317,8 @@ export const Menu: FunctionComponent<Props> = ({openState, toggleMenu}) => {
                                 </Link>
                             </li>
                             <li className={`${styles.col} ${styles.indentedMenuItem}`}>
-                                <Link  
+                                <Link
+                                    onClick={(e) => toggleMenu(!openState)}
                                     className={`${styles.row}`}
                                     href={'/orders/draft_orders'}>
                                     <div className={`${styles.row} ${styles.menuItem} `}>
@@ -324,7 +338,8 @@ export const Menu: FunctionComponent<Props> = ({openState, toggleMenu}) => {
                         </ul>
                     </li>
                     <li className={`${styles.row}`}>
-                        <Link  
+                        <Link
+                            onClick={(e) => toggleMenu(!openState)}
                             className={`${styles.row}`}
                             style={{
                                 borderLeft: router.pathname.includes("/fullfilment") ? "4px solid white" : "4px solid transparent"
@@ -358,7 +373,8 @@ export const Menu: FunctionComponent<Props> = ({openState, toggleMenu}) => {
                             <p>Bigly Store</p>
                         </li>
                         <li className={`${styles.menuSettingItem}`}>
-                            <Link  
+                            <Link
+                                onClick={(e) => toggleMenu(!openState)}
                                 className={`${styles.row}`}
                                 href={'/settings'}>
                                 <div className={`${styles.row} ${styles.menuItem} `}>

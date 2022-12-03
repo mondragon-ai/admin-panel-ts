@@ -19,6 +19,12 @@ import { MainRowContainerHeader } from "../../components/ui/headers/MainRowConta
 import { GetServerSideProps } from "next";
 import { impoweredRequest } from "../../lib/helpers/requests";
 
+
+import { algoliasearch } from "algoliasearch";
+
+// Instantiate the client
+const client = algoliasearch('9HC6EQSC7S', 'de139a052d86174f4b708e160db11c4b');
+
 // const products: Product[] = [
 //     {
 //         title: "1776 Hoodie",
@@ -87,9 +93,42 @@ interface Prop {
 export default function AllProducts(props: Prop) {
     const { products, size} = props;
 
-    const [itemSearch, setItemSearch] = useState("");
     const [list, setProducts] = useState<any[]>(products);
     const [filterState, setFilter] = useState<"" | "INACTIVE" | "ACTIVE">("");
+
+    const [query, setQuery] = useState<string>("")
+    const [results, setResults] = useState<any[]>([])
+
+    const updateSearch = async (v: string) => {
+        // Add a new record to your Algolia index
+        // const { taskID } = await client.saveObject({
+        //     indexName: '9HC6EQSC7S',
+        //     body: {
+        //         title: 'My Algolia Object',
+        //     },
+        // });
+        
+        // // Poll the task status to know when it has been indexed
+        // await client.waitForTask({ indexName: '9HC6EQSC7S', taskID });
+        setQuery(v);
+        
+        // Fetch search results
+        const { results } = await client.search({
+            requests: [
+            {
+                indexName: 'prod_product_search_engine',
+                // You can make typos, we handle it
+                query: query,
+                hitsPerPage: 50,
+            },
+            ],
+        });
+    
+        if (results[0].hits) {
+            setResults(results[0].hits);
+            console.log('[Results]', results[0].hits);
+        }
+    };
 
     return (
         <div className={`${styles.col}`}>
@@ -111,13 +150,13 @@ export default function AllProducts(props: Prop) {
                                 <div
                                     className={`${styles.formItem} ${styles.row}`} >
                                     <input
-                                        onChange={(e) => setItemSearch(e.target.value)}
-                                        type="email"
-                                        name="email"
+                                        onChange={(e) => updateSearch(e.target.value)}
+                                        type="text"
+                                        name="search_product"
                                         placeholder="" />
                                     <label style={{ 
-                                        top: itemSearch != "" ? "-5px" : "", 
-                                        fontSize: itemSearch != "" ? "10px" : ""}}>{` 🔍 Search Products` }</label>
+                                        top: query != "" ? "-5px" : "", 
+                                        fontSize: query != "" ? "10px" : ""}}>{` 🔍 Search Products` }</label>
                                 </div>
                             </div>
                             <div className={`${styles.row} ${styles.itemsFilterBtn}`}>
@@ -135,7 +174,18 @@ export default function AllProducts(props: Prop) {
                             rowTwoLower={"Status"}
                             rowThree={"Collections"}
                             rowFour={"Tags"}/>
-                        {size > 0 && list && list.map((p) => {
+                        {query === "" && size > 0 && list && list.map((p) => {
+                            console.log(p.id);
+                                return (
+                                    <div key={p.id} className={`${styles.col} ${styles.itemRow}`}>
+                                        <Underline width={100} />
+                                        <ProductContainerRow 
+                                            key={p.id}
+                                            p={p} />
+                                    </div>
+                                );
+                        })}
+                        {query !== "" && size > 0 && results && results.map((p) => {
                             console.log(p.id);
                                 return (
                                     <div key={p.id} className={`${styles.col} ${styles.itemRow}`}>

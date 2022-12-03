@@ -23,15 +23,15 @@ export const Layout: FunctionComponent<Props> = (props) => {
         }} className={`${styles.row} `}>
             <div
                 style={{
-                    display: !openState ? "" : "none",
-                    height: window.innerWidth < 720 ? "" + (window.innerHeight + 200) + "px" : "" + (window.innerHeight) + "px",
+                    display: window.innerWidth < 720 && openState ? "" : "none",
+                    height: window.innerWidth < 720 ? "" + (window.innerHeight + 600) + "px" : "" + (window.innerHeight) + "px",
                     minHeight: "" + window.innerHeight + "px",
                 }} 
                 className={styles.mainLayout}></div>
             <div
                 style={{
-                    display: !openState ? "" : "none",
-                    height: window.innerWidth < 720 ? "" + (window.innerHeight + 200) + "px" : "" + (window.innerHeight) + "px",
+                    display: window.innerWidth < 720 && openState ? "" : "none",
+                    height: window.innerWidth < 720 ? "" + (window.innerHeight + 600) + "px" : "" + (window.innerHeight) + "px",
                     minHeight: "" + window.innerHeight + "px",
                 }} 
                 className={styles.blur}></div>
@@ -43,7 +43,7 @@ export const Layout: FunctionComponent<Props> = (props) => {
                 className={`${styles.col} ${styles.mainContainer}`}
                 style={{
                     justifyContent: "space-between",
-                    display: (window.innerWidth > 700) ?  "" : !openState ?   "none" : "",
+                    display: window.innerWidth < 720 && !openState ? "" : "none",
                     height: "auto"
                 }}>
                 <div 

@@ -10,7 +10,7 @@ import { ProductVariantRow } from "./p/[handle]";
 
 import * as crypto from "crypto";
 import { Product } from "../../lib/types/products";
-import ImageUploading from "react-images-uploading";
+// import ImageUploading from "react-images-uploading";
 
 const t = [
     "VIP"
@@ -634,6 +634,7 @@ export const StepThree: FunctionComponent<Props> = ({
                     style={{ marginTop: window.innerWidth > 720 ? "1.5rem" : "" }}>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
+                            justifyContent: "flex-start",
                             width: window.innerWidth > 720 ? "33%" : "100%",
                             padding: "0 5px"
                         }}>
@@ -642,6 +643,7 @@ export const StepThree: FunctionComponent<Props> = ({
                             return <p 
                                 key={v}
                                 id={"options1"}
+                                style={{marginRight: "0.5rem" }} 
                                 onClick={(e) => deleteTag(e, v, setProduct, setTagState, product, tagText)}
                                 className={`${styles.tagItem}`}>{v} <b>x</b> </p> 
                             }) : null
@@ -720,6 +722,7 @@ export const StepThree: FunctionComponent<Props> = ({
                     style={{ marginTop:window.innerWidth > 720 ? "1.5rem" : "" }}>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
+                            justifyContent: "flex-start",
                             width: window.innerWidth > 720 ? "33%" : "100%",
                             padding: "0 5px"
                         }}>
@@ -728,6 +731,7 @@ export const StepThree: FunctionComponent<Props> = ({
                             return <p 
                                 key={v}
                                 id={"options2"}
+                                style={{marginRight: "0.5rem" }} 
                                 onClick={(e) => deleteTag(e, v, setProduct, setTagState, product, tagText)}
                                 className={`${styles.tagItem}`}>{v} <b>x</b> </p> 
                             }) : null
@@ -804,6 +808,7 @@ export const StepThree: FunctionComponent<Props> = ({
                     }}>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
+                            justifyContent: "flex-start",
                             width: "33%",
                             padding: "0 5px"
                         }}>
@@ -812,6 +817,7 @@ export const StepThree: FunctionComponent<Props> = ({
                             return <p 
                                 key={v}
                                 id={"options3"}
+                                style={{marginRight: "0.5rem" }} 
                                 onClick={(e) => deleteTag(e, v, setProduct, setTagState, product, tagText)}
                                 className={`${styles.tagItem}`}>{v} <b>x</b> </p> 
                             }) : null
@@ -894,49 +900,89 @@ export const StepTwo: FunctionComponent<Props> = ({
                     style={{
                         marginTop: "1.5rem"
                     }}>
-                    <div className={`${styles.formItem} ${styles.row}`}
-                        style={{
-                            width: window.innerWidth > 720 ? "33%" : "100%",
-                            padding: "0 5px"
-                        }}>
-                        <input
+                    
+                    <div className={`${styles.col}`}>
+                        <div className={`${styles.formItem} ${styles.row}`}
                             style={{
-                                color: "white"
-                            }}
-                            id={"tags"}
-                            onKeyDown={(e) => addTags(e, tagText.tags, setProduct, setTagState,  product, tagText)}
-                            onChange={(e) => setTagState({
-                                ...tagText,
-                                tags: e.target.value
-                            })}
-                            value={tagText.tags}
-                            type="text"
-                            name="tags" />
-                        <label style={{ 
-                            top: tagText.tags !== "" ? "-5px" : "", 
-                            fontSize: tagText.tags !== "" ? "10px" : ""}}>Tags</label>
+                                width: window.innerWidth > 720 ? "33%" : "100%",
+                                padding: "0 5px"
+                            }}>
+                            <input
+                                style={{
+                                    color: "white"
+                                }}
+                                id={"tags"}
+                                onKeyDown={(e) => addTags(e, tagText.tags, setProduct, setTagState,  product, tagText)}
+                                onChange={(e) => setTagState({
+                                    ...tagText,
+                                    tags: e.target.value
+                                })}
+                                value={tagText.tags}
+                                type="text"
+                                name="tags" />
+                            <label style={{ 
+                                top: tagText.tags !== "" ? "-5px" : "", 
+                                fontSize: tagText.tags !== "" ? "10px" : ""}}>Tags</label>
+                        </div>
+                        <div className={`${styles.formItem} ${styles.row}`}
+                            style={{
+                                justifyContent: "flex-start",
+                                width: window.innerWidth > 720 ? "33%" : "100%",
+                                padding: "0 5px"
+                            }}>
+                            { 
+                                product.tags && product.tags.length > 0 ?  product.tags.map(v => {
+                                return <p 
+                                    key={v}
+                                    id={"tags"}
+                                    style={{marginRight: "0.5rem" }} 
+                                    onClick={(e) => deleteTag(e, v, setProduct, setTagState, product, tagText)}
+                                    className={`${styles.tagItem}`}>{v} <b>x</b> </p> 
+                                }) : null
+                            }
+                        </div>
                     </div>
-                    <div className={`${styles.formItem} ${styles.row}`}
-                        style={{
-                            width: window.innerWidth > 720 ? "33%" : "100%",
-                            padding: "0 5px"
-                        }}>
-                        <input
+                    <div className={`${styles.col}`}>
+                        <div className={`${styles.formItem} ${styles.row}`}
                             style={{
-                                color: "white"
-                            }}
-                            id={"collections"}
-                            onKeyDown={(e) => addTags(e, tagText.tags, setProduct, setTagState,  product, tagText)}
-                            onChange={(e) => setTagState({
-                                ...tagText,
-                                collections: e.target.value
-                            })}
-                            value={tagText.collections}
-                            type="text"
-                            name="collections" />
-                        <label style={{ 
-                            top:  tagText.collections !== ""  ? "-5px" : "", 
-                            fontSize:  tagText.collections !== ""  ? "10px" : ""}}>Collections</label>
+                                width: window.innerWidth > 720 ? "33%" : "100%",
+                                padding: "0 5px"
+                            }}>
+                            <input
+                                style={{
+                                    color: "white"
+                                }}
+                                id={"collections"}
+                                onKeyDown={(e) => addTags(e, tagText.tags, setProduct, setTagState,  product, tagText)}
+                                onChange={(e) => setTagState({
+                                    ...tagText,
+                                    collections: e.target.value
+                                })}
+                                value={tagText.collections}
+                                type="text"
+                                name="collections" />
+                            <label style={{ 
+                                top:  tagText.collections !== ""  ? "-5px" : "", 
+                                fontSize:  tagText.collections !== ""  ? "10px" : ""}}>Collections</label>
+                        </div>
+
+                        <div className={`${styles.formItem} ${styles.row}`}
+                            style={{
+                                justifyContent: "flex-start",
+                                width: window.innerWidth > 720 ? "33%" : "100%",
+                                padding: "0 5px"
+                            }}>
+                            { 
+                                product?.collections && product.collections.length > 0 ?  product.collections.map(v => {
+                                return <p 
+                                    key={v}
+                                    id={"collections"}
+                                    style={{marginRight: "0.5rem" }} 
+                                    onClick={(e) => deleteTag(e, v, setProduct, setTagState, product, tagText)}
+                                    className={`${styles.tagItem}`}>{v} <b>x</b> </p> 
+                                }) : null
+                            }
+                        </div>
                     </div>
 
                     <div className={`${styles.col}`}
@@ -988,36 +1034,6 @@ export const StepTwo: FunctionComponent<Props> = ({
                     style={{
                         marginTop: "1.5rem"
                     }}>
-                    <div className={`${styles.formItem} ${styles.row}`}
-                        style={{
-                            width: window.innerWidth > 720 ? "33%" : "100%",
-                            padding: "0 5px"
-                        }}>
-                        { 
-                            product.tags && product.tags.length > 0 ?  product.tags.map(v => {
-                            return <p 
-                                key={v}
-                                id={"tags"}
-                                onClick={(e) => deleteTag(e, v, setProduct, setTagState, product, tagText)}
-                                className={`${styles.tagItem}`}>{v} <b>x</b> </p> 
-                            }) : null
-                        }
-                    </div>
-                    <div className={`${styles.formItem} ${styles.row}`}
-                        style={{
-                            width: window.innerWidth > 720 ? "33%" : "100%",
-                            padding: "0 5px"
-                        }}>
-                        { 
-                            product?.collections && product.collections.length > 0 ?  product.collections.map(v => {
-                            return <p 
-                                key={v}
-                                id={"collections"}
-                                onClick={(e) => deleteTag(e, v, setProduct, setTagState, product, tagText)}
-                                className={`${styles.tagItem}`}>{v} <b>x</b> </p> 
-                            }) : null
-                        }
-                    </div>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
                             width: "33%",

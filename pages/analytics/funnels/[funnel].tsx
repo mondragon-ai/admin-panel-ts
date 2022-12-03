@@ -12,11 +12,17 @@ export  const FunnelDailyAnalytics = (props: any) => {
     const ANALYTICS: DailyFunnel = props.data;
     console.log(ANALYTICS);
 
+
+
+    if (!ANALYTICS) {
+        throw new Error("DATA NOT FOUND. RELOAD");
+        
+    }
+    
     const {
         total_funnel_sales,
-        order_sales_count,
         total_funnel_aov,
-        order_earnings
+        order_earnings,
     } = ANALYTICS;
 
 
@@ -64,7 +70,8 @@ export  const FunnelDailyAnalytics = (props: any) => {
 }
 
 export const getServerSideProps: GetServerSideProps = async () => {
-    const url = "https://us-central1-impowered-funnel.cloudfunctions.net/funnel/analytics/funnels";
+    // const url = "https://us-central1-impowered-funnel.cloudfunctions.net/funnel/analytics/funnels";
+    const url = "http://localhost:5001/impowered-funnel/us-central1/funnel/analytics/funnels";
     const result = await impoweredRequest(url, "GET", null);
 
     if (!result) {
