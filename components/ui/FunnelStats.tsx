@@ -1,7 +1,7 @@
 import styles from "../../styles/Main.module.css";
 import data_styles from "../../styles/Analytics.module.css";
-import { GetServerSideProps } from "next";
-import { Analytics } from "../../lib/types/analytics";
+// import { GetServerSideProps } from "next";
+import {  DailyFunnel } from "../../lib/types/analytics";
 import { FunctionComponent } from "react";
 import { numberFormat, percentageFormatter } from "../../lib/helpers/formatters";
 
@@ -32,7 +32,7 @@ const upsellEarning = "$4.17";
 const upsellEarningUnique = "$5.56";
 
 type Props = {
-    ANALYTICS: Analytics
+    ANALYTICS: DailyFunnel
 }
 
 export const FunnelStats: FunctionComponent<Props> = ({ANALYTICS}) => {

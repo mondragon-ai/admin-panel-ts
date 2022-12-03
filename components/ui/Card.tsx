@@ -167,9 +167,12 @@ export const CreateHeader: React.FC<CardHeaderProps> = ({
         resource: string,
         product: any,
     ) => {
-        console.log("198: HANDLE CREATE  - PRODUCT-->\n", product)
         const response = await impoweredRequest(url + resource, "POST",{ product: product});
-        console.log("198: HANDLE CREATE -->\n", response)
+        console.log("198: HANDLE CREATE -->\n", response);
+
+        if (String(response.text).includes("SUCCESS")) {
+            window.location.href = "/products/all"
+        }
     }
 
     const createVariants = async (

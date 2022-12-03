@@ -3,13 +3,13 @@ import {AnalyticsHeader} from "../../../components/ui/headers/AnalyticsHeader";
 import { FunnelStats } from "../../../components/ui/FunnelStats";
 import { GetServerSideProps } from "next";
 import { impoweredRequest } from "../../../lib/helpers/requests";
-import { Analytics } from "../../../lib/types/analytics";
+import { DailyFunnel } from "../../../lib/types/analytics";
 import { numberFormat } from "../../../lib/helpers/formatters";
 
 export  const FunnelDailyAnalytics = (props: any) => {
 
     console.log(" ==> CLIENT SIDE");
-    const ANALYTICS: Analytics = props.data;
+    const ANALYTICS: DailyFunnel = props.data;
     console.log(ANALYTICS);
 
     const {

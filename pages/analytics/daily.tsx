@@ -3,71 +3,52 @@ import { Card } from "../../components/ui/Card";
 import { numberFormat } from "../../lib/helpers/formatters";
 import styles from "../../styles/Main.module.css";
 
-const TOTAL_SALES = "420069.89";
-const PREV_TOTAL_SALES = "410000.89";
-let T_SALES_DIFF = 1 - (Number(PREV_TOTAL_SALES) / Number(TOTAL_SALES));
-T_SALES_DIFF = Number((T_SALES_DIFF));
 
 
-const TOTAL_ORDERS = "159";
-
-const TOTAL_SESSIONS = "750";
-const PREV_TOTAL_SESSIONS = "89";
-const TOTAL_CARTS = "234";
-const TOTAL_CHECKOUTS = TOTAL_ORDERS;
-const PREV_TOTAL_CHECKOUTS = "206";
-
-const RETURNS = "-173.31"
-
-const TOTAL_AOV = "28.78"
-const PREV_TOTAL_AOV = "36.56"
-let T_AOV_DIFF = 1 - (Number(PREV_TOTAL_AOV) / Number(TOTAL_AOV));
-T_AOV_DIFF = Number((T_AOV_DIFF));
-
-const TOTAL_ORDERS_ONLINE = "98";
-const TOTAL_SALES_ONLINE = "23150.93";
-
-const TOTAL_ORDERS_FUNNELS = "47";
-const TOTAL_SALES_FUNNELS = "13804.56";
-
-const TOTAL_ORDERS_TAPCART = "15";
-const TOTAL_CHECKOUTS_TAPCART = "2123.04";
-
-
-import * as crypto from "crypto";
+// import * as crypto from "crypto";
 import { AnalyticsHeader } from "../../components/ui/headers/AnalyticsHeader";
-import Underline from "../../components/ui/Underline";
+// import Underline from "../../components/ui/Underline";
+import { GetServerSideProps } from "next";
+import { impoweredRequest } from "../../lib/helpers/requests";
+import { Analytics } from "../../lib/types/analytics";
+import { FunctionComponent } from "react";
 
-const TOP_SELLERS = [
-  {
-    title: "Hoodie",
-    id: crypto.randomBytes(10).toString('hex'),
-    url: "",
-    order_count: 1233,
-    view_count: 21235
-  },
-  {
-    title: "Strawberry Gummies",
-    id: crypto.randomBytes(10).toString('hex'),
-    url: "",
-    order_count: 1233,
-    view_count: 21235
-  },
-  {
-    title: "1776 Shirt",
-    id: crypto.randomBytes(10).toString('hex'),
-    url: "",
-    order_count: 1233,
-    view_count: 21235
-  }
-]
+export type DailyAnalyticsProp = {
+    daily: Analytics
+}
 
-export default function Daily() {
+export const Daily: FunctionComponent<DailyAnalyticsProp> = ({daily}) => {
 
-  const cartRate = Math.round((Number(TOTAL_CARTS) / Number(TOTAL_SESSIONS))*1000) / 100;
-  const SALE_RATE = Math.round((Number(TOTAL_CHECKOUTS) / Number(TOTAL_SESSIONS))*1000) / 100;
+    const {
+        total_daily_carts,
+        total_daily_orders,
+        total_daily_checkouts,
+        total_daily_sessions,
+        prev_daily_sales,
+        prev_daily_new_sessions,
+        prev_daily_checkouts,
+        total_daily_sales,
+        daily_sales_rate,
+        total_funnel_sales,
+        total_funnel_orders,
+        total_online_sales,
+        total_online_orders,
+        daily_aov,
+        top_sellers,
+        prev_daily_aov,
+    } = daily
 
-  const PREV_SALE_RATE = Number(PREV_TOTAL_CHECKOUTS) / Number(PREV_TOTAL_SESSIONS);
+    console.log(top_sellers)
+
+
+    const cartRate = Math.round((Number(total_daily_carts ? total_daily_carts : 0) / Number(total_daily_sessions ? total_daily_sessions : 1))*1000) / 100;
+    const SALE_RATE = Math.round((Number(total_daily_orders ? total_daily_orders : 0) / Number(total_daily_sessions ? total_daily_sessions : 1))*1000) / 10;
+
+    const PREV_SALE_RATE = Number(prev_daily_checkouts ? prev_daily_checkouts : 0) / Number(prev_daily_new_sessions ? prev_daily_new_sessions : 1);
+
+    let T_AOV_DIFF = (Number(prev_daily_aov ? prev_daily_aov : 0) / Number(daily_aov ? daily_aov : 1));
+    T_AOV_DIFF = Number((T_AOV_DIFF));
+
 
     return (
         <div className={`${styles.col}`}>
@@ -79,8 +60,8 @@ export default function Daily() {
                             <Card
                                 card_type={"DEFAULT"}
                                 title='Sales Breakdown'
-                                header={numberFormat(Number(TOTAL_SALES))}
-                                subHeader={ T_SALES_DIFF > 0 ?  Number(T_SALES_DIFF) :  Number(T_SALES_DIFF) }>
+                                header={numberFormat(Number(total_daily_sales ? (total_daily_sales/100) : 0))}
+                                subHeader={  Number(daily_sales_rate ? daily_sales_rate : 0)}>
                                 <div className={styles.col}>
                                     <div className={`${styles.row}`}>
                                         <p style={{width: "50%", fontWeight: "100"}}>
@@ -95,18 +76,18 @@ export default function Daily() {
                                     </div>
                                     <div className={`${styles.row}`}>
                                     <p style={{width: "50%"}}>Online Store </p>
-                                    <p style={{width: "20%"}}>{TOTAL_ORDERS_ONLINE} orders</p>
-                                    <p style={{width: "20%"}}><b>{ numberFormat(Number(TOTAL_SALES_ONLINE)) }</b></p>
+                                    <p style={{width: "20%"}}>{total_online_orders ? total_online_orders : 0} orders</p>
+                                    <p style={{width: "20%"}}><b>{ numberFormat(Number(total_online_sales ? total_online_sales : 0)) }</b></p>
                                     </div>
                                     <div className={`${styles.row}`}>
                                     <p style={{width: "50%"}}>Funnels </p>
-                                    <p style={{width: "20%"}}>{TOTAL_ORDERS_FUNNELS} orders</p>
-                                    <p style={{width: "20%"}}><b>{numberFormat(Number(TOTAL_SALES_FUNNELS))}</b></p>
+                                    <p style={{width: "20%"}}>{total_funnel_orders ? total_funnel_orders : 0} orders</p>
+                                    <p style={{width: "20%"}}><b>{numberFormat(Number(total_funnel_sales ? total_funnel_sales : 0))}</b></p>
                                     </div>
                                     <div className={`${styles.row}`}>
                                     <p style={{width: "50%"}}>Tap Cart </p>
-                                    <p style={{width: "20%"}}>{TOTAL_ORDERS_TAPCART} orders</p>
-                                    <p style={{width: "20%"}}><b>{numberFormat(Number(TOTAL_CHECKOUTS_TAPCART))}</b></p>
+                                    <p style={{width: "20%"}}>{0} orders</p>
+                                    <p style={{width: "20%"}}><b>{numberFormat(Number(0))}</b></p>
                                     </div>
                                 </div>
                             </Card>     
@@ -115,11 +96,11 @@ export default function Daily() {
                             <Card 
                                 card_type={"DEFAULT"}
                                 title='Average Order Value'
-                                header={numberFormat(Number(TOTAL_AOV))}
+                                header={numberFormat(Number(daily_aov ? (daily_aov /100) : 0))}
                                 subHeader={ T_AOV_DIFF > 0 ?  Number(T_AOV_DIFF) :  Number(T_AOV_DIFF) }>
                                 <div className={`${styles.col}`}>
                                     <div className={`${styles.row}`}>
-                                        <p>Total Orders: <b>{TOTAL_ORDERS}</b></p>
+                                        <p>Total Orders: <b>{total_daily_orders ? total_daily_orders : 0}</b></p>
                                     </div>
                                 </div>
                             </Card>
@@ -145,17 +126,17 @@ export default function Daily() {
                                 <div className={`${styles.row}`}>
                                 <p style={{width: "50%"}}>Total Sessions: </p>
                                 <p style={{width: "20%"}}>-</p>
-                                <p style={{width: "20%"}}><b>{TOTAL_SESSIONS}</b></p>
+                                <p style={{width: "20%"}}><b>{total_daily_sessions ? total_daily_sessions : 0}</b></p>
                                 </div>
                                 <div className={`${styles.row}`}>
                                 <p style={{width: "50%"}}>Total Carts: </p>
                                 <p style={{width: "20%"}}>{cartRate}%</p>
-                                <p style={{width: "20%"}}><b>{TOTAL_CARTS}</b></p>
+                                <p style={{width: "20%"}}><b>{total_daily_carts ? total_daily_carts : 0}</b></p>
                                 </div>
                                 <div className={`${styles.row}`}>
                                 <p style={{width: "50%"}}>Total Checkouts: </p>
-                                <p style={{width: "20%"}}>{SALE_RATE}%</p>
-                                <p style={{width: "20%"}}><b>{TOTAL_CHECKOUTS}</b></p>
+                                <p style={{width: "20%"}}>{daily_sales_rate ? daily_sales_rate : 0}%</p>
+                                <p style={{width: "20%"}}><b>{total_daily_checkouts ? total_daily_checkouts : 0}</b></p>
                                 </div>
                             </div>
                             </Card>
@@ -164,7 +145,7 @@ export default function Daily() {
 
                     <div style={{paddingTop: "1rem"}} className={`${styles.row} ${styles.mobileContainer} ${styles.analyticCard}`}>
                         <div className={`${styles.col} ${styles.oneThird}`}>
-                        <Card title='Viewed The Most' header={TOP_SELLERS[0].title}>
+                        <Card title='Viewed The Most' header={top_sellers && top_sellers[0].title}>
                             <div className={styles.col}>
                             <div style={{paddingTop: "1rem", alignItems: "flex-end"}} className={`${styles.row}`}>
                                 <p style={{width: "50%", fontWeight: "100"}}>
@@ -177,13 +158,13 @@ export default function Daily() {
                                     Total Orders
                                 </p>
                             </div>
-                            {TOP_SELLERS && TOP_SELLERS.map(product => {
+                            {top_sellers && top_sellers.map(product => {
                                 return (
-                                <div key={product.id} className={`${styles.row} ${styles.topSellers}`}>
+                                <div key={product.title} className={`${styles.row} ${styles.topSellers}`}>
                                     <Link href={`/products/${product.id}`} className={`${styles.row}`}>
                                         <p style={{width: "50%"}}>{product.title}</p>
-                                        <p style={{width: "20%"}}>{product.view_count}</p>
-                                        <p style={{width: "20%"}}><b>{product.order_count}</b></p>
+                                        <p style={{width: "20%"}}>{product.view_count ? product.view_count : 0}</p>
+                                        <p style={{width: "20%"}}><b>{product.total_orders ? product.total_orders : 0}</b></p>
                                     </Link>
                                 </div>
                                 )
@@ -213,3 +194,34 @@ export default function Daily() {
         </div>
     )
 }
+
+
+export const getServerSideProps: GetServerSideProps = async () => {
+    const url = "https://us-central1-impowered-funnel.cloudfunctions.net/funnel/analytics/daily";
+    const result = await impoweredRequest(url, "GET", {});
+
+    console.log(" ==> SERVER SIDE");
+    console.log(result);
+
+    if (!result) {
+        throw new Error("Product list error");
+    }
+
+    console.log(" ==> SERVER SIDE");
+    console.log(result);
+
+    let analytics = {} as Analytics;
+
+    if (result?.data) {
+        analytics = {...result?.data};
+    }
+
+    return {
+        props: {
+            daily: analytics
+        }
+    }
+}
+
+
+export default Daily;

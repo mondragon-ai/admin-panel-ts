@@ -8,43 +8,52 @@ import { numberFormat } from "../../../lib/helpers/formatters";
 import { deleteTag } from "../../../lib/helpers/tags";
 import { Product, ProductList, Variant } from "../../../lib/types/products";
 import styles from "../../../styles/Main.module.css";
+import { GetServerSideProps } from "next";
+import { impoweredRequest } from "../../../lib/helpers/requests";
+import { ParsedUrlQuery } from "querystring";
 
-const product: Product = {
-    title: "Desantis Land Hoodie",
-    status: true,
-    id: crypto.randomBytes(10).toString("hex"),
-    price: 6840,
-    collections: ["SALE", "Shirts"],
-    tags: ["VIP_ONLY"],
-    options: {
-        options1: ["Color", "Size"],
-        options2: ["Color", "Size"],
-        options3: ["Color", "Size"],
+// const product: Product = {
+//     title: "Desantis Land Hoodie",
+//     status: true,
+//     id: crypto.randomBytes(10).toString("hex"),
+//     price: 6840,
+//     collections: ["SALE", "Shirts"],
+//     tags: ["VIP_ONLY"],
+//     options: {
+//         options1: ["Color", "Size"],
+//         options2: ["Color", "Size"],
+//         options3: ["Color", "Size"],
 
-    },
-    quantity: 20,
-    description: "description here",
-    compare_at_price: 0,
-    weight: 0.5,
-    is_digital: false,
-    sell_overstock: true,
-    requires_shipping: false,
-    videos: [
-        {
-            id: "vid_" + crypto.randomBytes(10).toString("hex"),
-            url: "",
-            type: "YOUTUBE"
-        }
-    ],
-} as Product;
+//     },
+//     quantity: 20,
+//     description: "description here",
+//     compare_at_price: 0,
+//     weight: 0.5,
+//     is_digital: false,
+//     sell_overstock: true,
+//     requires_shipping: false,
+//     videos: [
+//         {
+//             id: "vid_" + crypto.randomBytes(10).toString("hex"),
+//             url: "",
+//             type: "YOUTUBE"
+//         }
+//     ],
+// } as Product;
 
 const t = [
     "VIP"
 ]
 
-export const ProductDetail = () => {
+export interface ProductDetailProp {
+    p: Product
+} 
 
-    const [p, setProduct] = useState({})
+export const ProductDetail: FunctionComponent<ProductDetailProp> = ({
+    p
+}) => {
+
+    const [product, setProduct] = useState(p)
     
     let [tags, setTags] = useState(t);
     const [tagText, setTagState] = useState("");
@@ -66,7 +75,7 @@ export const ProductDetail = () => {
             <main className={`${styles.col} ${styles.container}`}>
                 <div className={`${styles.row} ${styles.mobileContainer}`}>
                     <div className={`${styles.col} ${styles.oneThird}`}>
-                        <TagAdvanced setProduct={setProduct} setTags={setTags} setTagState={setTagState} tags={tags} />
+                        <TagAdvanced  product={product} setProduct={setProduct} setTags={setTags} setTagState={setTagState} tags={tags} />
                         <Card 
                             card_type="INFO"
                             title="Manage Images & Videos"
@@ -141,19 +150,21 @@ export const ProductDetail = () => {
                                                 }}
                                                 onChange={(e) => setProduct({
                                                     ...product,
-                                                    videos: {
-                                                        ...product.videos,
-                                                        id: "vid_" + crypto.randomBytes(10).toString("hex"),
-                                                        url: "",
-                                                        type: "YOUTUBE"
-                                                    }
+                                                    videos: [
+                                                        {
+                                                            ...product?.videos,
+                                                            id: "vid_" + crypto.randomBytes(10).toString("hex"),
+                                                            url: "",
+                                                            type: "YOUTUBE"
+                                                        }
+                                                    ]
                                                 })}
-                                                value={product.videos[0].id}
+                                                value={product?.videos && product?.videos[0].id}
                                                 type="text"
                                                 name="links" />
                                             <label style={{ 
-                                                top: product.videos[0].id  !== "" ? "-5px" : "", 
-                                                fontSize: product.videos[0].id  !== "" ? "10px" : ""}}>Video Link</label>
+                                                top:  product.videos && product.videos[0].id  !== "" ? "-5px" : "", 
+                                                fontSize: product.videos && product.videos[0].id  !== "" ? "10px" : ""}}>Video Link</label>
                                         </div>
                                         <div className={`${styles.col}`}>
                                             <p className={`${styles.links}`} style={{marginBottom: "1rem", fontSize: "0.9rem", color: "gray"}}>
@@ -168,7 +179,7 @@ export const ProductDetail = () => {
                     </div>
                     <div className={`${styles.col} ${styles.twoThird}`}
                         style={{padding: 0}}>
-                        <TitleDescription setProduct={setProduct} setTags={setTags} setTagState={setTagState} tags={tags} />
+                        <TitleDescription setProduct={setProduct} product={product} setTags={setTags} setTagState={setTagState} tags={tags} />
                         <OptionsVariants product={product} setProduct={setProduct} />
                     </div>
                 </div>
@@ -604,6 +615,7 @@ export const ProductVariantRow: FunctionComponent<VarRow> = ({variant}) => {
 
 export const TitleDescription: FunctionComponent<TagProps> = ({
     setProduct,
+    product
 }) => {
     return (
         <Card 
@@ -625,12 +637,12 @@ export const TitleDescription: FunctionComponent<TagProps> = ({
                                 ...product,
                                 title: e.target.value,
                             })}
-                            value={product.title}
+                            value={product?.title}
                             type="text"
                             name="title" />
                         <label style={{ 
-                            top: product.title != "" ? "-5px" : "", 
-                            fontSize: product.title != "" ? "10px" : ""}}>Title</label>
+                            top: product?.title != "" ? "-5px" : "", 
+                            fontSize: product?.title != "" ? "10px" : ""}}>Title</label>
                     </div>
                     <div className={`${styles.formItem} ${styles.row}`}>
                         <div className={`${styles.formItem} ${styles.row}`}
@@ -647,12 +659,12 @@ export const TitleDescription: FunctionComponent<TagProps> = ({
                                     ...product,
                                     price: e.target.value.replace("$", "").replace(".", "").replace(",", "")
                                 })}
-                                value={numberFormat(Number(product.price)/100)}
+                                value={numberFormat(Number(product?.price)/100)}
                                 type="text"
                                 name="price" />
                             <label style={{ 
-                                top: product.price > 0 ? "-5px" : "", 
-                                fontSize: product.price > 0 ? "10px" : ""}}>Price </label>
+                                top: product?.price && product?.price > 0 ? "-5px" : "", 
+                                fontSize: product?.price && product?.price > 0 ? "10px" : ""}}>Price </label>
                         </div>
                         <div className={`${styles.formItem} ${styles.row}`}
                             style={{
@@ -668,7 +680,7 @@ export const TitleDescription: FunctionComponent<TagProps> = ({
                                     ...product,
                                     compare_at_price: Number(e.target.value.replace("$", "").replace(".", "").replace(",", ""))
                                 })}
-                                value={numberFormat(Number(product.compare_at_price)/100)}
+                                value={numberFormat(Number(product?.compare_at_price)/100)}
                                 type="text"
                                 name="price" />
                             <label style={{ 
@@ -700,11 +712,11 @@ export const TitleDescription: FunctionComponent<TagProps> = ({
                                 ...product,
                                 description: e.target.value
                             })}
-                            value={product.description}
+                            value={product?.description}
                             name="title" />
                         <label style={{ 
-                            top: product.description != "" ? "-5px" : "", 
-                            fontSize: product.description != "" ? "10px" : ""}}>Title</label>
+                            top: product?.description != "" ? "-5px" : "", 
+                            fontSize: product?.description != "" ? "10px" : ""}}>Title</label>
                     </div>
                 </div>
                 <div className={`${styles.row}  ${styles.mobileContainer}`}
@@ -724,12 +736,12 @@ export const TitleDescription: FunctionComponent<TagProps> = ({
                                 ...product,
                                 quantity: Number(e.target.value)
                             })}
-                            value={product.quantity}
+                            value={product?.quantity}
                             type="number"
                             name="quantity" />
                         <label style={{ 
-                            top: product.quantity  > 0 ? "-5px" : "", 
-                            fontSize: product.quantity  > 0? "10px" : ""}}>Inventory</label>
+                            top: product?.quantity  && product?.quantity  > 0 ? "-5px" : "", 
+                            fontSize: product?.quantity && product?.quantity  > 0? "10px" : ""}}>Inventory</label>
                     </div>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
@@ -744,12 +756,12 @@ export const TitleDescription: FunctionComponent<TagProps> = ({
                                 ...product,
                                 weight: Number(e.target.value)
                             })}
-                            value={product.weight}
+                            value={product?.weight}
                             type="number"
                             name="weight" />
                         <label style={{ 
-                            top: product.weight && product.weight  > 0 ? "-5px" : "", 
-                            fontSize: product.weight && product.weight  > 0 ? "10px" : ""}}>Weight</label>
+                            top: product?.weight && product?.weight  > 0 ? "-5px" : "", 
+                            fontSize: product?.weight && product?.weight  > 0 ? "10px" : ""}}>Weight</label>
                     </div>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
@@ -792,6 +804,7 @@ export const TitleDescription: FunctionComponent<TagProps> = ({
         </Card>
     )
 }
+
 export const TagAdvanced: FunctionComponent<TagProps> = ({
     setProduct,
     product
@@ -916,6 +929,37 @@ export const TagAdvanced: FunctionComponent<TagProps> = ({
             </div>
         </Card>
     )
+}
+
+
+
+export const getServerSideProps: GetServerSideProps = async ({params}) => {
+    const { handle } = params as ParsedUrlQuery;
+    const url = "https://us-central1-impowered-funnel.cloudfunctions.net/funnel/products";
+    const result = await impoweredRequest(url, "POST", {product_uuid: handle});
+
+    console.log(" ==> SERVER SIDE");
+    console.log(handle);
+    console.log(result);
+
+    if (!result) {
+        throw new Error("Product list error");
+    }
+
+    console.log(" ==> SERVER SIDE");
+    console.log(result);
+
+    let products = [{}] as Product[];
+
+    if (result?.data) {
+        products = result?.data?.result[0]
+    }
+
+    return {
+        props: {
+            p: products
+        }
+    }
 }
 
 export default ProductDetail;

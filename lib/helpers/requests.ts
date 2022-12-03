@@ -6,12 +6,12 @@ export const impoweredRequest = async (
 
     let result = null;
 
-    if (method == "GET" || method == "") {
+    if (method == "GET") {
         const response = await fetch(url, {
-            method: method != "" ? method : "GET",
+            method: "GET",
             headers: {
                 "Content-Type": "application/json",
-                "impowered-api-key": "9izyr03rp1czh8gzmf7mpr9ecrkbqq"
+                "impowered-api-key": "19uq99myrxd6jmp19k5mygo5d461l0"
             }
         });
         result = await response.json();
@@ -20,7 +20,7 @@ export const impoweredRequest = async (
             method: method != "" ? method : "GET",
             headers: {
                 "Content-Type": "application/json",
-                "impowered-api-key": "9izyr03rp1czh8gzmf7mpr9ecrkbqq"
+                "impowered-api-key": "19uq99myrxd6jmp19k5mygo5d461l0"
             },
             body: JSON.stringify(data)
         });

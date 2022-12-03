@@ -2,10 +2,55 @@ import Image from "next/image";
 import { Card } from "../../components/ui/Card";
 import { DetailPageHeader } from "../../components/ui/headers/DetailPageHeader";
 import styles from "../../styles/Main.module.css";
+// import { InstantSearch, SearchBox } from 'react-instantsearch-hooks-web';
+import { algoliasearch } from "algoliasearch";
+import { useState } from "react";
+
+// const searchClient = algoliasearch('9HC6EQSC7S', '30f809d42b3e235fba496385670a313a');
+
+// Instantiate the client
+const client = algoliasearch('9HC6EQSC7S', 'de139a052d86174f4b708e160db11c4b');
+
+
 
 const name = "Obi Kanobi";
 
 export const CustomerDetail = () => {
+
+    const [query, setQuery] = useState<any>()
+    const [results, setResults] = useState<any>()
+
+    const updateSearch = async (v: string) => {
+        // Add a new record to your Algolia index
+        // const { taskID } = await client.saveObject({
+        //     indexName: '9HC6EQSC7S',
+        //     body: {
+        //         title: 'My Algolia Object',
+        //     },
+        // });
+        
+        // // Poll the task status to know when it has been indexed
+        // await client.waitForTask({ indexName: '9HC6EQSC7S', taskID });
+        setQuery(v);
+        
+        // Fetch search results
+        const { results } = await client.search({
+            requests: [
+            {
+                indexName: '9HC6EQSC7S',
+                // You can make typos, we handle it
+                query: query,
+                hitsPerPage: 50,
+            },
+            ],
+        });
+    
+        if (results[0].hits) {
+            setResults(results[0].hits);
+            console.log('[Results]', results[0].hits);
+        }
+    };
+  
     return (
         <div className={`${styles.col}`}>
         {/* Sub Header - page specific */}
@@ -77,7 +122,41 @@ export const CustomerDetail = () => {
                         </Card>
                     </div>
                     <div className={`${styles.col} ${styles.twoThird}`}>
-                        <h4>test</h4>
+
+                    <Card card_type="INFO"
+                        title="Manage Images & Videos"
+                        header={""}>
+                            <div className={`${styles.col}`}>
+                                <div className={`${styles.col}`}>
+
+                                    {/* TOP */}
+                                    <div className={`${styles.col}`}
+                                        style={{width: "100%",}}>
+                                        <div className={`${styles.row}`}>
+                                            <h3>Images</h3>
+                                        </div>
+                                        <div className={`${styles.col}`}>
+        
+                                        <div
+                                            className={`${styles.formItem} ${styles.row}`} >
+                                            <input
+                                                onChange={(e) => updateSearch(e.target.value)}
+                                                type="search"
+                                                name="search"
+                                                value={query}/>
+                                            <label style={{ 
+                                                top: query != "" ? "-5px" : "", 
+                                                fontSize: query != "" ? "10px" : ""}}>{` 🔍 Search Products` }</label>
+                                        </div>
+                                        </div>
+                                    </div>
+                                </div>  
+                            </div>
+                        </Card>
+
+                        {/* <InstantSearch searchClient={client} indexName="instant_search">
+                        <SearchBox />
+                        </InstantSearch> */}
                     </div>
                 </div>
             </main>

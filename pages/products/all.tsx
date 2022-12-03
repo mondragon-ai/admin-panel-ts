@@ -1,6 +1,6 @@
 import styles from "../../styles/Main.module.css";
 import AllItemHeader from "../../components/ui/headers/AllItemHeader";
-import { Dispatch, FunctionComponent, SetStateAction, useState } from "react";
+import { useState } from "react";
 import {
     faFilter,
 } from '@fortawesome/free-solid-svg-icons';
@@ -14,73 +14,79 @@ import {
 import { Product } from "../../lib/types/products";
 import Underline from "../../components/ui/Underline";
 import * as crypto from "crypto"
-import { filterActive, filterAll } from "../../lib/helpers/ActiveFilter";
+// import { filterActive, filterAll } from "../../lib/helpers/ActiveFilter";
 import { MainRowContainerHeader } from "../../components/ui/headers/MainRowContainerHeader";
+import { GetServerSideProps } from "next";
+import { impoweredRequest } from "../../lib/helpers/requests";
 
-const products: Product[] = [
-    {
-        title: "1776 Hoodie",
-        status: false,
-        id: crypto.randomBytes(10).toString("hex"),
-        price: 6840,
-        collections: ["SALE", "Shirts"],
-        tags: ["VIP_ONLY"],
-        options: {
-            options1: ["Color", "Size"],
-            options2: ["Color", "Size"],
-            options3: ["Color", "Size"],
+// const products: Product[] = [
+//     {
+//         title: "1776 Hoodie",
+//         status: false,
+//         id: crypto.randomBytes(10).toString("hex"),
+//         price: 6840,
+//         collections: ["SALE", "Shirts"],
+//         tags: ["VIP_ONLY"],
+//         options: {
+//             options1: ["Color", "Size"],
+//             options2: ["Color", "Size"],
+//             options3: ["Color", "Size"],
     
-        },
-        quantity: 20,
-        description: "description here",
-        compare_at_price: 0,
-        weight: 0.5,
-        is_digital: false,
-        sell_overstock: true,
-        requires_shipping: false,
-        videos: [
-            {
-                id: "vid_" + crypto.randomBytes(10).toString("hex"),
-                url: "",
-                type: "YOUTUBE"
-            }
-        ],
-    },
-    {
-        title: "1776 Hoodie",
-        status: false,
-        id: crypto.randomBytes(10).toString("hex"),
-        price: 6840,
-        collections: ["SALE", "Shirts"],
-        tags: ["VIP_ONLY"],
-        options: {
-            options1: ["Color", "Size"],
-            options2: ["Color", "Size"],
-            options3: ["Color", "Size"],
+//         },
+//         quantity: 20,
+//         description: "description here",
+//         compare_at_price: 0,
+//         weight: 0.5,
+//         is_digital: false,
+//         sell_overstock: true,
+//         requires_shipping: false,
+//         videos: [
+//             {
+//                 id: "vid_" + crypto.randomBytes(10).toString("hex"),
+//                 url: "",
+//                 type: "YOUTUBE"
+//             }
+//         ],
+//     },
+//     {
+//         title: "1776 Hoodie",
+//         status: false,
+//         id: crypto.randomBytes(10).toString("hex"),
+//         price: 6840,
+//         collections: ["SALE", "Shirts"],
+//         tags: ["VIP_ONLY"],
+//         options: {
+//             options1: ["Color", "Size"],
+//             options2: ["Color", "Size"],
+//             options3: ["Color", "Size"],
     
-        },
-        quantity: 20,
-        description: "description here",
-        compare_at_price: 0,
-        weight: 0.5,
-        is_digital: false,
-        sell_overstock: true,
-        requires_shipping: false,
-        videos: [
-            {
-                id: "vid_" + crypto.randomBytes(10).toString("hex"),
-                url: "",
-                type: "YOUTUBE"
-            }
-        ],
-    }
-]
+//         },
+//         quantity: 20,
+//         description: "description here",
+//         compare_at_price: 0,
+//         weight: 0.5,
+//         is_digital: false,
+//         sell_overstock: true,
+//         requires_shipping: false,
+//         videos: [
+//             {
+//                 id: "vid_" + crypto.randomBytes(10).toString("hex"),
+//                 url: "",
+//                 type: "YOUTUBE"
+//             }
+//         ],
+//     }
+// ]
 
 interface Prop {
     itemTxt: string
+    products: Product[],
+    size: number
 }
 
-export default function  AllProducts(props: Prop) {
+export default function AllProducts(props: Prop) {
+    const { products, size} = props;
+
     const [itemSearch, setItemSearch] = useState("");
     const [list, setProducts] = useState<any[]>(products);
     const [filterState, setFilter] = useState<"" | "INACTIVE" | "ACTIVE">("");
@@ -129,7 +135,7 @@ export default function  AllProducts(props: Prop) {
                             rowTwoLower={"Status"}
                             rowThree={"Collections"}
                             rowFour={"Tags"}/>
-                        {list && list.map((p) => {
+                        {size > 0 && list && list.map((p) => {
                             console.log(p.id);
                                 return (
                                     <div key={p.id} className={`${styles.col} ${styles.itemRow}`}>
@@ -146,3 +152,35 @@ export default function  AllProducts(props: Prop) {
         </div>
     )
 }
+
+export const getServerSideProps: GetServerSideProps = async () => {
+    const url = "https://us-central1-impowered-funnel.cloudfunctions.net/funnel/products";
+    const result = await impoweredRequest(url, "POST", {product_uuid: ""});
+
+    console.log(" ==> SERVER SIDE");
+    console.log(result);
+
+    if (!result) {
+        throw new Error("Product list error");
+    }
+
+    console.log(" ==> SERVER SIDE");
+    console.log(result);
+
+    let products = [{}] as Product[];
+    let size = 0;
+
+    if (result?.data) {
+        products = result?.data?.result,
+        size = result?.data?.size
+    }
+
+    return {
+        props: {
+            size: size,
+            products: products
+        }
+    }
+}
+
+// export default AllProducts;
