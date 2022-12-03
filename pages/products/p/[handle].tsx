@@ -248,7 +248,7 @@ export const OptionsVariants: FunctionComponent<TagProps> = ({
                     }}>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
-                            width: window.innerWidth > 720 ? "33%" : "100%",
+                            width: window?.innerWidth > 720 ? "33%" : "100%",
                             padding: "0 5px"
                         }}>
                         <input
@@ -264,7 +264,7 @@ export const OptionsVariants: FunctionComponent<TagProps> = ({
                     </div>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
-                            width: window.innerWidth > 720 ? "33%" : "100%",
+                            width: window?.innerWidth > 720 ? "33%" : "100%",
                             padding: "0 5px"
                         }}>
                         <input
@@ -290,11 +290,11 @@ export const OptionsVariants: FunctionComponent<TagProps> = ({
 
                 <div className={`${styles.row}  ${styles.mobileContainer}`}
                     style={{
-                        marginTop: window.innerWidth > 720 ? "1.5rem" : "",
+                        marginTop: window?.innerWidth > 720 ? "1.5rem" : "",
                     }}>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
-                            width: window.innerWidth > 720 ? "33%" : "100%",
+                            width: window?.innerWidth > 720 ? "33%" : "100%",
                             padding: "0 5px"
                         }}>
                         { 
@@ -324,11 +324,11 @@ export const OptionsVariants: FunctionComponent<TagProps> = ({
 
                 <div className={`${styles.row}  ${styles.mobileContainer} ${styles.optionsCol}`}
                     style={{
-                        marginTop: window.innerWidth > 720 ? "1.5rem" : "",
+                        marginTop: window?.innerWidth > 720 ? "1.5rem" : "",
                     }}>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
-                            width: window.innerWidth > 720 ? "33%" : "100%",
+                            width: window?.innerWidth > 720 ? "33%" : "100%",
                             padding: "0 5px"
                         }}>
                         <input
@@ -345,7 +345,7 @@ export const OptionsVariants: FunctionComponent<TagProps> = ({
                     </div>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
-                            width: window.innerWidth > 720 ? "33%" : "100%",
+                            width: window?.innerWidth > 720 ? "33%" : "100%",
                             padding: "0 5px"
                         }}>
                         <input
@@ -371,11 +371,11 @@ export const OptionsVariants: FunctionComponent<TagProps> = ({
 
                 <div className={`${styles.row}  ${styles.mobileContainer}`}
                     style={{
-                        marginTop:window.innerWidth > 720 ? "1.5rem" : "",
+                        marginTop:window?.innerWidth > 720 ? "1.5rem" : "",
                     }}>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
-                            width: window.innerWidth > 720 ? "33%" : "100%",
+                            width: window?.innerWidth > 720 ? "33%" : "100%",
                             padding: "0 5px"
                         }}>
                         { 
@@ -405,12 +405,12 @@ export const OptionsVariants: FunctionComponent<TagProps> = ({
 
                 <div className={`${styles.row}  ${styles.mobileContainer} ${styles.optionsCol}`}
                     style={{
-                        marginTop: window.innerWidth > 720 ? "1.5rem" : "",
+                        marginTop: window?.innerWidth > 720 ? "1.5rem" : "",
                     }}>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
-                            width: window.innerWidth > 720 ? "33%" : "100%",
-                            padding: window.innerWidth > 720 ? "0 5px" : ""
+                            width: window?.innerWidth > 720 ? "33%" : "100%",
+                            padding: window?.innerWidth > 720 ? "0 5px" : ""
                         }}>
                         <input
                             style={{
@@ -425,8 +425,8 @@ export const OptionsVariants: FunctionComponent<TagProps> = ({
                     </div>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
-                            width: window.innerWidth > 720 ? "33%" : "100%",
-                            padding: window.innerWidth > 720 ? "0 5px" : ""
+                            width: window?.innerWidth > 720 ? "33%" : "100%",
+                            padding: window?.innerWidth > 720 ? "0 5px" : ""
                         }}>
                         <input
                             style={{
@@ -442,7 +442,7 @@ export const OptionsVariants: FunctionComponent<TagProps> = ({
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
                             width: "33%",
-                            padding: window.innerWidth > 720 ? "0 5px" : ""
+                            padding: window?.innerWidth > 720 ? "0 5px" : ""
                         }}>
                         <p style={{padding: 0, width: "90%"}}>Option Three</p>
                         <div  style={{padding: 0, width: "10%"}} id=""> </div>
@@ -451,7 +451,7 @@ export const OptionsVariants: FunctionComponent<TagProps> = ({
 
                 <div className={`${styles.row}  ${styles.mobileContainer}`}
                     style={{
-                        marginTop: window.innerWidth > 720 ? "1.5rem" : "",
+                        marginTop: window?.innerWidth > 720 ? "1.5rem" : "",
                     }}>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
@@ -517,14 +517,14 @@ type VarRow = {
     variant: Variant
 }
 
-const width = window.innerWidth > 720 ? 100 : 300;
 
 export const ProductVariantRow: FunctionComponent<VarRow> = ({variant}) => {
+    const width = window?.innerWidth > 720 ? 100 : 300;
 
     return (
         <div className={`${styles.col}`}
                 style={{
-                    width:  window.innerWidth > 720 ? "100%" : "300%",
+                    width:  window?.innerWidth > 720 ? "100%" : "300%",
                 }}>
             <Underline width={width} />
             <div className={`${styles.row}`}
@@ -630,7 +630,7 @@ export const TitleDescription: FunctionComponent<TagProps> = ({
                 <div className={`${styles.row}  ${styles.mobileContainer}`}>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
-                            width: window.innerWidth > 720 ? "50%" : "100%",
+                            width: window?.innerWidth > 720 ? "50%" : "100%",
                             padding: "0 5px"
                         }}>
                         <input
@@ -729,7 +729,7 @@ export const TitleDescription: FunctionComponent<TagProps> = ({
                     }}>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
-                            width: window.innerWidth > 720 ? "33%" : "100%",
+                            width: window?.innerWidth > 720 ? "33%" : "100%",
                             padding: "0 5px"
                         }}>
                         <input
@@ -749,7 +749,7 @@ export const TitleDescription: FunctionComponent<TagProps> = ({
                     </div>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
-                            width: window.innerWidth > 720 ? "33%" : "100%",
+                            width: window?.innerWidth > 720 ? "33%" : "100%",
                             padding: "0 5px"
                         }}>
                         <input
@@ -769,7 +769,7 @@ export const TitleDescription: FunctionComponent<TagProps> = ({
                     </div>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
-                            width: window.innerWidth > 720 ? "33%" : "100%",
+                            width: window?.innerWidth > 720 ? "33%" : "100%",
                             padding: "0 5px"
                         }}>
                         <p style={{padding: 0, width: "90%"}}>Digital Product</p>
@@ -779,11 +779,11 @@ export const TitleDescription: FunctionComponent<TagProps> = ({
 
                 <div className={`${styles.row} ${styles.mobileContainer}`}
                     style={{
-                        marginTop: window.innerWidth > 720 ? "1.5rem" : "",
+                        marginTop: window?.innerWidth > 720 ? "1.5rem" : "",
                     }}>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
-                            width: window.innerWidth > 720 ? "33%" : "100%",
+                            width: window?.innerWidth > 720 ? "33%" : "100%",
                             padding: "0 5px"
                         }}>
                         <p style={{padding: 0, width: "90%"}}>Oversell Stock</p>
@@ -791,7 +791,7 @@ export const TitleDescription: FunctionComponent<TagProps> = ({
                     </div>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
-                            width: window.innerWidth > 720 ? "33%" : "100%",
+                            width: window?.innerWidth > 720 ? "33%" : "100%",
                             padding: "0 5px"
                         }}>
                         <p style={{padding: 0, width: "90%"}}>Requires Shipping</p>
@@ -799,7 +799,7 @@ export const TitleDescription: FunctionComponent<TagProps> = ({
                     </div>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
-                            width: window.innerWidth > 720 ? "33%" : "100%",
+                            width: window?.innerWidth > 720 ? "33%" : "100%",
                             padding: "0 5px"
                         }}>
                     </div>
@@ -860,7 +860,7 @@ export const TagAdvanced: FunctionComponent<TagProps> = ({
                     }}>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
-                            width: window.innerWidth > 720 ? "33%" : "100%",
+                            width: window?.innerWidth > 720 ? "33%" : "100%",
                             padding: "0 5px"
                         }}>
                         { 
@@ -908,7 +908,7 @@ export const TagAdvanced: FunctionComponent<TagProps> = ({
                     }}>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
-                            width: window.innerWidth > 720 ? "33%" : "100%",
+                            width: window?.innerWidth > 720 ? "33%" : "100%",
                             padding: "0 5px"
                         }}>
                         { 

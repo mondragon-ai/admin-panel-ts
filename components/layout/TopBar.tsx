@@ -29,7 +29,7 @@ export const TopBar: FunctionComponent<Props> = ({state, openState, toggleMenu})
     }
     return (
         <header className={`${styles.row} ${styles.topBar} `}>
-            <div className={`${styles.row} ${styles.topLeftMobile}`}>
+            <div className={`${styles.row} ${styles.topLeftMobile}`} style={{justifyContent: "space-evenly"}}>
                 <div onClick={() => toggleMenu(!openState)}><FontAwesomeIcon icon={faBars} /></div>
                 <div><Image src={URL} alt={"imPowered Logo"} width={50} height={35} /></div>
             </div>

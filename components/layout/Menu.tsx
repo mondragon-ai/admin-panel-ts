@@ -50,7 +50,7 @@ export const Menu: FunctionComponent<Props> = ({openState, toggleMenu}) => {
             className={`${styles.col} ${styles.sideBar} `} 
             style={{
                 marginLeft: window.innerWidth > 720 ?  "0" : !openState ?   "-600px" : "0",
-                height: window.innerHeight < 720 ? "" + (window.innerHeight + 600) + "px" : "" + (window.innerHeight) + "px",
+                height: window.innerWidth < 720 ? "" + (window.innerHeight + 600) + "px" : "" + (window.innerHeight) + "px",
                 minHeight: "" + window.innerHeight + "px",
             }}>
             <header className={`${styles.col} ${styles.topHeaderMobile}`}>
