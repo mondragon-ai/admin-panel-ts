@@ -1,16 +1,18 @@
 import Image from "next/image";
-import { FunctionComponent, useState } from "react";
+import { ChangeEvent, Dispatch, FunctionComponent, MouseEvent, SetStateAction, useEffect, useRef, useState } from "react";
 import { Card } from "../../../components/ui/Card";
 import * as crypto from "crypto";
 import { DetailPageHeader } from "../../../components/ui/headers/DetailPageHeader";
 import Underline from "../../../components/ui/Underline";
 import { numberFormat } from "../../../lib/helpers/formatters";
-import { deleteTag } from "../../../lib/helpers/tags";
+import { addTags, deleteTag } from "../../../lib/helpers/tags";
 import { Product, ProductList, Variant } from "../../../lib/types/products";
 import styles from "../../../styles/Main.module.css";
 import { GetServerSideProps } from "next";
 import { impoweredRequest } from "../../../lib/helpers/requests";
 import { ParsedUrlQuery } from "querystring";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import { storage } from "../../../lib/firebase";
 
 // const product: Product = {
 //     title: "Desantis Land Hoodie",
@@ -49,6 +51,323 @@ export interface ProductDetailProp {
     p: Product
 } 
 
+
+type Props = {
+    setProduct:  Dispatch<SetStateAction<Product>>,
+    product: Product,
+    navForm?: Dispatch<SetStateAction<string>>,
+    setTags?: Dispatch<SetStateAction<string[]>>,
+    setTagState?: Dispatch<SetStateAction<string>>,
+    tags?: string[],
+    setIndex?: Dispatch<SetStateAction<{
+        required: boolean;
+        complete: boolean;
+        active: boolean;
+        title: string;
+        step: string;
+    }[]>>,
+    steps?: {
+        required: boolean;
+        complete: boolean;
+        active: boolean;
+        title: string;
+        step: string;
+    }[],
+    state?: any;
+    checkboxes?: any;
+    setCheckboxes?: any;
+}
+
+export const MediaCard: FunctionComponent<Props> = ({
+    setProduct,
+    product,
+}) => {
+
+    const [image, setImage] = useState<File | string>("");
+    const [createObjURL, setCreateObjectURL] = useState<any>(null)
+    const [percent, setPercent] = useState<number>(0)
+
+    const [images, setImages] = useState<{url: string, alt?: string, id: string}[]>(product?.images);
+        
+
+    const uploadToClient = (event: ChangeEvent<HTMLInputElement | any>) => {
+      if (event.target.files && event.target.files[0]) {
+        const i = event.target.files[0];
+
+        console.log(" => Percent (start)");
+        console.log(percent)
+    
+        setImage(i);
+
+        let reset_imgs: {url: string, alt?: string, id: string}[] = [];
+        let uploaded = false
+
+        images.forEach(img => {
+            if (img.url === "" && !uploaded) {
+                setCreateObjectURL(URL.createObjectURL(i));
+                uploaded = true;
+                reset_imgs = [
+                    ...reset_imgs,
+                    {
+                        url: URL.createObjectURL(i),
+                        alt: "",
+                        id: "img_" + crypto.randomBytes(10).toString("hex")
+                    }
+                ]
+            } else {
+                reset_imgs = [
+                    ...reset_imgs,
+                    img
+                ]
+            }
+        });
+
+        setImages(reset_imgs);
+      }
+    };
+
+    useEffect(() => {
+
+        if (image !== "") {
+
+            console.log(" => Image (start)");
+            console.log(image)
+            setTimeout(() => uploadToServer(), 1000);
+        }
+
+    }, [image]);
+
+
+    const uploadToServer = async () => {
+        const body = new FormData();
+         body.append("file", image as File);
+
+
+         console.log(" => Image (inside)");
+         console.log(image)
+
+        if (image === undefined) {
+            alert("Please choose a file first!")
+            throw new Error("File not present");
+        } else {
+            const name = (image as File)?.name ? (image as File)?.name.replaceAll(" ", "_") : "" + crypto.randomBytes(10).toString("hex");
+
+
+
+            // call FB storage bucket
+            const storageRef = ref(storage, "/images/test/" + name);
+            console.log(" => S REf)");
+            console.log(storageRef)
+    
+            const uploadTask = uploadBytesResumable(storageRef, image as File);
+     
+            // 
+            uploadTask.on(
+                "state_changed",
+                (snapshot) => {
+                    const p = Math.round(
+                        (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+                    );
+         
+                    // update progress
+                    setPercent(p);
+                },
+                (err) => console.log(err),
+                () => {
+                    // download url
+                    getDownloadURL(uploadTask.snapshot.ref).then( async (url) => {
+                        console.log(url);
+                        const images = product?.images ? product?.images : [];
+                        const img_id = "img_" + crypto.randomBytes(10).toString("hex")
+                        setProduct({
+                            ...product,
+                            images: [
+                                ...images,
+                                {
+                                    id: img_id,
+                                    url: url,
+                                    alt: "test"
+                                }
+                            ]
+                        })
+                        setImages([
+                            ...images,
+                            {
+                                url: url,
+                                alt: "Test",
+                                id: img_id
+                            }
+                        ])
+                        setPercent(0);
+                    });
+                }
+            ); 
+        }
+    };
+
+
+
+    console.log(" => Percent (end)");
+    console.log(percent)
+
+    // log checks
+    console.log(" => Img to Upload");
+    console.log(storage);
+    
+    // // Order Tag State
+    // let [tags, setTags] = useState(t);
+    // const [tagText, setTagState] = useState("");
+  // Create a reference to the hidden file input element
+    let hiddenFileInput = useRef(null);
+    
+    // Programatically click the hidden file input element
+    // when the Button component is clicked
+    const handleClick = () => {
+        hiddenFileInput = hiddenFileInput?.current?.click();
+    };
+    return (
+        <Card 
+            card_type="INFO"
+            title="Media"
+            header={""}
+            product={product}
+            setProduct={setProduct}>
+            <div className={`${styles.col}`}>
+                <div className={`${styles.col}`}>
+
+                    {/* TOP */}
+                    <div className={`${styles.col}`}
+                        style={{ width:  "100%"}}>
+                        <div className={`${styles.row}`}>
+                            <h3>Images</h3>
+                        </div>
+                        <div className={`${styles.col}`}>
+                            <div className={`${styles.row}`} style={{
+                                margin: "1rem 0 0 0",
+                                height: "5px",
+                                borderRadius: "2px",
+                                width: `${percent}%`,
+                                background: "var(--accent)"}}></div>
+                            <div className={`${styles.row} ${styles.mobileContainer}`}
+                                    style={{padding: "1rem 0rem 0 0", height: "auto", width: "100%"}}>
+                                <div className={`${styles.col}`}
+                                    style={{
+                                        background: "",
+                                        height: "100%",
+                                        width: window.innerWidth > 720 ? "40%" : "100%",
+                                        padding: "1rem"}}>
+                                    <div className={`${styles.col}`}>
+                                        <input 
+                                            accept="image/*"
+                                            type="file"
+                                            ref={hiddenFileInput}
+                                            id="select-image"
+                                            style={{ display: "none" }}
+                                            name="myImage"
+                                            onChange={(e) => uploadToClient(e)} 
+                                        />
+                                        <div className={`${styles.col}`}
+                                            onClick={(e) => handleClick()}
+                                            style={{
+                                                width: "100%",
+                                                height: "200px",
+                                                border: "1px dotted var(--accent)",
+                                                borderRadius: "6px",
+                                                backgroundPosition: "center",
+                                                backgroundSize: "cover",
+                                                boxSizing: "border-box",
+                                                justifyContent: "center",
+                                                alignItems: "center",
+                                                textAlign: "center",
+                                                cursor: "pointer"}}
+                                            >
+                                            <p>Click Here to Uplaod Your Image</p>
+                                        </div>
+                                        {/* <ImageContainer images={images} /> */}
+                                        {/* {addImage ? <AddImage handle={handle} onChange={onChange} images={images} addImage={addImage} maxNumber toggleImg={toggleImg} />: null} */}
+                                    </div>
+                                </div>
+                                <div className={`${styles.row}`} style={{overflowX: "scroll"}}>
+                                    <div className={`${styles.row}`} style={{width: window.innerWidth > 720 ? "100%" : "150%"}}>
+                                        <div className={`${styles.row}`}
+                                            style={{
+                                                justifyContent: "space-between",
+                                                width: window.innerWidth > 720 ? "100%" : "150%",
+                                                padding: "1rem 0rem 1rem 0",
+                                                borderRadius: "6px"}}>
+                                            {
+                                                images && images.map((img, i) => {
+                                                    return (
+
+                                                            <div key={i} className={`${styles.col}`}
+                                                                style={{background: "", alignItems: "flex-start", borderRadius: "6px", padding: "0"}}>
+                                                                <Image 
+                                                                    style={{border: "0.4px solid var(--accent)", borderRadius: "6px"}}
+                                                                    src={img.url ? img.url : "https://boltagency.ca/content/images/2020/03/placeholder-images-product-1_large.png" } 
+                                                                    alt={img.alt as string}
+                                                                    width={window.innerWidth < 720 ? 100 : 200}
+                                                                    height={window.innerWidth < 720 ? 100 : 200} />
+                                                            </div>
+                                                    )
+                                                })
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* BOTTOM */}
+                    <div className={`${styles.col}`}
+                        style={{width: "100%",}}>
+                        <div className={`${styles.row}`}>
+                            <h3>Video Links</h3>
+                        </div>
+                        <div className={`${styles.formItem} ${styles.row} ${styles.mobileContainer}`}>
+                            <div className={`${styles.formItem} ${styles.row}`}
+                                style={{
+                                    width: "100%",
+                                    padding: "0px",
+                                    marginTop: "2rem"
+                                }}>
+                                <input
+                                    style={{
+                                        color: "white"
+                                    }}
+                                    onChange={(e) => setProduct({
+                                        ...product,
+                                        videos: [
+                                            ...product.videos,
+                                            {
+                                                id: "vid_" + crypto.randomBytes(10).toString("hex"),
+                                                url: "",
+                                                type: "YOUTUBE"
+                                            }
+                                        ]
+                                    })}
+                                    value={product.videos[0].id}
+                                    type="text"
+                                    name="links" />
+                                <label style={{ 
+                                    top: product.videos[0].id  !== "" ? "-5px" : "", 
+                                    fontSize: product.videos[0].id  !== "" ? "10px" : ""}}>Video Link</label>
+                            </div>
+                            <div className={`${styles.col}`} style={{marginTop: "1.8rem"}}>
+                                <p className={`${styles.links}`} style={{marginBottom: "1rem", fontSize: "0.9rem", color: "gray"}}>
+                                    https://www.youtube.com owjnwhebgkjwe rgkjw ekrjgb wke gk
+                                </p>
+                                <Underline width={100} />
+                            </div>
+                        </div>
+                    </div>
+                </div>  
+            </div>
+        </Card>
+    )
+}
+
 export const ProductDetail: FunctionComponent<ProductDetailProp> = ({
     p
 }) => {
@@ -57,6 +376,14 @@ export const ProductDetail: FunctionComponent<ProductDetailProp> = ({
     
     let [tags, setTags] = useState(t);
     const [tagText, setTagState] = useState("");
+
+
+    const [checkboxes, setCheckboxes] = useState({
+        is_digital: false,
+        sell_overstock: true,
+        requires_shipping: false
+    })
+
 
     const {
         title
@@ -76,111 +403,21 @@ export const ProductDetail: FunctionComponent<ProductDetailProp> = ({
                 <div className={`${styles.row} ${styles.mobileContainer}`}>
                     <div className={`${styles.col} ${styles.oneThird}`}>
                         <TagAdvanced  product={product} setProduct={setProduct} setTags={setTags} setTagState={setTagState} tags={tags} />
-                        <Card 
-                            card_type="INFO"
-                            title="Manage Images & Videos"
-                            header={""}>
-                            <div className={`${styles.col}`}>
-                                <div className={`${styles.col}`}>
-
-                                    {/* TOP */}
-                                    <div className={`${styles.col}`}
-                                        style={{width: "100%",}}>
-                                        <div className={`${styles.row}`}>
-                                            <h3>Images</h3>
-                                        </div>
-                                        <div className={`${styles.col}`}
-                                                style={{padding: "1rem 0rem 0 0", height: "auto",}}>
-                                            <div className={`${styles.col}`}
-                                                style={{background: "", height: "100%", width: "100%", padding: "1rem 0rem 1rem 0"}}>
-                                                <div className={`${styles.col}`}>
-                                                    FILE UPLOADER
-                                                </div>
-                                            </div>
-                                            <div className={`${styles.row}`}
-                                                style={{justifyContent: "space-between", width: "100%", padding: "1rem 0rem 1rem 0", borderRadius: "6px"}}>
-                                                <div className={`${styles.col}`}
-                                                    style={{background: "", alignItems: "flex-start", borderRadius: "6px", padding: "0"}}>
-                                                    <Image 
-                                                        style={{border: "0.4px solid var(--accent)", borderRadius: "6px"}}
-                                                        src={"https://boltagency.ca/content/images/2020/03/placeholder-images-product-1_large.png"} 
-                                                        alt=""
-                                                        width={100}
-                                                        height={100} />
-                                                </div>
-
-                                                <div className={`${styles.col}`}
-                                                    style={{background: "", alignItems: "center", padding: "0", borderRadius: "6px"}}>
-                                                    <Image 
-                                                        style={{border: "0.4px solid var(--accent)", borderRadius: "6px"}}
-                                                        src={"https://boltagency.ca/content/images/2020/03/placeholder-images-product-1_large.png"} 
-                                                        alt=""
-                                                        width={100}
-                                                        height={100} />
-                                                </div>
-
-                                                <div className={`${styles.col}`}
-                                                    style={{background: "", alignItems: "flex-end", borderRadius: "6px", padding: "0", }}>
-                                                    <Image 
-                                                        style={{border: "0.4px solid var(--accent)", borderRadius: "6px"}}
-                                                        src={"https://boltagency.ca/content/images/2020/03/placeholder-images-product-1_large.png"} 
-                                                        alt=""
-                                                        width={100}
-                                                        height={100} />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* BOTTOM */}
-                                    <div className={`${styles.col}`}
-                                        style={{width: "100%",}}>
-                                        <div className={`${styles.row}`}>
-                                            <h3>Video Links</h3>
-                                        </div>
-                                        <div className={`${styles.formItem} ${styles.row}`}
-                                            style={{
-                                                width: "100%",
-                                                padding: "0px",
-                                                marginTop: "2rem"
-                                            }}>
-                                            <input
-                                                style={{
-                                                    color: "white"
-                                                }}
-                                                onChange={(e) => setProduct({
-                                                    ...product,
-                                                    videos: [
-                                                        {
-                                                            ...product?.videos,
-                                                            id: "vid_" + crypto.randomBytes(10).toString("hex"),
-                                                            url: "",
-                                                            type: "YOUTUBE"
-                                                        }
-                                                    ]
-                                                })}
-                                                value={product?.videos && product?.videos[0].id}
-                                                type="text"
-                                                name="links" />
-                                            <label style={{ 
-                                                top:  product.videos && product.videos[0].id  !== "" ? "-5px" : "", 
-                                                fontSize: product.videos && product.videos[0].id  !== "" ? "10px" : ""}}>Video Link</label>
-                                        </div>
-                                        <div className={`${styles.col}`}>
-                                            <p className={`${styles.links}`} style={{marginBottom: "1rem", fontSize: "0.9rem", color: "gray"}}>
-                                                https://www.youtube.com owjnwhebgkjwe rgkjw ekrjgb wke gk
-                                            </p>
-                                            <Underline width={100} />
-                                        </div>
-                                    </div>
-                                </div>  
-                            </div>
-                        </Card>
+                        <MediaCard product={product} setProduct={setProduct} />
                     </div>
                     <div className={`${styles.col} ${styles.twoThird}`}
                         style={{padding: 0}}>
-                        <TitleDescription setProduct={setProduct} product={product} setTags={setTags} setTagState={setTagState} tags={tags} />
-                        <OptionsVariants product={product} setProduct={setProduct} />
+                        <TitleDescription 
+                            setProduct={setProduct}
+                            product={product}
+                            setTags={setTags}
+                            setTagState={setTagState}
+                            tags={tags}
+                            checkboxes={checkboxes}
+                            setCheckboxes={setCheckboxes}  />
+                        <OptionsVariants
+                            product={product}
+                            setProduct={setProduct} />
                     </div>
                 </div>
             </main>
@@ -198,49 +435,36 @@ type TagProps = {
 }
 
 
-export const OptionsVariants: FunctionComponent<TagProps> = ({
+
+export const OptionsVariants: FunctionComponent<Props> = ({
+    setProduct,
     product,
-    setProduct
+    navForm,
+    setIndex,
+    steps,
+    state
 }) => {
     
     
-    // Order Tag State
-    let [tags, setTags] = useState<{
-        tags: string[],
-        collections: string[]
-    }>({
-        tags: [],
-        collections: []
-    });
     const [tagText, setTagState] = useState<{
-        tags: string,
-        collections: string
+        options1: string,
+        options2: string,
+        options3: string
     }>({
-        tags: "",
-        collections: ""
+        options1: "",
+        options2: "",
+        options3: ""
     });
-
-    const updateProductState = () => {
-        setProduct({
-            ...product,
-
-        })
-    }
-    const [variants, setVariants] = useState([
-        {
-            id: "var_" + crypto.randomBytes(10).toString('hex'),
-            title: "hoodie",
-
-        }
-    ]);
 
     return (
         <>
         <Card 
             card_type="INFO"
-            title="Options"
+            title="Options & Variants"
             header={""}
-            next={"OPTIONS"}>
+            state={state}
+            product={product}
+            setProduct={setProduct}>
             <div className={`${styles.col}`}>
                 <div className={`${styles.row}  ${styles.mobileContainer} ${styles.optionsCol}`}
                     style={{
@@ -248,35 +472,44 @@ export const OptionsVariants: FunctionComponent<TagProps> = ({
                     }}>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
-                            width: window?.innerWidth > 720 ? "33%" : "100%",
+                            width: window.innerWidth > 720 ? "33%" : "100%",
                             padding: "0 5px"
                         }}>
                         <input
                             style={{
                                 color: "white"
                             }}
-                            value={""}
-                            type="text"
-                            name="options1" />
+                            id={"options1"}
+                            onKeyDown={(e) => addTags(e, product?.option1 as string, setProduct, setTagState, product, tagText)}
+                            onChange={(e) => setTagState({
+                                ...tagText,
+                                options1: e.target.value
+                            })}
+                            value={tagText.options1}
+                            type="text"/>
                         <label style={{ 
-                            top: product?.quantity && product?.quantity > 0 ? "-5px" : "", 
-                            fontSize: product?.quantity  && product?.quantity > 0? "10px" : ""}}>Options</label>
+                            top: tagText.options1 && tagText.options1 !== "" ? "-5px" : "", 
+                            fontSize: tagText.options1 && tagText.options1 !== "" ? "10px" : ""}}>Options</label>
                     </div>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
-                            width: window?.innerWidth > 720 ? "33%" : "100%",
+                            width: window.innerWidth > 720 ? "33%" : "100%",
                             padding: "0 5px"
                         }}>
                         <input
                             style={{
                                 color: "white"
                             }}
-                            value={product?.weight}
+                            onChange={(e) => setProduct({
+                                ...product,
+                                option1: e.target.value
+                            })}
+                            value={product?.option1}
                             type="text"
                             name="options1" />
                         <label style={{ 
-                            top: product?.weight && product?.weight > 0 ? "-5px" : "", 
-                            fontSize: product?.weight && product?.weight > 0 ? "10px" : ""}}>Option Name</label>
+                            top: product?.option1 && product?.option1 !== "" ? "-5px" : "", 
+                            fontSize: product?.option1 && product?.option1 !== "" ? "10px" : ""}}>Option Name</label>
                     </div>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
@@ -289,20 +522,20 @@ export const OptionsVariants: FunctionComponent<TagProps> = ({
                 </div>
 
                 <div className={`${styles.row}  ${styles.mobileContainer}`}
-                    style={{
-                        marginTop: window?.innerWidth > 720 ? "1.5rem" : "",
-                    }}>
+                    style={{ marginTop: window.innerWidth > 720 ? "1.5rem" : "" }}>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
-                            width: window?.innerWidth > 720 ? "33%" : "100%",
+                            justifyContent: "flex-start",
+                            width: window.innerWidth > 720 ? "33%" : "100%",
                             padding: "0 5px"
                         }}>
                         { 
-                            tags && tags.collections.length > 0 ?  tags.collections.map(v => {
+                            product.options.options1 && product.options.options1.length > 0 ?  product.options.options1.map(v => {
                             return <p 
                                 key={v}
-                                id={"tags"}
-                                onClick={(e) => deleteTag(e, v, setTags, setTagState, product as Product, tagText)}
+                                id={"options1"}
+                                style={{marginRight: "0.5rem" }} 
+                                onClick={(e) => deleteTag(e, v, setProduct, setTagState, product, tagText)}
                                 className={`${styles.tagItem}`}>{v} <b>x</b> </p> 
                             }) : null
                         }
@@ -314,51 +547,57 @@ export const OptionsVariants: FunctionComponent<TagProps> = ({
                         }}>
                         {<p style={{padding: 0, width: "90%"}}></p>}
                     </div>
+
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
                             width: "33%",
                             padding: "0 5px"
                         }}>
                     </div>
+
                 </div>
 
                 <div className={`${styles.row}  ${styles.mobileContainer} ${styles.optionsCol}`}
-                    style={{
-                        marginTop: window?.innerWidth > 720 ? "1.5rem" : "",
-                    }}>
+                    style={{ marginTop: window.innerWidth > 720 ? "1.5rem" : "" }}>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
-                            width: window?.innerWidth > 720 ? "33%" : "100%",
+                            width: window.innerWidth > 720 ? "33%" : "100%",
                             padding: "0 5px"
                         }}>
-                        <input
-                            style={{
-                                color: "white"
-                            }}
-                            // onChange={(e) => }
-                            value={product?.quantity}
+                        <input style={{ color: "white"}}
+                            id={"options2"}
+                            onKeyDown={(e) => addTags(e, product?.option2 as string, setProduct, setTagState, product, tagText)}
+                            onChange={(e) => setTagState({
+                                ...tagText,
+                                options2: e.target.value
+                            })}
+                            value={tagText.options2}
                             type="text"
                             name="options2" />
                         <label style={{ 
-                            top: product?.quantity && product?.quantity  > 0 ? "-5px" : "", 
-                            fontSize: product?.quantity && product?.quantity > 0? "10px" : ""}}>Options</label>
+                            top: product?.option2 && product?.option2 !== "" ? "-5px" : "", 
+                            fontSize: product?.option2 && product?.option2 !== "" ? "10px" : ""}}>Options</label>
                     </div>
+
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
-                            width: window?.innerWidth > 720 ? "33%" : "100%",
+                            width: window.innerWidth > 720 ? "33%" : "100%",
                             padding: "0 5px"
                         }}>
                         <input
-                            style={{
-                                color: "white"
-                            }}
-                            value={product?.weight}
+                            style={{ color: "white" }}
+                            onChange={(e) => setProduct({
+                                ...product,
+                                option2: e.target.value
+                            })}
+                            value={product?.option2}
                             type="text"
                             name="option2" />
                         <label style={{ 
-                            top: product?.weight && product?.weight  > 0 ? "-5px" : "", 
-                            fontSize: product?.weight && product?.weight  > 0 ? "10px" : ""}}>Option Name</label>
+                            top: product?.option2 && product?.option2 !== "" ? "-5px" : "", 
+                            fontSize: product?.option2 && product?.option2 !== "" ? "10px" : ""}}>Option Name</label>
                     </div>
+
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
                             width: "33%",
@@ -367,23 +606,24 @@ export const OptionsVariants: FunctionComponent<TagProps> = ({
                         <p style={{padding: 0, width: "90%"}}>Option Two</p>
                         <div  style={{padding: 0, width: "10%"}} id=""> </div>
                     </div>
+
                 </div>
 
                 <div className={`${styles.row}  ${styles.mobileContainer}`}
-                    style={{
-                        marginTop:window?.innerWidth > 720 ? "1.5rem" : "",
-                    }}>
+                    style={{ marginTop:window.innerWidth > 720 ? "1.5rem" : "" }}>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
-                            width: window?.innerWidth > 720 ? "33%" : "100%",
+                            justifyContent: "flex-start",
+                            width: window.innerWidth > 720 ? "33%" : "100%",
                             padding: "0 5px"
                         }}>
                         { 
-                            tags && tags.tags.length > 0 ?  tags.tags.map(v => {
+                            product.options.options2 && product.options.options2.length > 0 ?  product.options.options2.map(v => {
                             return <p 
                                 key={v}
-                                id={"tags"}
-                                onClick={(e) => deleteTag(e, v, setTags, setTagState, product as Product, tagText)}
+                                id={"options2"}
+                                style={{marginRight: "0.5rem" }} 
+                                onClick={(e) => deleteTag(e, v, setProduct, setTagState, product, tagText)}
                                 className={`${styles.tagItem}`}>{v} <b>x</b> </p> 
                             }) : null
                         }
@@ -395,6 +635,7 @@ export const OptionsVariants: FunctionComponent<TagProps> = ({
                         }}>
                         {<p style={{padding: 0, width: "90%"}}></p>}
                     </div>
+
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
                             width: "33%",
@@ -404,45 +645,48 @@ export const OptionsVariants: FunctionComponent<TagProps> = ({
                 </div>
 
                 <div className={`${styles.row}  ${styles.mobileContainer} ${styles.optionsCol}`}
-                    style={{
-                        marginTop: window?.innerWidth > 720 ? "1.5rem" : "",
-                    }}>
+                    style={{ marginTop: window.innerWidth > 720 ? "1.5rem" : "" }}>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
-                            width: window?.innerWidth > 720 ? "33%" : "100%",
-                            padding: window?.innerWidth > 720 ? "0 5px" : ""
+                            width: window.innerWidth > 720 ? "33%" : "100%",
+                            padding: window.innerWidth > 720 ? "0 5px" : ""
                         }}>
                         <input
                             style={{
                                 color: "white"
                             }}
-                            value={product?.quantity}
-                            type="text"
-                            name="options3" />
-                        <label style={{ 
-                            top: product?.quantity && product?.quantity > 0 ? "-5px" : "", 
-                            fontSize: product?.quantity && product?.quantity > 0? "10px" : ""}}>Options</label>
-                    </div>
-                    <div className={`${styles.formItem} ${styles.row}`}
-                        style={{
-                            width: window?.innerWidth > 720 ? "33%" : "100%",
-                            padding: window?.innerWidth > 720 ? "0 5px" : ""
-                        }}>
-                        <input
-                            style={{
-                                color: "white"
-                            }}
-                            value={product?.weight }
+                            id="options3" 
+                            onKeyDown={(e) => addTags(e, product?.option3 as string, setProduct, setTagState, product, tagText)}
+                            onChange={(e) => setTagState({
+                                ...tagText,
+                                options3: e.target.value
+                            })}
+                            value={product?.option3}
                             type="text"
                             name="option3" />
                         <label style={{ 
-                            top: product?.weight  && product?.weight  > 0 ? "-5px" : "", 
-                            fontSize: product?.weight && product?.weight  > 0 ? "10px" : ""}}>Option Name</label>
+                            top: product?.option3 && product?.option3 !== "" ? "-5px" : "", 
+                            fontSize: product?.option3 && product?.option3 !== "" ? "10px" : ""}}>Options</label>
+                    </div>
+                    <div className={`${styles.formItem} ${styles.row}`}
+                        style={{
+                            width: window.innerWidth > 720 ? "33%" : "100%",
+                            padding: window.innerWidth > 720 ? "0 5px" : ""
+                        }}>
+                        <input
+                            style={{
+                                color: "white"
+                            }}
+                            value={product?.option3 }
+                            type="text" />
+                        <label style={{ 
+                            top: product?.option3 && product?.option3 !== "" ? "-5px" : "", 
+                            fontSize: product?.option3 && product?.option3 !== "" ? "10px" : ""}}>Option Name</label>
                     </div>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
                             width: "33%",
-                            padding: window?.innerWidth > 720 ? "0 5px" : ""
+                            padding: window.innerWidth > 720 ? "0 5px" : ""
                         }}>
                         <p style={{padding: 0, width: "90%"}}>Option Three</p>
                         <div  style={{padding: 0, width: "10%"}} id=""> </div>
@@ -451,19 +695,21 @@ export const OptionsVariants: FunctionComponent<TagProps> = ({
 
                 <div className={`${styles.row}  ${styles.mobileContainer}`}
                     style={{
-                        marginTop: window?.innerWidth > 720 ? "1.5rem" : "",
+                        marginTop: window.innerWidth > 720 ? "1.5rem" : "",
                     }}>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
+                            justifyContent: "flex-start",
                             width: "33%",
                             padding: "0 5px"
                         }}>
                         { 
-                            tags && tags.tags.length > 0 ?  tags.tags.map(v => {
+                            product.options.options3 && product.options.options3.length > 0 ?  product.options.options3.map(v => {
                             return <p 
                                 key={v}
-                                id={"tags"}
-                                onClick={(e) => deleteTag(e, v, setTags, setTagState, product as Product, tagText)}
+                                id={"options3"}
+                                style={{marginRight: "0.5rem" }} 
+                                onClick={(e) => deleteTag(e, v, setProduct, setTagState, product, tagText)}
                                 className={`${styles.tagItem}`}>{v} <b>x</b> </p> 
                             }) : null
                         }
@@ -490,10 +736,10 @@ export const OptionsVariants: FunctionComponent<TagProps> = ({
             title="Variants"
             header={""}
             next={"OPTIONS"}>
-            <div className={`${styles.col}`} style={{overflowX: "scroll"}}>
-                <div className={`${styles.col}`} >
+            <div className={`${styles.col}`} style={{overflowY: "hidden",overflowX: "scroll"}}>
+                <div className={`${styles.col}`} style={{width: window.innerWidth > 720 ? "100%" : "110%"}}>
                     {
-                        product?.variants && product?.variants.map(v => {
+                        product.variants && product.variants.map(v => {
                             return (
                                 <div key={v.variant_id} className={`${styles.col}`}
                                     style={{
@@ -508,8 +754,8 @@ export const OptionsVariants: FunctionComponent<TagProps> = ({
                 </div>
             </div>
         </Card>
+       </>
         
-        </>
     )
 }
 
@@ -617,9 +863,11 @@ export const ProductVariantRow: FunctionComponent<VarRow> = ({variant}) => {
     )
 }
 
-export const TitleDescription: FunctionComponent<TagProps> = ({
+export const TitleDescription: FunctionComponent<Props> = ({
     setProduct,
-    product
+    product,
+    checkboxes,
+    setCheckboxes
 }) => {
     return (
         <Card 
@@ -630,7 +878,7 @@ export const TitleDescription: FunctionComponent<TagProps> = ({
                 <div className={`${styles.row}  ${styles.mobileContainer}`}>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
-                            width: window?.innerWidth > 720 ? "50%" : "100%",
+                            width: window.innerWidth > 720 ? "50%" : "100%",
                             padding: "0 5px"
                         }}>
                         <input
@@ -639,7 +887,7 @@ export const TitleDescription: FunctionComponent<TagProps> = ({
                             }}
                             onChange={(e) => setProduct({
                                 ...product,
-                                title: e.target.value,
+                                title: e.target.value
                             })}
                             value={product?.title}
                             type="text"
@@ -661,7 +909,7 @@ export const TitleDescription: FunctionComponent<TagProps> = ({
                                 }}
                                 onChange={(e) => setProduct({
                                     ...product,
-                                    price: e.target.value.replace("$", "").replace(".", "").replace(",", "")
+                                    price: Number(e.target.value.replace("$", "").replace(".", "").replace(",", ""))
                                 })}
                                 value={numberFormat(Number(product?.price)/100)}
                                 type="text"
@@ -688,8 +936,8 @@ export const TitleDescription: FunctionComponent<TagProps> = ({
                                 type="text"
                                 name="price" />
                             <label style={{ 
-                                top: product?.compare_at_price  && product?.compare_at_price > 0 ? "-5px" : "", 
-                                fontSize: product?.compare_at_price  && product?.compare_at_price > 0 ? "10px" : ""}}>Compare at Price </label>
+                                top: product?.compare_at_price && product?.compare_at_price > 0 ? "-5px" : "", 
+                                fontSize: product?.compare_at_price && product?.compare_at_price > 0 ? "10px" : ""}}>Compare at Price </label>
                         </div>
                     </div>
                 </div>
@@ -717,10 +965,10 @@ export const TitleDescription: FunctionComponent<TagProps> = ({
                                 description: e.target.value
                             })}
                             value={product?.description}
-                            name="title" />
+                            name="description" />
                         <label style={{ 
                             top: product?.description != "" ? "-5px" : "", 
-                            fontSize: product?.description != "" ? "10px" : ""}}>Title</label>
+                            fontSize: product?.description != "" ? "10px" : ""}}>Description</label>
                     </div>
                 </div>
                 <div className={`${styles.row}  ${styles.mobileContainer}`}
@@ -729,7 +977,7 @@ export const TitleDescription: FunctionComponent<TagProps> = ({
                     }}>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
-                            width: window?.innerWidth > 720 ? "33%" : "100%",
+                            width: window.innerWidth > 720 ? "33%" : "100%",
                             padding: "0 5px"
                         }}>
                         <input
@@ -744,12 +992,12 @@ export const TitleDescription: FunctionComponent<TagProps> = ({
                             type="number"
                             name="quantity" />
                         <label style={{ 
-                            top: product?.quantity  && product?.quantity  > 0 ? "-5px" : "", 
+                            top: product?.quantity && product?.quantity  > 0 ? "-5px" : "", 
                             fontSize: product?.quantity && product?.quantity  > 0? "10px" : ""}}>Inventory</label>
                     </div>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
-                            width: window?.innerWidth > 720 ? "33%" : "100%",
+                            width: window.innerWidth > 720 ? "33%" : "100%",
                             padding: "0 5px"
                         }}>
                         <input
@@ -764,42 +1012,76 @@ export const TitleDescription: FunctionComponent<TagProps> = ({
                             type="number"
                             name="weight" />
                         <label style={{ 
-                            top: product?.weight && product?.weight  > 0 ? "-5px" : "", 
-                            fontSize: product?.weight && product?.weight  > 0 ? "10px" : ""}}>Weight</label>
+                            top: product?.weight && product.weight  > 0 ? "-5px" : "", 
+                            fontSize: product?.weight && product.weight  > 0 ? "10px" : ""}}>Weight</label>
                     </div>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
-                            width: window?.innerWidth > 720 ? "33%" : "100%",
+                            width: window.innerWidth > 720 ? "33%" : "100%",
                             padding: "0 5px"
                         }}>
                         <p style={{padding: 0, width: "90%"}}>Digital Product</p>
-                        <div  style={{padding: 0, width: "10%"}} id=""> </div>
+                        <div className={`${styles.formItem} ${styles.row}`}
+                            style={{padding: 0, width: "10%"}} id="">
+                            <div onClick={() => setCheckboxes({...checkboxes, is_digital: !checkboxes.is_digital}) as Dispatch<any>}
+                                style={{
+                                background: checkboxes.is_digital ? "white" : "red",
+                                height: "15px",
+                                width: "15px",
+                                borderRadius: "2px",
+                                border: checkboxes.is_digital ? "0.5px solid red" : "0.5px solid white"
+                            }} id="">
+                                <div></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 <div className={`${styles.row} ${styles.mobileContainer}`}
                     style={{
-                        marginTop: window?.innerWidth > 720 ? "1.5rem" : "",
+                        marginTop: window.innerWidth > 720 ? "1.5rem" : "",
                     }}>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
-                            width: window?.innerWidth > 720 ? "33%" : "100%",
+                            width: window.innerWidth > 720 ? "33%" : "100%",
                             padding: "0 5px"
                         }}>
                         <p style={{padding: 0, width: "90%"}}>Oversell Stock</p>
-                        <div  style={{padding: 0, width: "10%"}} id=""></div>
+                        <div  style={{padding: 0, width: "10%"}} id="">
+                            <div onClick={() => setCheckboxes({...checkboxes, sell_overstock: !checkboxes.sell_overstock}) as Dispatch<any>}
+                                style={{
+                                background: checkboxes.sell_overstock ? "white" : "red",
+                                height: "15px",
+                                width: "15px",
+                                borderRadius: "2px",
+                                border: checkboxes.sell_overstock ? "0.5px solid red" : "0.5px solid white"
+                            }} id="">
+                                <div></div>
+                            </div>
+                        </div>
                     </div>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
-                            width: window?.innerWidth > 720 ? "33%" : "100%",
+                            width: window.innerWidth > 720 ? "33%" : "100%",
                             padding: "0 5px"
                         }}>
                         <p style={{padding: 0, width: "90%"}}>Requires Shipping</p>
-                        <div  style={{padding: 0, width: "10%"}} id=""> </div>
+                        <div  style={{padding: 0, width: "10%"}} id="">
+                            <div onClick={() => setCheckboxes({...checkboxes, requires_shipping: !checkboxes.requires_shipping}) as Dispatch<any>}
+                                style={{
+                                background: checkboxes.requires_shipping ? "white" : "red",
+                                height: "15px",
+                                width: "15px",
+                                borderRadius: "2px",
+                                border: checkboxes.requires_shipping ? "0.5px solid red" : "0.5px solid white"
+                            }} id="">
+                                <div></div>
+                            </div>
+                        </div>
                     </div>
                     <div className={`${styles.formItem} ${styles.row}`}
                         style={{
-                            width: window?.innerWidth > 720 ? "33%" : "100%",
+                            width: window.innerWidth > 720 ? "33%" : "100%",
                             padding: "0 5px"
                         }}>
                     </div>

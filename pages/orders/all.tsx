@@ -1,14 +1,5 @@
 import styles from "../../styles/Main.module.css";
 
-// export const AllOrders = () => {
-//     return (
-//         <div className={`${styles.col}`}>
-//             hello
-//         </div>
-//     );
-// }
-
-// export default AllOrders;
 
 import AllItemHeader from "../../components/ui/headers/AllItemHeader";
 import { FunctionComponent, useState } from "react";
@@ -17,39 +8,16 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-    ProductContainerRow
-} from "../../components/ui/rows/ProductContainerRow";
-import {
     ItemContainerHeader
 } from "../../components/ui/headers/ItemContainerHeader";
 import Underline from "../../components/ui/Underline";
 import * as crypto from "crypto"
 import { MainRowContainerHeader } from "../../components/ui/headers/MainRowContainerHeader";
 import { MainRowContainer } from "../../components/ui/rows/MainRowContainer";
-import { Orders } from "../../lib/types/orders";
-
-const orders: Orders[] = [
-    {
-        title: "#SH-912398982",
-        status: false,
-        id: crypto.randomBytes(10).toString("hex"),
-        total_price: "$29.94",
-        tags: ["SALE", "Shirts"],
-        email: "allMight@gobigly.com",
-        first_name: "All",
-        last_name: "Might",
-    },
-    {
-        title: "#SH-92834592454",
-        status: true,
-        id: crypto.randomBytes(10).toString("hex"),
-        total_price: "$164.91",
-        tags: ["VIP_ONLY", "CLICK_FUNNEL"],
-        email: "allMight@gobigly.com",
-        first_name: "All",
-        last_name: "Might",
-    }
-]
+import { Order } from "../../lib/types/orders";
+import { GetServerSideProps } from "next";
+import { impoweredRequest } from "../../lib/helpers/requests";
+import { numberFormat } from "../../lib/helpers/formatters";
 
 const cols = [
     {
@@ -75,10 +43,13 @@ const cols = [
 ]
 
 interface Prop {
-    itemTxt: string
+    itemTxt: string,
+    orders: Order[],
+    size: number
 }
 
 export default function  AllOrders(props: Prop) {
+    const { orders, size} = props;
     const [itemSearch, setItemSearch] = useState("");
     const [list, setOrders] = useState<any[]>(orders);
     const [filterState, setFilter] = useState<"" | "INACTIVE" | "ACTIVE">("");
@@ -127,20 +98,20 @@ export default function  AllOrders(props: Prop) {
                             rowTwoLower={"Fullfilment Status"}
                             rowThree={"Email"}
                             rowFour={"Tags"}/>
-                        {list && list.map((p: Orders) => {
-                            console.log(p.id);
+                        {list && list.map((p: Order) => {
+                            console.log(p);
                                 return (
                                     <div key={p.id} className={`${styles.col} ${styles.itemRow}`}>
                                         <Underline width={100} />
                                         <MainRowContainer
                                             href={`/orders/o/${p.id}`} 
-                                            id={p.id}
-                                            colOneTop={p.title}
-                                            colOneBottom={p.first_name + " " + p.last_name}
-                                            colTwoTop={Number(p.total_price) /100}
-                                            colTwoBottom={p.status}
-                                            colThree={p.email}
-                                            colFour={p.tags} />
+                                            id={p.id as string}
+                                            colOneTop={p.order_name as string}
+                                            colOneBottom={p.first_name as string + " " + p.last_name as string}
+                                            colTwoTop={numberFormat(Number(p?.current_total_price ? p.current_total_price : 0 ) /100)}
+                                            colTwoBottom={p.payment_status == "PAID" ? true : false}
+                                            colThree={p.email as string}
+                                            colFour={p.tags as string[]} />
                                     </div>
                                 );
                         })}
@@ -149,4 +120,31 @@ export default function  AllOrders(props: Prop) {
             </main>
         </div>
     )
+}
+
+
+
+export const getServerSideProps: GetServerSideProps = async () => {
+    const dev_server = "http://localhost:5001/impowered-funnel/us-central1/funnel"
+    // const url = "https://us-central1-impowered-funnel.cloudfunctions.net/funnel/customers";
+    const result = await impoweredRequest(dev_server + "/orders", "POST", {ord_uuid: ""});
+
+    if (!result) {
+        throw new Error("Product list error");
+    }
+
+    let orders = [{}] as Order[];
+    let size = 0;
+
+    if (result?.result) {
+        orders = result?.result?.orders,
+        size = result?.result?.size
+    }
+
+    return {
+        props: {
+            size: size,
+            orders: orders
+        }
+    }
 }

@@ -20,13 +20,16 @@ export interface Product {
         options2: string[],
         options3: string[]
     },
-    videos: [
-        {
-            id: string,
-            url: string,
-            type: "YOUTUBE" | "VIMEO"
-        }
-    ],
+    videos: {
+        id: string,
+        url: string,
+        type: "YOUTUBE" | "VIMEO"
+    }[],
+    images: {
+        id: string,
+        url: string,
+        alt: string
+    }[],
     variants?: Variant[],
     sku?: string,
 }

@@ -139,7 +139,7 @@ export default function AllProducts(props: Prop) {
                 />
             <main className={`${styles.col} ${styles.container}`}>
                 <div className={`${styles.col} ${styles.card}`}>
-                    <div style={{ alignItems: "center"}} className={`${styles.row} ${styles.itemRowHContainer}`}>
+                    <div style={{ alignItems: "center", justifyContent: "space-between"}} className={`${styles.row} ${styles.itemRowHContainer}`}>
                         <MainRowContainerHeader 
                             list={products}
                             type={filterState}

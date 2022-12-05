@@ -16,7 +16,7 @@ export const VariantRow: React.FC<Props> = ({
     return (
         <div className={`${styles.row}`}
             style={{padding: "1rem 0"}}>
-            <div
+            {window?.innerWidth >720 ? <div
                 className={`${styles.row}`}
                 style={{
                     width: "20%",
@@ -29,7 +29,7 @@ export const VariantRow: React.FC<Props> = ({
                         width={60}
                         height={60} />
                     </div>
-            </div>
+            </div> : null}
             <div 
                 style={{
                     width: "40%",

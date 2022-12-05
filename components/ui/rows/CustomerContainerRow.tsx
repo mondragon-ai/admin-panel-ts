@@ -15,7 +15,7 @@ export const CustomerContainerRow: FunctionComponent<any> = ({c}) => {
         status,
         tags,
         total_orders,
-        total_value
+        total_spent
     } = CUSTOMER;
 
     return (
@@ -89,7 +89,7 @@ export const CustomerContainerRow: FunctionComponent<any> = ({c}) => {
                         overflow: "hidden"
                     }} 
                     className={`${styles.row} ${styles.noneMobile}`}>
-                    {numberFormat(Number(total_value))}
+                    {numberFormat(Number(total_spent)/100)}
                 </div>
                 <div 
                     style={{

@@ -1,5 +1,5 @@
 // import Image from "next/image";
-import { useState } from "react";
+import { FunctionComponent, useState } from "react";
 import { Card } from "../../components/ui/Card";
 import { DetailPageHeader } from "../../components/ui/headers/DetailPageHeader";
 import styles from "../../styles/Main.module.css";
@@ -10,6 +10,10 @@ import { VariantRow } from "../../components/ui/rows/VariantRow";
 import { LineItem } from "../../lib/types/orders";
 import Underline from "../../components/ui/Underline";
 import { numberFormat } from "../../lib/helpers/formatters";
+import { ParsedUrlQuery } from "querystring";
+import { GetServerSideProps } from "next";
+import { impoweredRequest } from "../../lib/helpers/requests";
+import { Customer } from "../../lib/types/customers";
 
 // Dummy Data
 const customer = {
@@ -65,9 +69,16 @@ const api_timeline: {
 
 const name = "Obi Kanobi";
 
-export const CustomerDetail = () => {
 
-    const [c, setCustomer] = useState(customer);
+
+export interface CustomerDetailProps {
+    c: Customer
+} 
+
+
+export const CustomerDetail: FunctionComponent<CustomerDetailProps> = (props) => {
+
+    const [c, setCustomer] = useState(props.c);
     const [tag, setTag] = useState("");
     const [notes, setNotes] = useState(customer.notes);
 
@@ -291,24 +302,24 @@ export const CustomerDetail = () => {
                                 <div className={`${styles.col}`}>
                                     <div className={`${styles.col}`}>
                                         <div className={`${styles.row} ${styles.mobileContainer} `} style={{justifyContent: "space-between", alignItems: "center"}}>
-                                            <div className={`${styles.row}`} style={{justifyContent: "flex-start", alignItems: "center"}}>
-                                                <h4>{last_order.order_number ? last_order.order_number : ""}</h4>
+                                            <div className={`${styles.row}  ${styles.mobileContainer}`} style={{justifyContent: "flex-start", alignItems: window?.innerWidth > 720 ? "center" : "flex-start"}}>
+                                                <h4>{last_order?.order_number ? last_order?.order_number : ""}</h4>
                                                 <p className={`${styles.tag}`}
-                                                    style={{margin: "0 0.5rem"}}>{"Paid 💰"}</p>
+                                                    style={{margin:  window?.innerWidth > 720 ? "0 0.5rem" : "0.5rem 0"}}>{"Paid 💰"}</p>
                                                 <p className={`${styles.tag}`}>{"Unfulfilled 📦"}</p>
                                             </div>
                                             {window.innerWidth > 720 ? null : <div className={`${styles.row}`} style={{justifyContent: "flex-start", alignItems: "center"}}>
                                                     <span>{date}</span>
                                                 </div>}
-                                            <div className={`${styles.row}`}>
-                                                <h2>{numberFormat(Number(last_order.total_price  ? last_order.total_price : 0)/100)}</h2>
+                                            <div className={`${styles.row}`} style={{justifyContent: "flex-end"}}>
+                                                <h2>{numberFormat(Number(last_order?.total_price  ? last_order?.total_price : 0)/100)}</h2>
                                             </div>
                                         </div>  
                                        {window.innerWidth > 720 ? <div className={`${styles.row}`} style={{justifyContent: "flex-start", alignItems: "center"}}>
                                             <span>{date}</span>
                                         </div> : null}
                                         {
-                                            last_order?.line_items && last_order.line_items.map(item => {
+                                            last_order?.line_items && last_order?.line_items.map(item => {
                                                 return (
                                                     <div key={item.id} className={`${styles.col}`} style={{marginTop: "3rem"}}>
                                                         <Underline width={100} />
@@ -336,6 +347,41 @@ export const CustomerDetail = () => {
             </main>
         </div>
     )
+}
+
+
+export const getServerSideProps: GetServerSideProps = async ({params}) => {
+    const { handle } = params as ParsedUrlQuery;
+    const dev_server = "http://127.0.0.1:5001/impowered-funnel/us-central1/funnel"
+    // const url = "https://us-central1-impowered-funnel.cloudfunctions.net/funnel/customers";
+    const result = await impoweredRequest(dev_server + "/customers", "POST", {cus_uuid: handle});
+
+    console.log(" ==> SERVER SIDE");
+    console.log(handle);
+    console.log(result);
+
+    if (!result) {
+        throw new Error("Product list error");
+    }
+
+    console.log(" ==> SERVER SIDE");
+    console.log(result);
+
+    let customers = [{}] as Customer[];
+    let size = 0;
+
+    if (result?.result) {
+        customers = result?.result?.customers,
+        size = result?.result?.size
+    }
+
+    console.log(customers);
+    console.log(size);
+    return {
+        props: {
+            c: customer
+        }
+    }
 }
 
 export default CustomerDetail;

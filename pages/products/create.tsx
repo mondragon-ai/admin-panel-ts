@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Dispatch, FunctionComponent, SetStateAction, useState } from "react";
+import { ChangeEvent, Dispatch, FunctionComponent, MouseEvent, SetStateAction, useEffect, useRef, useState } from "react";
 import { Card } from "../../components/ui/Card";
 import FormProgress from "../../components/ui/FormProgress";
 import Underline from "../../components/ui/Underline";
@@ -11,6 +11,15 @@ import { ProductVariantRow } from "./p/[handle]";
 import * as crypto from "crypto";
 import { Product } from "../../lib/types/products";
 // import ImageUploading from "react-images-uploading";
+
+// Storage Bucket
+import {
+    ref,
+    uploadBytesResumable,
+    getDownloadURL, 
+    uploadBytes
+} from "firebase/storage";
+import { storage } from "../../lib/firebase";
 
 const t = [
     "VIP"
@@ -412,6 +421,7 @@ export const ImageContainer: FunctionComponent<ImgProps> = ({images}) => {
 // }
 
 
+
 export const StepFour: FunctionComponent<Props> = ({
     setProduct,
     product,
@@ -420,13 +430,155 @@ export const StepFour: FunctionComponent<Props> = ({
     steps
 }) => {
 
-    const [images, setImages] = useState([]);
-    const [addImage, toggleImg] = useState(false)
-    
-    // Order Tag State
-    let [tags, setTags] = useState(t);
-    const [tagText, setTagState] = useState("");
+    const [image, setImage] = useState<File | string>("");
+    const [createObjURL, setCreateObjectURL] = useState<any>(null)
+    const [percent, setPercent] = useState<number>(0)
 
+    const [images, setImages] = useState<{url: string, alt?: ""}[]>(
+    [
+        {
+            url: "",
+            alt: "", 
+
+        }, 
+        {
+            url: "",
+            alt: "", 
+
+        },
+        {
+            url: "",
+            alt: "", 
+
+        }
+    ]);
+        
+
+    const uploadToClient = (event: ChangeEvent<HTMLInputElement | any>) => {
+      if (event.target.files && event.target.files[0]) {
+        const i = event.target.files[0];
+
+        console.log(" => Percent (start)");
+        console.log(percent)
+    
+        setImage(i);
+
+        let reset_imgs: {url: string, alt?: ""}[] = [];
+        let uploaded = false
+
+        images.forEach(img => {
+            if (img.url === "" && !uploaded) {
+                setCreateObjectURL(URL.createObjectURL(i));
+                uploaded = true;
+                reset_imgs = [
+                    ...reset_imgs,
+                    {
+                        url: URL.createObjectURL(i),
+                        alt: ""
+                    }
+                ]
+            } else {
+                reset_imgs = [
+                    ...reset_imgs,
+                    img
+                ]
+            }
+        });
+
+        setImages(reset_imgs);
+      }
+    };
+
+    useEffect(() => {
+
+        if (image !== "") {
+
+            console.log(" => Image (start)");
+            console.log(image)
+            setTimeout(() => uploadToServer(), 1000);
+        }
+
+    }, [image]);
+
+
+    const uploadToServer = async () => {
+        const body = new FormData();
+         body.append("file", image as File);
+
+
+         console.log(" => Image (inside)");
+         console.log(image)
+
+        if (image === undefined) {
+            alert("Please choose a file first!")
+            throw new Error("File not present");
+        } else {
+            const name = (image as File)?.name ? (image as File)?.name.replaceAll(" ", "_") : "" + crypto.randomBytes(10).toString("hex");
+
+
+
+            // call FB storage bucket
+            const storageRef = ref(storage, "/images/test/" + name);
+            console.log(" => S REf)");
+            console.log(storageRef)
+    
+            const uploadTask = uploadBytesResumable(storageRef, image as File);
+     
+            // 
+            uploadTask.on(
+                "state_changed",
+                (snapshot) => {
+                    const p = Math.round(
+                        (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+                    );
+         
+                    // update progress
+                    setPercent(p);
+                },
+                (err) => console.log(err),
+                () => {
+                    // download url
+                    getDownloadURL(uploadTask.snapshot.ref).then( async (url) => {
+                        console.log(url);
+                        const images = product?.images ? product?.images : []
+                        setProduct({
+                            ...product,
+                            images: [
+                                ...images,
+                                {
+                                    id: "img_" + crypto.randomBytes(10).toString("hex"),
+                                    url: url,
+                                    alt: "test"
+                                }
+                            ]
+                        })
+                        setPercent(0);
+                    });
+                }
+            ); 
+        }
+    };
+
+
+
+    console.log(" => Percent (end)");
+    console.log(percent)
+
+    // log checks
+    console.log(" => Img to Upload");
+    console.log(storage);
+    
+    // // Order Tag State
+    // let [tags, setTags] = useState(t);
+    // const [tagText, setTagState] = useState("");
+  // Create a reference to the hidden file input element
+    let hiddenFileInput = useRef(null);
+    
+    // Programatically click the hidden file input element
+    // when the Button component is clicked
+    const handleClick = (event: MouseEvent) => {
+        hiddenFileInput = hiddenFileInput?.current?.click();
+    };
     return (
         <Card 
             card_type="CREATE"
@@ -443,50 +595,84 @@ export const StepFour: FunctionComponent<Props> = ({
 
                     {/* TOP */}
                     <div className={`${styles.col}`}
-                        style={{width: "100%",}}>
+                        style={{ width:  "100%"}}>
                         <div className={`${styles.row}`}>
                             <h3>Images</h3>
                         </div>
-                        <div className={`${styles.col}`}
-                                style={{padding: "1rem 0rem 0 0", height: "auto",}}>
-                            <div className={`${styles.col}`}
-                                style={{background: "", height: "100%", width: "100%", padding: "1rem 0rem 1rem 0"}}>
-                                <div className={`${styles.col}`}>
-                                    {/* <ImageContainer images={images} /> */}
-                                    {/* {addImage ? <AddImage handle={handle} onChange={onChange} images={images} addImage={addImage} maxNumber toggleImg={toggleImg} />: null} */}
-                                </div>
-                            </div>
-                            <div className={`${styles.row}`}
-                                style={{justifyContent: "space-between", width: "100%", padding: "1rem 0rem 1rem 0", borderRadius: "6px"}}>
+                        <div className={`${styles.col}`}>
+                            <div className={`${styles.row}`} style={{
+                                margin: "1rem 0 0 0",
+                                height: "5px",
+                                borderRadius: "2px",
+                                width: `${percent}%`,
+                                background: "var(--accent)"}}></div>
+                            <div className={`${styles.row} ${styles.mobileContainer}`}
+                                    style={{padding: "1rem 0rem 0 0", height: "auto", width: "100%"}}>
                                 <div className={`${styles.col}`}
-                                    style={{background: "", alignItems: "flex-start", borderRadius: "6px", padding: "0"}}>
-                                    <Image 
-                                        style={{border: "0.4px solid var(--accent)", borderRadius: "6px"}}
-                                        src={"https://boltagency.ca/content/images/2020/03/placeholder-images-product-1_large.png"} 
-                                        alt=""
-                                        width={100}
-                                        height={100} />
+                                    style={{
+                                        background: "",
+                                        height: "100%",
+                                        width: window.innerWidth > 720 ? "40%" : "100%",
+                                        padding: "1rem"}}>
+                                    <div className={`${styles.col}`}>
+                                        <input 
+                                            accept="image/*"
+                                            type="file"
+                                            ref={hiddenFileInput}
+                                            id="select-image"
+                                            style={{ display: "none" }}
+                                            name="myImage"
+                                            onChange={(e) => uploadToClient(e)} 
+                                        />
+                                        <div className={`${styles.col}`}
+                                            onClick={handleClick}
+                                            style={{
+                                                width: "100%",
+                                                height: "200px",
+                                                border: "1px dotted var(--accent)",
+                                                borderRadius: "6px",
+                                                backgroundPosition: "center",
+                                                backgroundSize: "cover",
+                                                boxSizing: "border-box",
+                                                justifyContent: "center",
+                                                alignItems: "center",
+                                                textAlign: "center",
+                                                cursor: "pointer"}}
+                                            >
+                                            <p>Click Here to Uplaod Your Image</p>
+                                        </div>
+                                        {/* <ImageContainer images={images} /> */}
+                                        {/* {addImage ? <AddImage handle={handle} onChange={onChange} images={images} addImage={addImage} maxNumber toggleImg={toggleImg} />: null} */}
+                                    </div>
                                 </div>
+                                <div className={`${styles.row}`} style={{overflowX: "scroll"}}>
+                                    <div className={`${styles.row}`} style={{width: window.innerWidth > 720 ? "100%" : "150%"}}>
+                                        <div className={`${styles.row}`}
+                                            style={{
+                                                justifyContent: "space-between",
+                                                width: window.innerWidth > 720 ? "100%" : "150%",
+                                                padding: "1rem 0rem 1rem 0",
+                                                borderRadius: "6px"}}>
+                                            {
+                                                images && images.map((img, i) => {
+                                                    return (
 
-                                <div className={`${styles.col}`}
-                                    style={{background: "", alignItems: "center", padding: "0", borderRadius: "6px"}}>
-                                    <Image 
-                                        style={{border: "0.4px solid var(--accent)", borderRadius: "6px"}}
-                                        src={"https://boltagency.ca/content/images/2020/03/placeholder-images-product-1_large.png"} 
-                                        alt=""
-                                        width={100}
-                                        height={100} />
+                                                            <div key={i} className={`${styles.col}`}
+                                                                style={{background: "", alignItems: "flex-start", borderRadius: "6px", padding: "0"}}>
+                                                                <Image 
+                                                                    style={{border: "0.4px solid var(--accent)", borderRadius: "6px"}}
+                                                                    src={img.url ? img.url : "https://boltagency.ca/content/images/2020/03/placeholder-images-product-1_large.png" } 
+                                                                    alt={img.alt as string}
+                                                                    width={window.innerWidth < 720 ? 100 : 200}
+                                                                    height={window.innerWidth < 720 ? 100 : 200} />
+                                                            </div>
+                                                    )
+                                                })
+                                            }
+                                        </div>
+                                    </div>
                                 </div>
-
-                                <div className={`${styles.col}`}
-                                    style={{background: "", alignItems: "flex-end", borderRadius: "6px", padding: "0", }}>
-                                    <Image 
-                                        style={{border: "0.4px solid var(--accent)", borderRadius: "6px"}}
-                                        src={"https://boltagency.ca/content/images/2020/03/placeholder-images-product-1_large.png"} 
-                                        alt=""
-                                        width={100}
-                                        height={100} />
-                                </div>
+                                
                             </div>
                         </div>
                     </div>
@@ -497,39 +683,41 @@ export const StepFour: FunctionComponent<Props> = ({
                         <div className={`${styles.row}`}>
                             <h3>Video Links</h3>
                         </div>
-                        <div className={`${styles.formItem} ${styles.row}`}
-                            style={{
-                                width: "100%",
-                                padding: "0px",
-                                marginTop: "2rem"
-                            }}>
-                            <input
+                        <div className={`${styles.formItem} ${styles.row} ${styles.mobileContainer}`}>
+                            <div className={`${styles.formItem} ${styles.row}`}
                                 style={{
-                                    color: "white"
-                                }}
-                                onChange={(e) => setProduct({
-                                    ...product,
-                                    videos: [
-                                        {
+                                    width: "100%",
+                                    padding: "0px",
+                                    marginTop: "2rem"
+                                }}>
+                                <input
+                                    style={{
+                                        color: "white"
+                                    }}
+                                    onChange={(e) => setProduct({
+                                        ...product,
+                                        videos: [
                                             ...product.videos,
-                                            id: "vid_" + crypto.randomBytes(10).toString("hex"),
-                                            url: "",
-                                            type: "YOUTUBE"
-                                        }
-                                    ]
-                                })}
-                                value={product.videos[0].id}
-                                type="text"
-                                name="links" />
-                            <label style={{ 
-                                top: product.videos[0].id  !== "" ? "-5px" : "", 
-                                fontSize: product.videos[0].id  !== "" ? "10px" : ""}}>Video Link</label>
-                        </div>
-                        <div className={`${styles.col}`}>
-                            <p className={`${styles.links}`} style={{marginBottom: "1rem", fontSize: "0.9rem", color: "gray"}}>
-                                https://www.youtube.com owjnwhebgkjwe rgkjw ekrjgb wke gk
-                            </p>
-                            <Underline width={100} />
+                                            {
+                                                id: "vid_" + crypto.randomBytes(10).toString("hex"),
+                                                url: "",
+                                                type: "YOUTUBE"
+                                            }
+                                        ]
+                                    })}
+                                    value={product.videos[0].id}
+                                    type="text"
+                                    name="links" />
+                                <label style={{ 
+                                    top: product.videos[0].id  !== "" ? "-5px" : "", 
+                                    fontSize: product.videos[0].id  !== "" ? "10px" : ""}}>Video Link</label>
+                            </div>
+                            <div className={`${styles.col}`} style={{marginTop: "1.8rem"}}>
+                                <p className={`${styles.links}`} style={{marginBottom: "1rem", fontSize: "0.9rem", color: "gray"}}>
+                                    https://www.youtube.com owjnwhebgkjwe rgkjw ekrjgb wke gk
+                                </p>
+                                <Underline width={100} />
+                            </div>
                         </div>
                     </div>
                 </div>  
