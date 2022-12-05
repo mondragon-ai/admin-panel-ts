@@ -126,8 +126,8 @@ export default function  AllOrders(props: Prop) {
 
 export const getServerSideProps: GetServerSideProps = async () => {
     const dev_server = "http://localhost:5001/impowered-funnel/us-central1/funnel"
-    // const url = "https://us-central1-impowered-funnel.cloudfunctions.net/funnel/customers";
-    const result = await impoweredRequest(dev_server + "/orders", "POST", {ord_uuid: ""});
+    const url = "https://us-central1-impowered-funnel.cloudfunctions.net/funnel";
+    const result = await impoweredRequest(url + "/orders", "POST", {ord_uuid: ""});
 
     if (!result) {
         throw new Error("Product list error");

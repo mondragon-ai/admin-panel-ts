@@ -352,9 +352,9 @@ export const CustomerDetail: FunctionComponent<CustomerDetailProps> = (props) =>
 
 export const getServerSideProps: GetServerSideProps = async ({params}) => {
     const { handle } = params as ParsedUrlQuery;
-    const dev_server = "http://127.0.0.1:5001/impowered-funnel/us-central1/funnel"
-    // const url = "https://us-central1-impowered-funnel.cloudfunctions.net/funnel/customers";
-    const result = await impoweredRequest(dev_server + "/customers", "POST", {cus_uuid: handle});
+    // const dev_server = "http://127.0.0.1:5001/impowered-funnel/us-central1/funnel"
+    const url = "https://us-central1-impowered-funnel.cloudfunctions.net/funnel";
+    const result = await impoweredRequest(url + "/customers", "POST", {cus_uuid: handle});
 
     console.log(" ==> SERVER SIDE");
     console.log(handle);

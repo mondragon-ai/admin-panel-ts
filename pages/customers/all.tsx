@@ -180,9 +180,9 @@ export default function AllCustomers(props: Prop) {
 
 
 export const getServerSideProps: GetServerSideProps = async () => {
-    const dev_server = "http://localhost:5001/impowered-funnel/us-central1/funnel"
-    // const url = "https://us-central1-impowered-funnel.cloudfunctions.net/funnel/customers";
-    const result = await impoweredRequest(dev_server + "/customers", "POST", {cus_uuid: ""});
+    // const dev_server = "http://localhost:5001/impowered-funnel/us-central1/funnel"
+    const url = "https://us-central1-impowered-funnel.cloudfunctions.net/funnel";
+    const result = await impoweredRequest(url + "/customers", "POST", {cus_uuid: ""});
 
     console.log(" ==> SERVER SIDE");
     console.log(result);
