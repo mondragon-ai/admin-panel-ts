@@ -83,6 +83,6 @@ export interface Order {
     payment_status?: "PAID" | "UNPAID",
     transaction_id: string,
     store_type?: "SHOPIFY" | "IMPOWERED" | "",
-    first_name: "all",
-    last_name: "Might",
+    first_name: string,
+    last_name: string,
 }

@@ -15,47 +15,47 @@ import { GetServerSideProps } from "next";
 import { impoweredRequest } from "../../lib/helpers/requests";
 import { Customer } from "../../lib/types/customers";
 
-// Dummy Data
-const customer = {
-    tags: ["VIP"],
-    id: "cus_" + crypto.randomBytes(10).toString("hex"),
-    first_name: "Obi",
-    last_name: "Kanobi",
-    email: "Kanobi@gobigly.com",
-    addresses: [
-        {
-            type: "BOTH",
-            line1: "420 Bigly",
-            line2: "",
-            city: "South Park",
-            state: "NM",
-            zip: "72704",
-            country: "US",
-            name: "Obi Kanobi"
-        }
-    ],
-    last_order: {
-        id: "ord_" + crypto.randomBytes(10).toString("hex"),
-        line_items: [
-            {
-                title: "Hoodie 1776",
-                price: 8984,
-                compare_at_price: 0,
-                quantity: 3,
-                option1: "Small",
-                option2: "Blue",
-                option3: "",
-                id: "var_" + crypto.randomBytes(10).toString("hex"),
+// // Dummy Data
+// const customer = {
+//     tags: ["VIP"],
+//     id: "cus_" + crypto.randomBytes(10).toString("hex"),
+//     first_name: "Obi",
+//     last_name: "Kanobi",
+//     email: "Kanobi@gobigly.com",
+//     addresses: [
+//         {
+//             type: "BOTH",
+//             line1: "420 Bigly",
+//             line2: "",
+//             city: "South Park",
+//             state: "NM",
+//             zip: "72704",
+//             country: "US",
+//             name: "Obi Kanobi"
+//         }
+//     ],
+//     last_order: {
+//         id: "ord_" + crypto.randomBytes(10).toString("hex"),
+//         line_items: [
+//             {
+//                 title: "Hoodie 1776",
+//                 price: 8984,
+//                 compare_at_price: 0,
+//                 quantity: 3,
+//                 option1: "Small",
+//                 option2: "Blue",
+//                 option3: "",
+//                 id: "var_" + crypto.randomBytes(10).toString("hex"),
 
-            }
-        ],
-        total_price: 3000,
-        order_number: "#SH-" + crypto.randomBytes(5).toString("hex").toUpperCase(),
-    },
-    notes: "API TL ALT ++ CS ",
-    total_orders: 3,
-    total_spent: 42069,
-}
+//             }
+//         ],
+//         total_price: 3000,
+//         order_number: "#SH-" + crypto.randomBytes(5).toString("hex").toUpperCase(),
+//     },
+//     notes: "API TL ALT ++ CS ",
+//     total_orders: 3,
+//     total_spent: 42069,
+// }
 
 const api_timeline: {
     date: string,
@@ -67,21 +67,21 @@ const api_timeline: {
     }
 ]
 
-const name = "Obi Kanobi";
-
 
 
 export interface CustomerDetailProps {
-    c: Customer
+    c: Customer[]
 } 
 
 
 export const CustomerDetail: FunctionComponent<CustomerDetailProps> = (props) => {
 
-    const [c, setCustomer] = useState(props.c);
+    const [customer, setCustomer] = useState(props.c[0] ? props.c[0] : {} as Customer);
     const [tag, setTag] = useState("");
-    const [notes, setNotes] = useState(customer.notes);
+    const [notes, setNotes] = useState(props.c[0]?.notes ? props.c[0]?.notes : "");
 
+
+    console.log(customer)
     const {
         first_name,
         last_name,
@@ -90,7 +90,7 @@ export const CustomerDetail: FunctionComponent<CustomerDetailProps> = (props) =>
         last_order,
         total_orders,
         total_spent
-    } = c;
+    } = customer;
 
     const date = new Date().toLocaleString()
 
@@ -101,7 +101,7 @@ export const CustomerDetail: FunctionComponent<CustomerDetailProps> = (props) =>
         {/* Sub Header - page specific */}
             <DetailPageHeader 
             back_route={"/customers/all"}
-            title={name}
+            title={first_name}
             special_btn={"Delete Product"}
             special_btn_route={"/products/all"} />
 
@@ -229,7 +229,7 @@ export const CustomerDetail: FunctionComponent<CustomerDetailProps> = (props) =>
                                                 padding: "0 5px"
                                             }}>
                                             { 
-                                                customer && customer.tags.length > 0 ?  customer.tags.map(v => {
+                                                customer.tags && customer.tags.length > 0 ?  customer.tags.map(v => {
                                                 return <p 
                                                     key={v}
                                                     id={"tags"}
@@ -379,7 +379,7 @@ export const getServerSideProps: GetServerSideProps = async ({params}) => {
     console.log(size);
     return {
         props: {
-            c: customer
+            c: customers
         }
     }
 }

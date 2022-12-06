@@ -54,6 +54,8 @@ export default function  AllOrders(props: Prop) {
     const [list, setOrders] = useState<any[]>(orders);
     const [filterState, setFilter] = useState<"" | "INACTIVE" | "ACTIVE">("");
 
+    console.log(orders);
+    
     return (
         <div className={`${styles.col}`}>
             <AllItemHeader 

@@ -1088,12 +1088,12 @@ export const StepTwo: FunctionComponent<Props> = ({
                         marginTop: "1.5rem"
                     }}>
                     
-                    <div className={`${styles.col}`}>
-                        <div className={`${styles.formItem} ${styles.row}`}
-                            style={{
-                                width: window.innerWidth > 720 ? "33%" : "100%",
-                                padding: "0 5px"
-                            }}>
+                    <div className={`${styles.col}`}
+                        style={{
+                            width: window.innerWidth > 720 ? "33%" : "100%",
+                            padding: "0 5px"
+                        }}>
+                        <div className={`${styles.formItem} ${styles.row}`}>
                             <input
                                 style={{
                                     color: "white"
@@ -1114,7 +1114,7 @@ export const StepTwo: FunctionComponent<Props> = ({
                         <div className={`${styles.formItem} ${styles.row}`}
                             style={{
                                 justifyContent: "flex-start",
-                                width: window.innerWidth > 720 ? "33%" : "100%",
+                                // width: window.innerWidth > 720 ? "33%" : "100%",
                                 padding: "0 5px"
                             }}>
                             { 
@@ -1129,12 +1129,12 @@ export const StepTwo: FunctionComponent<Props> = ({
                             }
                         </div>
                     </div>
-                    <div className={`${styles.col}`}>
-                        <div className={`${styles.formItem} ${styles.row}`}
-                            style={{
-                                width: window.innerWidth > 720 ? "33%" : "100%",
-                                padding: "0 5px"
-                            }}>
+                    <div className={`${styles.col}`}
+                        style={{
+                            width: window.innerWidth > 720 ? "33%" : "100%",
+                            padding: "0 5px"
+                        }}>
+                        <div className={`${styles.formItem} ${styles.row}`}>
                             <input
                                 style={{
                                     color: "white"
@@ -1156,7 +1156,7 @@ export const StepTwo: FunctionComponent<Props> = ({
                         <div className={`${styles.formItem} ${styles.row}`}
                             style={{
                                 justifyContent: "flex-start",
-                                width: window.innerWidth > 720 ? "33%" : "100%",
+                                // width: window.innerWidth > 720 ? "33%" : "100%",
                                 padding: "0 5px"
                             }}>
                             { 
@@ -1173,10 +1173,10 @@ export const StepTwo: FunctionComponent<Props> = ({
                     </div>
 
                     <div className={`${styles.col}`}
-                            style={{
-                                width: window.innerWidth > 720 ? "33%" : "100%",
-                                padding: "0 5px"
-                            }}>
+                        style={{
+                            width: window.innerWidth > 720 ? "33%" : "100%",
+                            padding: "0 5px"
+                        }}>
                         <div className={`${styles.formItem} ${styles.row}`}>
                             <input
                                 style={{
@@ -1197,7 +1197,7 @@ export const StepTwo: FunctionComponent<Props> = ({
 
                         <div className={`${styles.formItem} ${styles.row}`}
                             style={{
-                                width: window.innerWidth > 720 ? "33%" : "100%",
+                                // width: window.innerWidth > 720 ? "33%" : "100%",
                                 padding: "0 5px"
                             }}>
                             <p style={{padding: 0, width: "90%"}}>High Risk</p>

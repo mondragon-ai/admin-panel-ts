@@ -7,12 +7,28 @@ export interface Customer {
     email: string,
     status: boolean,
     tags: string[],
-    addresses: Address[],
     last_order: LastOrder,
     notes: string,
     total_orders: number,
     total_spent: number,
-    
+    phone?: string,
+    accepts_SMS?: boolean,
+    accepts_email?: boolean,
+    ip_address?: string,
+    ORDER_STARTED?: boolean,
+    stripe?: {
+        UUID: string,
+        PI_UUID: string, 
+        CLIENT_ID: string,
+        PM: string
+    },
+    created_at?: FirebaseFirestore.Timestamp,
+    updated_at: FirebaseFirestore.Timestamp,
+    line_items?: LineItem,
+    addresses: Address[],
+    orders: string[],
+    draft_orders: string[],
+    shopify_uuid: string
 }
 
 export type Address = {

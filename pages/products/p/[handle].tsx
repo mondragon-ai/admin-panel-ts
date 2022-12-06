@@ -248,13 +248,13 @@ export const MediaCard: FunctionComponent<Props> = ({
                                 borderRadius: "2px",
                                 width: `${percent}%`,
                                 background: "var(--accent)"}}></div>
-                            <div className={`${styles.row} ${styles.mobileContainer}`}
+                            <div className={`${styles.col} ${styles.mobileContainer}`}
                                     style={{padding: "1rem 0rem 0 0", height: "auto", width: "100%"}}>
                                 <div className={`${styles.col}`}
                                     style={{
                                         background: "",
                                         height: "100%",
-                                        width: window.innerWidth > 720 ? "40%" : "100%",
+                                        width: window.innerWidth < 720 ? "40%" : "100%",
                                         padding: "1rem"}}>
                                     <div className={`${styles.col}`}>
                                         <input 
@@ -287,9 +287,9 @@ export const MediaCard: FunctionComponent<Props> = ({
                                         {/* {addImage ? <AddImage handle={handle} onChange={onChange} images={images} addImage={addImage} maxNumber toggleImg={toggleImg} />: null} */}
                                     </div>
                                 </div>
-                                <div className={`${styles.row}`} style={{overflowX: "scroll"}}>
-                                    <div className={`${styles.row}`} style={{width: window.innerWidth > 720 ? "100%" : "150%"}}>
-                                        <div className={`${styles.row}`}
+                                <div className={`${styles.col}  ${styles.mobileContainer}`} style={{overflowX: "scroll"}}>
+                                    <div className={`${styles.col} ${styles.mobileContainer}`} style={{width: window.innerWidth > 720 ? "100%" : "150%"}}>
+                                        <div className={`${styles.col} ${styles.mobileContainer}`}
                                             style={{
                                                 justifyContent: "space-between",
                                                 width: window.innerWidth > 720 ? "100%" : "150%",
@@ -325,7 +325,7 @@ export const MediaCard: FunctionComponent<Props> = ({
                         <div className={`${styles.row}`}>
                             <h3>Video Links</h3>
                         </div>
-                        <div className={`${styles.formItem} ${styles.row} ${styles.mobileContainer}`}>
+                        <div className={`${styles.formItem} ${styles.col} ${styles.mobileContainer}`}>
                             <div className={`${styles.formItem} ${styles.row}`}
                                 style={{
                                     width: "100%",
