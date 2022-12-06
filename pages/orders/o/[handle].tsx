@@ -93,7 +93,7 @@ export const OrderDetail: FunctionComponent<OrderProps> = ({orders}) => {
     } = order
 
 
-    const order_date = new Date((updated_at._seconds * 1000)).toLocaleString();
+    const order_date = new Date((updated_at.seconds * 1000)).toLocaleString();
     
     return (
         <div className={`${styles.col}`}>
