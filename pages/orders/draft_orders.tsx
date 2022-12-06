@@ -50,7 +50,9 @@ import Underline from "../../components/ui/Underline";
 import * as crypto from "crypto"
 import { MainRowContainerHeader } from "../../components/ui/headers/MainRowContainerHeader";
 import { MainRowContainer } from "../../components/ui/rows/MainRowContainer";
-import { Carts } from "../../lib/types/orders";
+import { Carts, DraftOrders, Order } from "../../lib/types/orders";
+import { GetServerSideProps } from "next";
+import { impoweredRequest } from "../../lib/helpers/requests";
 
 const orders: Carts[] = [
     {
@@ -150,4 +152,31 @@ export default function  AllCart(props: Prop) {
             </main>
         </div>
     )
+}
+
+
+
+export const getServerSideProps: GetServerSideProps = async () => {
+    // const dev_server = "http://localhost:5001/impowered-funnel/us-central1/funnel"
+    const url = "https://us-central1-impowered-funnel.cloudfunctions.net/funnel";
+    const result = await impoweredRequest(url + "/draft_orders", "POST", {dra_uuid: ""});
+
+    if (!result) {
+        throw new Error("Product list error");
+    }
+
+    let orders = [{}] as Order[];
+    let size = 0;
+
+    if (result?.result) {
+        orders = result?.result?.orders,
+        size = result?.result?.size
+    }
+
+    return {
+        props: {
+            size: size,
+            orders: orders
+        }
+    }
 }

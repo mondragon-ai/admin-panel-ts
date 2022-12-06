@@ -357,6 +357,48 @@ export const Menu: FunctionComponent<Props> = ({openState, toggleMenu}) => {
                             </div>
                         </Link>
                     </li>
+                    <li className={`${styles.col}`}>
+                        <Link  
+                            onClick={(e) => toggleMenu(!openState)}
+                            className={`${styles.row}`}
+                            style={{
+                                borderLeft: router.pathname == "/themes/all" ? "4px solid white" : "4px solid transparent",
+                            }}
+                            href={'/themes/all'}>
+                            <div className={`${styles.row} ${styles.menuItem} `}>
+                                <i 
+                                    style={{
+                                        color: router.pathname == "/themes/all" ? "white" : ""
+                                    }}>
+                                    <FontAwesomeIcon icon={faMagnifyingGlassChart} /></i>
+                                <span 
+                                    style={{
+                                        color: router.pathname == "/themes/all" ? "white" : ""
+                                    }}>Themes</span>
+                            </div>
+                        </Link>
+                        <ul className={`${styles.col}`}>
+                            <li className={`${styles.col} ${styles.indentedMenuItem}`}>
+                                <Link
+                                    onClick={(e) => toggleMenu(!openState)}
+                                    className={`${styles.row}`}
+                                    href={'/themes/funnels/all'}>
+                                    <div className={`${styles.row} ${styles.menuItem} `}>
+                                        <i
+                                            style={{
+                                                color: router.pathname.includes("/themes/funnels") ? "white" : "",
+                                                fontSize: "0.8rem",
+                                                padding: "0.1rem 0",
+                                            }}><FontAwesomeIcon icon={faGauge}/></i>
+                                        <span 
+                                            style={{
+                                                color: router.pathname.includes("/themes/funnels/all") ? "white" : ""
+                                            }}>Funnels</span>
+                                    </div>
+                                </Link>
+                            </li>
+                        </ul>
+                    </li>
                 </ul>
                 <div className={`${styles.col} `}>
                     <Underline width={40} />

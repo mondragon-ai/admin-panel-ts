@@ -117,6 +117,7 @@ const p = {
 export const createProduct: FunctionComponent<Prop> = (props) => {
 
     const [steps, setIndex] = useState(s);
+    const [formStep, navForm] = useState("STEP_TWO")
 
     const [product, setProduct] = useState(p);
 
@@ -126,7 +127,6 @@ export const createProduct: FunctionComponent<Prop> = (props) => {
         requires_shipping: false
     })
 
-    const [formStep, navForm] = useState("STEP_TWO")
 
     console.log(product)
 

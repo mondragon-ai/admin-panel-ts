@@ -14,7 +14,11 @@ export const impoweredRequest = async (
                 "impowered-api-key": "19uq99myrxd6jmp19k5mygo5d461l0"
             }
         });
-        result = await response.json();
+        if (response.ok) {
+            result = await response.json();
+        } else {
+            throw new Error(" - Fetch Error");
+        }
     } else {
         const response = await fetch(url, {
             method: method != "" ? method : "GET",
@@ -24,7 +28,11 @@ export const impoweredRequest = async (
             },
             body: JSON.stringify(data)
         });
-        result = await response.json();
+        if (response.ok) {
+            result = await response.json();
+        } else {
+            throw new Error(" - Fetch Error");
+        }
     }
 
     return result;
