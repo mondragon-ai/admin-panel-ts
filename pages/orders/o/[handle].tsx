@@ -74,7 +74,13 @@ type OrderProps = {
     orders: Order[]
 }
 
+type TimeProp = {
+    _seconds: number
+}
+
 export const OrderDetail: FunctionComponent<OrderProps> = ({orders}) => {
+
+
 
     const [order, setOrder] = useState(orders[0] ? orders[0] : {} as Order);
 
@@ -92,11 +98,15 @@ export const OrderDetail: FunctionComponent<OrderProps> = ({orders}) => {
         updated_at
     } = order
 
+    const seconds = updated_at && (updated_at as any)._seconds ?  Number((updated_at as any)._seconds )*1000: new Date().toLocaleString();
+    console.log(seconds)
 
-    const order_date = new Date(((updated_at as any)._seconds * 1000)).toLocaleString();
+    const order_date = new Date((seconds)).toLocaleString();
     
     return (
         <div className={`${styles.col}`}>
+            <div className={`${styles.row}`} 
+                style={{height: "100%", background: "black", zIndex: 100}}></div>
             {/* Sub Header - page specific */}
             <DetailPageHeader 
                 back_route={"/orders/all"}
