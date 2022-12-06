@@ -572,7 +572,7 @@ export const StepFour: FunctionComponent<Props> = ({
     // let [tags, setTags] = useState(t);
     // const [tagText, setTagState] = useState("");
   // Create a reference to the hidden file input element
-    let hiddenFileInput = useRef(null);
+    let hiddenFileInput = useRef<any>(null);
     
     // Programatically click the hidden file input element
     // when the Button component is clicked
