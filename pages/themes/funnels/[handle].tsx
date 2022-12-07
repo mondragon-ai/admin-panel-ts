@@ -79,7 +79,8 @@ export const FunnelDetail: FunctionComponent<FunnelProps> = ({funnels}) => {
 
     const {
         title,
-        steps
+        steps,
+        id
     } = funnel
 
     return (
@@ -101,16 +102,19 @@ export const FunnelDetail: FunctionComponent<FunnelProps> = ({funnels}) => {
                     <div className={`${styles.oneThird}`}>
 
                         <Card width={50}
-                            title="Funnel Steps"
-                            header={""}
+                            title="Funnel Details"
+                            header={title}
                             subHeader={""}
-                            card_type="INFO"
+                            card_type="DEFAULT"
                         >
                             <div className={`${styles.col}`}>
-                                <div style={{ justifyContent: "flex-start",  paddingBottom: "1rem"}} className={`${styles.row} ${styles.formItem}`}>
-                                    <input id="steps" type="text" />
-                                    <label htmlFor="steps">Steps</label>
-                                </div>
+                                {/* <div style={{ justifyContent: "flex-start",  paddingBottom: "1rem"}} className={`${styles.col} ${styles.formItem}`}>
+                                    <p>{id}</p>
+                                </div> */}
+                                <div style={{ paddingBottom: "1rem"}} className={`${styles.row} ${styles.formItem}`}>
+                                    <p>#{id}</p>
+                                    <p>📋</p>
+                                </div> 
 
 
                                 <div style={{ paddingTop: "1rem"}} className={`${styles.col}`}>
@@ -124,43 +128,35 @@ export const FunnelDetail: FunctionComponent<FunnelProps> = ({funnels}) => {
                                     steps && steps.map(step => {
                                         return (
                                             <div style={{ paddingTop: "1rem"}} className={`${styles.col}`}>
-                                                <div style={{ paddingBottom: "1rem"}} className={`${styles.row}`}>
-                                                    <p style={{paddingTop: "0rem"}}>{step.name}</p>
-                                                    <p style={{paddingTop: "0rem"}}>{step.order}</p>
+                                                <Underline width={100} />   
+                                                <div style={{ paddingTop: "1rem"}} className={`${styles.row}`}>
+                                                    <p style={{paddingTop: "0rem"}}>{step?.name?.replaceAll("_", " ")}</p>
+                                                    <p style={{paddingTop: "0rem"}}>{step?.order}</p>
                                                 </div>
-                                                <Underline width={100} />
                                             </div>
                                         )
                                     })
                                 }
                             </div>
                         </Card>
-                        <Card  width={50}
-                            title={""}
-                            header={""}
-                            subHeader={""}
-                            status={false}
-                            card_type="INFO"
-                        >
-                            <div className={`${styles.col}`}>
-
-                            </div>
-                        </Card>
                     </div>
 
                     {/* Right 2/3 Column Container */}
                     <div style={{paddingTop: "0"}} className={`${styles.twoThird} ${styles.col}`}>
-                        <Card  
-                            width={50}
-                            title="Funnel Details"
-                            header={""}
-                            subHeader={""}
-                            card_type="INFO"
-                        >
-                            <div  className={`${styles.col}`}>
+                        {
+                            steps && steps[0] ?
+                            <Card  
+                                width={50}
+                                title="Step Details"
+                                header={""}
+                                subHeader={""}
+                                card_type="INFO"
+                            >
+                                <div  className={`${styles.col}`}>
 
-                            </div>
-                        </Card>
+                                </div>
+                            </Card> : null
+                        }
                     </div>
                 </div>
             </main>

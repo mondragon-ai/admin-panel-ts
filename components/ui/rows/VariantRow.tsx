@@ -8,11 +8,17 @@ import Underline from "../Underline";
 import { numberFormat } from "../../../lib/helpers/formatters";
 
 type Props = {
-    item: LineItem
+    item: any
 }
 export const VariantRow: React.FC<Props> = ({
     item
 }) => {
+
+    const {url} = item;
+
+
+    const URL = url && url !== "" ? url : "https://boltagency.ca/content/images/2020/03/placeholder-images-product-1_large.png";
+
     return (
         <div className={`${styles.row}`}
             style={{padding: "1rem 0"}}>
@@ -24,7 +30,7 @@ export const VariantRow: React.FC<Props> = ({
                 }}>
                     <div >
                     <Image 
-                        src={"https://boltagency.ca/content/images/2020/03/placeholder-images-product-1_large.png"} 
+                        src={URL} 
                         alt=""
                         width={60}
                         height={60} />

@@ -9,8 +9,8 @@ type Step = {
 }
 
 type Props = {
-    steps: Step[],
-    formStep: string
+    steps?: Step[],
+    formStep?: string
 }
 
 export const FormProgress: FunctionComponent<Props> = ({steps}) => {

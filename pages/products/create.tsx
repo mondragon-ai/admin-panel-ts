@@ -589,7 +589,9 @@ export const StepFour: FunctionComponent<Props> = ({
             setIndex={setIndex}
             steps={steps}
             product={product}
-            setProduct={setProduct}>
+            setProduct={setProduct}
+            resource={"/products/create"}
+            redirect={"/products/all"}>
             <div className={`${styles.col}`}>
                 <div className={`${styles.col}`}>
 

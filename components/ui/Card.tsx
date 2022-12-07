@@ -46,6 +46,9 @@ export interface CardHeaderProps {
     state?: any,
     product?: Product,
     setProduct?: Dispatch<SetStateAction<any>>,
+    redirect?: string,
+    resource?: string,
+    request_key?: string,
 }
   
 
@@ -68,8 +71,12 @@ export const Card: React.FC<CardHeaderProps> = ({
     steps,
     state,
     product,
-    setProduct
+    setProduct,
+    redirect,
+    resource,
+    request_key,
 }) => {
+    console.log(" => KEY: " + request_key);
     return (
         <div className={`${styles.card}`}>
             {
@@ -95,7 +102,10 @@ export const Card: React.FC<CardHeaderProps> = ({
                         steps={steps}
                         state={state} 
                         product={product}
-                        setProduct={setProduct} /> :
+                        setProduct={setProduct}
+                        resource={resource}
+                        redirect={redirect}
+                        request_key={request_key}/> :
                     <DefaultHeader 
                         header={header}
                         subHeader={subHeader as string}
@@ -121,8 +131,12 @@ export const CreateHeader: React.FC<CardHeaderProps> = ({
     steps,
     state,
     product,
-    setProduct
+    setProduct,
+    request_key,
+    redirect,
+    resource
 }) => {
+    
 
     const handleNav = (s: string) => {
         let list: any[] = [];
@@ -161,13 +175,15 @@ export const CreateHeader: React.FC<CardHeaderProps> = ({
 
     const handleSave = async (
         resource: string,
-        product: any,
+        redirect: string,
+        data: any,
+        key: string,
     ) => {
-        const response = await impoweredRequest(url + resource, "POST",{ product: product});
+        const response = await impoweredRequest(url + resource, "POST", {[key]: data});
         console.log("198: HANDLE CREATE -->\n", response);
 
         if (String(response.text).includes("SUCCESS")) {
-            window.location.href = "/products/all"
+            window.location.href = redirect
         }
     }
 
@@ -184,7 +200,6 @@ export const CreateHeader: React.FC<CardHeaderProps> = ({
         console.log("198: VARIANTS -->\n")
     }
 
-    const resource = "/products/create";
     const data: any = state;
 
     return (
@@ -222,7 +237,12 @@ export const CreateHeader: React.FC<CardHeaderProps> = ({
                                 }}  
                                 className={`${styles.tag}`}>Next</p> : null}
                             {next === "SAVE" ? <p 
-                                onClick={() =>  handleSave(resource, product as Product)}
+                                onClick={() =>  handleSave(
+                                    resource as string, 
+                                    redirect as string,
+                                    data,
+                                    request_key as string,
+                                )}
                                 style={{
                                     marginLeft: "0.5rem",
                                     backgroundColor:  "rgb(138, 242, 138)",

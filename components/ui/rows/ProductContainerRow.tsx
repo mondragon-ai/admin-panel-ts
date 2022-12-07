@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { FunctionComponent } from "react";
 import { numberFormat } from "../../../lib/helpers/formatters";
@@ -16,7 +17,9 @@ export interface ColFromList {
 export const ProductContainerRow: FunctionComponent<any>  = ({p}) => {
 
     const PRODUCT: Product = p;
-    const { title, status, options, price, collections, tags } = PRODUCT;
+    const { title, status, options, price, collections, tags, images } = PRODUCT;
+
+    const URL = images && images[0] ? images[0].url : "https://boltagency.ca/content/images/2020/03/placeholder-images-product-1_large.png";
 
     return (
         <Link 
@@ -48,20 +51,32 @@ export const ProductContainerRow: FunctionComponent<any>  = ({p}) => {
                 <div 
                     style={{
                         width: "30%",
-                        justifyContent: "flex-start"
+                        justifyContent: "flex-start",
+                        alignItems: "center", 
                     }} 
-                    className={`${styles.col} ${styles.rowOneMobile}`}>
-                    <span 
-                        style={{
-                            fontSize: "1rem",
-                        }}>{title}</span>
-                    <div 
-                        style={{
-                            fontSize: "1rem",
-                            justifyContent: "flex-start"
-                        }}
-                        className={`${styles.row}`}>
-                        {options?.options1.map((option, i) => (<p key={option} className={`${styles.rowSubHead}`}>{option} {i != options.options1.length-1 ? ", " : ""}</p>) )}
+                    className={`${styles.row} ${styles.rowOneMobile}`}>
+                    <div className={`${styles.col}`} style={{paddingRight: "1rem", width: 'auto', justifySelf: "center"}}>
+                        <Image 
+                            style={{borderRadius: "3px", border: "1px solid black"}}
+                            src={URL}
+                            alt={"imPowered Logo"}
+                            width={35}
+                            height={35}
+                        />
+                    </div>
+                    <div className={`${styles.col}`} >
+                        <span 
+                            style={{
+                                fontSize: "1rem",
+                            }}>{title}</span>
+                        <div 
+                            style={{
+                                fontSize: "1rem",
+                                justifyContent: "flex-start"
+                            }}
+                            className={`${styles.row}`}>
+                            {options?.options1.map((option, i) => (<p key={option} className={`${styles.rowSubHead}`}>{option} {i != options.options1.length-1 ? ", " : ""}</p>) )}
+                        </div>
                     </div>
                 </div>
                 <div 
