@@ -177,6 +177,10 @@ export const CreateHeader: React.FC<CardHeaderProps> = ({
         data: any,
         key: string,
     ) => {
+        console.log(" => KEY: " + key);
+        console.log(" => KEY: " + resource);
+        console.log(" => KEY: " + redirect);
+        console.log(" => KEY: " + data);
         const response = await impoweredRequest(url + resource, "POST", {[key]: data});
         console.log("198: HANDLE CREATE -->\n", response);
 

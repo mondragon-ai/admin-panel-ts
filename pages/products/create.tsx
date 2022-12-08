@@ -591,6 +591,7 @@ export const StepFour: FunctionComponent<Props> = ({
             product={product}
             state={product}
             setProduct={setProduct}
+            request_key={"product"}
             resource={"/products/create"}
             redirect={"/products/all"}>
             <div className={`${styles.col}`}>
