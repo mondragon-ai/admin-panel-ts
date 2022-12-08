@@ -589,6 +589,7 @@ export const StepFour: FunctionComponent<Props> = ({
             setIndex={setIndex}
             steps={steps}
             product={product}
+            state={product}
             setProduct={setProduct}
             resource={"/products/create"}
             redirect={"/products/all"}>
