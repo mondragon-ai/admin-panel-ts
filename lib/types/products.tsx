@@ -74,13 +74,26 @@ export interface GiftCard {
     email: string,
 }
 
-export interface Collections { 
+export interface ProdCollection { 
     id: string,
     title: string,
     status: boolean,
     collections: string[],
     tags: string[],
-    products: string[]
+    notes: string,
+    type_to_compare: string,
+    compare_against: string,
+    condition: string,
+    products: {
+        id: string,
+        title: string,
+        url: string,
+        option1: string,
+        option2: string,
+        option3: string,
+        compare_at_price: number,
+        price: number,
+    }[]
 }
 
 export interface Subscriptions {

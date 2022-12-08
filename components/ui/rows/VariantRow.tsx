@@ -30,6 +30,7 @@ export const VariantRow: React.FC<Props> = ({
                 }}>
                     <div >
                     <Image 
+                        style={{borderRadius: "3px", border: "1px solid black"}}
                         src={URL} 
                         alt=""
                         width={60}

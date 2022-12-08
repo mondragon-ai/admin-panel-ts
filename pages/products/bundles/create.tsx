@@ -11,23 +11,22 @@ import { VariantRow } from "../../../components/ui/rows/VariantRow";
 import { algoliasearch } from "algoliasearch";
 const client = algoliasearch('9HC6EQSC7S', 'de139a052d86174f4b708e160db11c4b');
 
-type Bundle = {
+export type Bundle = {
     title: string,
-    type_to_compare: "TAGS" | "DATE" | "BEST_SELLERS" | "SOLD" | "QUANITY",
-    condition: "===" | ">=" | "<=" | "!==",
-    compare_against: string,
+    total: number,
+    new_price: number,
+    tags: string[],
     notes: string,
-    products: 
-    {
+    products: {
         id: string,
         title: string,
-
-    }[],
-    image: {
         url: string,
-        alt: string, 
-        id: string
-    }
+        option1: string,
+        option2: string,
+        option3: string,
+        compare_at_price: number,
+        price: number,
+    }[]
 }
 
 type Props = {
@@ -61,30 +60,32 @@ const s = [
         required: true,
         complete: false,
         active: false,
-        title: "Product",
+        title: "Name & Select Prodcuts",
         step: "STEP_ONE"
     },
     
 ]
+
 const b = {
-    title: "T-Shirt",
-    type_to_compare: "TAGS",
-    condition: "===",
-    compare_against: "",
-    notes: "Nothing to see here, just new shit",
+    title: "",
+    total: 0,
+    new_price: 0,
+    tags: [],
+    notes: "",
     products: [
         {
-            id: "prod_" + crypto.randomBytes(10).toString('hex'),
-            title: "test prod",
+            id: "",
+            title: "",
             url: "",
             option1: "",
             option2: "",
             option3: "",
             compare_at_price: 0,
-            price: 42000,
+            price: 0,
         }
     ]
 }
+
 
 export const createBundle: FunctionComponent<Props> = () => {
 
@@ -95,31 +96,70 @@ export const createBundle: FunctionComponent<Props> = () => {
 
 
     const [query, setQuery] = useState<string>("")
-    const [results, setResults] = useState<any[]>([])
+    const [hits, setResults] = useState<{
+        id: string,
+        title: string,
+        url: string,
+        option1: string,
+        option2: string,
+        option3: string,
+        compare_at_price: number,
+        price: number,
+    }[]>([]);
 
     const updateSearch = async (v: string) => {
-        setBundle({
-            ...bundle,
-            compare_against: v
-        })
     
         setQuery(v);
         
         // Fetch search results
         const { results } = await client.search({
             requests: [
-                {
-                    indexName: 'prod_product_search_engine',
-                    query: query,
-                    hitsPerPage: 250,
-                },
+            {
+                indexName: 'prod_product_search_engine',
+                // You can make typos, we handle it
+                query: query,
+                hitsPerPage: 50,
+            },
             ],
         });
     
         if (results[0].hits) {
-            setResults(results[0].hits);
+            setResults(results[0].hits as any);
             console.log('[Results]', results[0].hits);
         }
+
+        let product_list: {
+            id: string,
+            title: string,
+            url: string,
+            option1: string,
+            option2: string,
+            option3: string,
+            compare_at_price: number,
+            price: number,
+        }[] = []
+        
+
+        hits.forEach(hit => {
+            product_list = [
+                ...product_list,
+                {
+                    id: hit.id,
+                    title: hit.title,
+                    url: "",
+                    option1: hit.option1,
+                    option2: hit.option2,
+                    option3: hit.option3,
+                    compare_at_price: hit.compare_at_price,
+                    price: hit.price,
+                }
+            ]
+        })
+
+        setBundle({
+            ...bundle,
+            products: product_list
+        })
     };
 
     return (
@@ -138,7 +178,7 @@ export const createBundle: FunctionComponent<Props> = () => {
                 }}
             >
                 <div className={`${styles.col} ${styles.twoThird}`}>
-                    <Card title={"Collection Detail"}
+                    <Card title={"Bundle Detail"}
                         header={""}
                         card_type={"CREATE"}
                         next={"SAVE"}
@@ -167,85 +207,13 @@ export const createBundle: FunctionComponent<Props> = () => {
                                         name="title" />
                                     <label htmlFor="title" style={{ 
                                         top: bundle?.title && bundle.title !== "" ? "-5px" : "", 
-                                        fontSize: bundle?.title &&bundle.title !== "" ? "10px" : ""}}>Collections</label>
-                                </div>
-                            </div>
-                            <div className={`${styles.row}`}
-                                style={{
-                                    padding: "2rem 0"
-                                }}
-                            >
-                                
-                                <div className={`${styles.formItem} ${styles.row}`}
-                                    style={{
-                                        width:"40%",
-                                        padding: "0 5px"
-                                    }}>
-                                    <input
-                                        style={{
-                                            color: "white",
-                                            width: "100%"
-                                        }}
-                                        onChange={(e) => setBundle({
-                                            ...bundle,
-                                            type_to_compare: e.target.value
-                                        })}
-                                        disabled={true}
-                                        value={bundle?.type_to_compare}
-                                        type="text"
-                                        name="type_to_compare" />
-                                    <label htmlFor="type_to_compare" style={{ 
-                                        top: bundle?.type_to_compare && bundle.type_to_compare !== "" ? "-5px" : "", 
-                                        fontSize: bundle?.type_to_compare &&bundle.type_to_compare !== "" ? "10px" : ""}}>Type to Compare</label>
-                                </div>
-                                <div className={`${styles.formItem} ${styles.row}`}
-                                    style={{
-                                        width:"20%",
-                                        padding: "0 5px"
-                                    }}>
-                                    <input
-                                        style={{
-                                            color: "white",
-                                            width: "100%"
-                                        }}
-                                        onChange={(e) => setBundle({
-                                            ...bundle,
-                                            condition: e.target.value
-                                        })}
-                                        disabled={true}
-                                        value={bundle?.condition}
-                                        type="text"
-                                        name="condition" />
-                                    <label htmlFor="condition" style={{ 
-                                        top: bundle?.condition && bundle.condition !== "" ? "-5px" : "", 
-                                        fontSize: bundle?.condition &&bundle.condition !== "" ? "10px" : ""}}>Condition</label>
-                                </div>
-                                <div className={`${styles.formItem} ${styles.row}`}
-                                    style={{
-                                        width:"40%",
-                                        padding: "0 5px"
-                                    }}>
-                                    <input
-                                        style={{
-                                            color: "white",
-                                            width: "100%"
-                                        }}
-                                        onChange={(e) => setBundle({
-                                            ...bundle,
-                                            compare_against: e.target.value
-                                        })}
-                                        value={bundle?.compare_against}
-                                        type="text"
-                                        name="compare_against" />
-                                    <label htmlFor="compare_against" style={{ 
-                                        top: bundle?.compare_against && bundle.compare_against !== "" ? "-5px" : "", 
-                                        fontSize: bundle?.compare_against &&bundle.compare_against !== "" ? "10px" : ""}}>Compare Against</label>
+                                        fontSize: bundle?.title &&bundle.title !== "" ? "10px" : ""}}>Bundle Name</label>
                                 </div>
                             </div>
                         </div>
                     </Card>
 
-                    <Card title={"Products In Collection"}
+                    <Card title={"Products in Bundle"}
                         header={""}
                         card_type={"DEFAULT"}
                     >
@@ -283,14 +251,14 @@ export const createBundle: FunctionComponent<Props> = () => {
                                         query === "" && bundle.products && bundle.products.map(product => {
                                             return (
                                                 <div key={product.id} className={`${styles.col}`}>
-                                                    <VariantRow item={product} />
                                                     <Underline width={100} />
+                                                    <VariantRow item={product} />
                                                 </div>
                                             )
                                         })
                                     }
                                     {
-                                        query !== "" && results.length > 0 && results.map((product) => {
+                                        hits.length < 4 && query !== "" && hits.length > 0 && hits.map((product) => {
                                             return (
                                                 <div key={product.id} className={`${styles.col} ${styles.itemRow}`} onClick={() => setBundle({...bundle, products: [...bundle.products, product]})}>
                                                     <Underline width={100} />

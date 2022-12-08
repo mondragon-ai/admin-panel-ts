@@ -26,34 +26,36 @@ import Underline from "../../components/ui/Underline";
 import * as crypto from "crypto"
 import { MainRowContainerHeader } from "../../components/ui/headers/MainRowContainerHeader";
 import { MainRowContainer } from "../../components/ui/rows/MainRowContainer";
-import { Collections } from "../../lib/types/products";
+import { ProdCollection } from "../../lib/types/products";
+import { GetServerSideProps } from "next";
+import { impoweredRequest } from "../../lib/helpers/requests";
 
-const collections: Collections[] = [
-    {
-        collections: [],
-        products: [],
-        title: "T-Shirts",
-        status: false,
-        id: "col_" + crypto.randomBytes(10).toString("hex"),
-        tags: ["SALE", "Shirts"]
-    },
-    {
-        collections: [],
-        products: [
-            "pro_" + crypto.randomBytes(10).toString("hex")
-        ],
-        title: "T-Shirts",
-        status: false,
-        id: crypto.randomBytes(10).toString("hex"),
-        tags: ["SALE", "Shirts"]
-    }
-]
+// const collections: ProdCollection[] = [
+//     {
+//         collections: [],
+//         products: [],
+//         title: "T-Shirts",
+//         status: false,
+//         id: "col_" + crypto.randomBytes(10).toString("hex"),
+//         tags: ["SALE", "Shirts"]
+//     },
+//     {
+//         collections: [],
+//         products: [
+//             "pro_" + crypto.randomBytes(10).toString("hex")
+//         ],
+//         title: "T-Shirts",
+//         status: false,
+//         id: crypto.randomBytes(10).toString("hex"),
+//         tags: ["SALE", "Shirts"]
+//     }
+// ]
 
 interface Prop {
-    itemTxt: string
+    collections: ProdCollection[]
 }
 
-const Collections = (props: Prop) => {
+const Collections: FunctionComponent<Prop> = ({collections}) => {
     const [itemSearch, setItemSearch] = useState("");
     const [list, setOrders] = useState<any[]>(collections);
     const [filterState, setFilter] = useState<"" | "INACTIVE" | "ACTIVE">("");
@@ -102,7 +104,7 @@ const Collections = (props: Prop) => {
                             rowTwoLower={"Status"}
                             rowThree={""}
                             rowFour={"Tags"}/>
-                        {list && list.map((s: Collections) => {
+                        {list && list.map((s: ProdCollection) => {
                             console.log(s.id);
                                 return (
                                     <div key={s.id} className={`${styles.col} ${styles.itemRow}`}>
@@ -125,5 +127,37 @@ const Collections = (props: Prop) => {
         </div>
     )
 }
+
+
+export const getServerSideProps: GetServerSideProps = async () => {
+    const url = "https://us-central1-impowered-funnel.cloudfunctions.net/funnel/collections";
+    const result = await impoweredRequest(url, "POST", {col_uuid: ""});
+
+    console.log(" ==> SERVER SIDE");
+    console.log(result);
+
+    if (!result) {
+        throw new Error("Product list error");
+    }
+
+    console.log(" ==> SERVER SIDE");
+    console.log(result);
+
+    let collections = [{}] as ProdCollection[];
+    let size = 0;
+
+    if (result?.result) {
+        collections = result?.result?.orders,
+        size = result?.result?.size
+    }
+
+    return {
+        props: {
+            size: size,
+            collections: collections
+        }
+    }
+}
+
 
 export default Collections;
