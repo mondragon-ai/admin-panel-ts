@@ -91,15 +91,15 @@ const c = {
 }
 
 interface Prop {
-    collections: ProdCollection[]
+    bundles: Bundle[]
 }
 
-const CollectionDetail: FunctionComponent<Prop> = ({collections}) => {
+const SubscriptionDetail: FunctionComponent<Prop> = ({bundles}) => {
 
     const [steps, setIndex] = useState(s);
     const [formStep, setFormStep] = useState("STEP_ONE")
 
-    const [collection, setCollection] = useState(collections && collections.length > 0 ? collections[0] : {} as ProdCollection);
+    const [bundle, setBundle] = useState(bundles && bundles.length > 0 ? bundles[0] : {} as Bundle);
 
 
     const [query, setQuery] = useState<string>("")
@@ -116,10 +116,10 @@ const CollectionDetail: FunctionComponent<Prop> = ({collections}) => {
 
     const updateSearch = async (v: string) => {
 
-        setCollection({
-            ...collection,
-            compare_against: v
-        })
+        // setCollection({
+        //     ...collection,
+        //     compare_against: v
+        // })
 
         setQuery(v);
         
@@ -174,14 +174,14 @@ const CollectionDetail: FunctionComponent<Prop> = ({collections}) => {
         // })
     };
 
-    console.log(collection)
+    console.log(bundle)
 
     return (
         <div className={`${styles.col}`}>
             {/* Sub Header - page specific */}
             <DetailPageHeader
                 back_route={"/products/collections"}
-                title={collection.title}
+                title={bundle.title}
                 special_btn={"Delete"}
                 special_btn_route={"/products/collections"} />
             
@@ -209,16 +209,16 @@ const CollectionDetail: FunctionComponent<Prop> = ({collections}) => {
                                             borderRadius: "4px"
                                         }}
                                         id={"options2"}
-                                        onChange={(e) => setCollection({
-                                            ...collection,
+                                        onChange={(e) => setBundle({
+                                            ...bundle,
                                             notes: e.target.value
                                         })}
                                         
-                                        value={collection?.notes}
+                                        value={bundle?.notes}
                                         name="options2"/>
                                     <label style={{ 
-                                        top: collection?.notes && collection?.notes !== "" ? "-5px" : "", 
-                                        fontSize: collection?.notes && collection?.notes !== "" ? "10px" : ""}}>Notes</label>
+                                        top: bundle?.notes && bundle?.notes !== "" ? "-5px" : "", 
+                                        fontSize: bundle?.notes && bundle?.notes !== "" ? "10px" : ""}}>Notes</label>
                                 </div>
                             </div>
                         </Card>
@@ -245,16 +245,16 @@ const CollectionDetail: FunctionComponent<Prop> = ({collections}) => {
                                                 color: "white",
                                                 width: "100%"
                                             }}
-                                            onChange={(e) => setCollection({
-                                                ...collection,
+                                            onChange={(e) => setBundle({
+                                                ...bundle,
                                                 title: e.target.value
                                             })}
-                                            value={collection?.title}
+                                            value={bundle?.title}
                                             type="text"
                                             name="title" />
                                         <label htmlFor="title" style={{ 
-                                            top: collection?.title && collection.title !== "" ? "-5px" : "", 
-                                            fontSize: collection?.title &&collection.title !== "" ? "10px" : ""}}>Collection Title</label>
+                                            top: bundle?.title && bundle.title !== "" ? "-5px" : "", 
+                                            fontSize: bundle?.title && bundle.title !== "" ? "10px" : ""}}>Collection Title</label>
                                     </div>
                                 </div>
                                 <div className={`${styles.row}`}
@@ -262,69 +262,6 @@ const CollectionDetail: FunctionComponent<Prop> = ({collections}) => {
                                         padding: "2rem 0"
                                     }}
                                 >
-                                    
-                                    <div className={`${styles.formItem} ${styles.row}`}
-                                        style={{
-                                            width:"40%",
-                                            padding: "0 5px"
-                                        }}>
-                                        <input
-                                            style={{
-                                                color: "white",
-                                                width: "100%"
-                                            }}
-                                            onChange={(e) => setCollection({
-                                                ...collection,
-                                                type_to_compare: e.target.value
-                                            })}
-                                            disabled={true}
-                                            value={collection?.type_to_compare}
-                                            type="text"
-                                            name="type_to_compare" />
-                                        <label htmlFor="type_to_compare" style={{ 
-                                            top: collection?.type_to_compare && collection.type_to_compare !== "" ? "-5px" : "", 
-                                            fontSize: collection?.type_to_compare && collection.type_to_compare !== "" ? "10px" : ""}}>Type to Compare</label>
-                                    </div>
-                                    <div className={`${styles.formItem} ${styles.row}`}
-                                        style={{
-                                            width:"20%",
-                                            padding: "0 5px"
-                                        }}>
-                                        <input
-                                            style={{
-                                                color: "white",
-                                                width: "100%"
-                                            }}
-                                            onChange={(e) => setCollection({
-                                                ...collection,
-                                                condition: e.target.value
-                                            })}
-                                            disabled={true}
-                                            value={collection?.condition}
-                                            type="text"
-                                            name="condition" />
-                                        <label htmlFor="condition" style={{ 
-                                            top: collection?.condition && collection.condition !== "" ? "-5px" : "", 
-                                            fontSize: collection?.condition && collection.condition !== "" ? "10px" : ""}}>Condition</label>
-                                    </div>
-                                    <div className={`${styles.formItem} ${styles.row}`}
-                                        style={{
-                                            width:"40%",
-                                            padding: "0 5px"
-                                        }}>
-                                        <input
-                                            style={{
-                                                color: "white",
-                                                width: "100%"
-                                            }}
-                                            onChange={(e) => updateSearch(e.target.value)}
-                                            value={collection?.compare_against}
-                                            type="text"
-                                            name="query" />
-                                        <label htmlFor="query" style={{ 
-                                            top: collection?.compare_against !== "" ? "-5px" : "", 
-                                            fontSize: collection?.compare_against !== "" ? "10px" : ""}}>Compare Against</label>
-                                    </div>
                                 </div>
                             </div>
                         </Card>
@@ -337,7 +274,7 @@ const CollectionDetail: FunctionComponent<Prop> = ({collections}) => {
                                 <div className={`${styles.col}`} style={{ padding: "1rem 0" }}>
                                     <div className={`${styles.col}`} style={{ padding: "0em 0.5rem 0rem 0.5rem " }}>
                                         {
-                                            query === "" && collection.products && collection.products.map(product => {
+                                            query === "" && bundle.products && bundle.products.map(product => {
                                                 return (
                                                     <div key={product.id} className={`${styles.col}`}>
                                                         <VariantRow item={product} />
@@ -370,37 +307,37 @@ const CollectionDetail: FunctionComponent<Prop> = ({collections}) => {
 
 
 export const getServerSideProps: GetServerSideProps = async () => {
-    const url = "https://us-central1-impowered-funnel.cloudfunctions.net/funnel/collections";
-    const result = await impoweredRequest(url, "POST", {col_uuid: ""});
+    const url = "https://us-central1-impowered-funnel.cloudfunctions.net/funnel/bundles";
+    const result = await impoweredRequest(url, "POST", {bun_uuid: ""});
 
     console.log(" ==> SERVER SIDE");
     console.log(result);
 
     if (!result) {
-        throw new Error("Product list error");
+        throw new Error("Bundle list error");
     }
 
     console.log(" ==> SERVER SIDE");
     console.log(result);
 
-    let collections = [{}] as ProdCollection[];
+    let bundles = [{}] as Bundle[];
     let size = 0;
 
     if (result?.result) {
-        collections = result?.result?.collections,
+        bundles = result?.result?.bundles,
         size = result?.result?.size
     }
 
     return {
         props: {
             size: size,
-            collections: collections
+            bundles: bundles
         }
     }
 }
 
 
 
-export default CollectionDetail;
+export default SubscriptionDetail;
 
 

@@ -183,6 +183,10 @@ export const createBundle: FunctionComponent<Props> = () => {
                         card_type={"CREATE"}
                         next={"SAVE"}
                         prev={""}
+                        request_key={"bundle"}
+                        resource={"/bundles/create"}
+                        redirect={"/products/bundles"}
+                        state={bundle}
                     >
                         <div className={`${styles.col}`}>
                             

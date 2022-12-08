@@ -147,7 +147,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
     let size = 0;
 
     if (result?.result) {
-        collections = result?.result?.orders,
+        collections = result?.result?.collections,
         size = result?.result?.size
     }
 

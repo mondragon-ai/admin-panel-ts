@@ -76,7 +76,6 @@ export const Card: React.FC<CardHeaderProps> = ({
     resource,
     request_key,
 }) => {
-    console.log(" => KEY: " + request_key);
     return (
         <div className={`${styles.card}`}>
             {
@@ -136,7 +135,6 @@ export const CreateHeader: React.FC<CardHeaderProps> = ({
     redirect,
     resource
 }) => {
-    
 
     const handleNav = (s: string) => {
         let list: any[] = [];

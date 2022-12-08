@@ -28,35 +28,37 @@ import { MainRowContainerHeader } from "../../components/ui/headers/MainRowConta
 import { MainRowContainer } from "../../components/ui/rows/MainRowContainer";
 import { Bundle } from "../../lib/types/products";
 import { numberFormat } from "../../lib/helpers/formatters";
+import { GetServerSideProps } from "next";
+import { impoweredRequest } from "../../lib/helpers/requests";
 
-const bundles: Bundle[] = [
-    {
-        collections: [],
-        products: [],
-        title: "Chill Pack",
-        status: false,
-        id: "col_" + crypto.randomBytes(10).toString("hex"),
-        tags: ["SALE", "Shirts"],
-        price: 100
-    },
-    {
-        collections: [],
-        products: [
-            "pro_" + crypto.randomBytes(10).toString("hex")
-        ],
-        title: "T-Shirts",
-        status: false,
-        id: crypto.randomBytes(10).toString("hex"),
-        tags: ["SALE", "Shirts"],
-        price: 100
-    }
-]
+// const bundles: Bundle[] = [
+//     {
+//         collections: [],
+//         products: [],
+//         title: "Chill Pack",
+//         status: false,
+//         id: "col_" + crypto.randomBytes(10).toString("hex"),
+//         tags: ["SALE", "Shirts"],
+//         price: 100
+//     },
+//     {
+//         collections: [],
+//         products: [
+//             "pro_" + crypto.randomBytes(10).toString("hex")
+//         ],
+//         title: "T-Shirts",
+//         status: false,
+//         id: crypto.randomBytes(10).toString("hex"),
+//         tags: ["SALE", "Shirts"],
+//         price: 100
+//     }
+// ]
 
 interface Prop {
-    itemTxt: string
+    bundles: Bundle[]
 }
 
-const Bundles = (props: Prop) => {
+const Bundles: FunctionComponent<Prop> = ({bundles}) => {
     const [itemSearch, setItemSearch] = useState("");
     const [list, setOrders] = useState<any[]>(bundles);
     const [filterState, setFilter] = useState<"" | "INACTIVE" | "ACTIVE">("");
@@ -128,5 +130,37 @@ const Bundles = (props: Prop) => {
         </div>
     )
 }
+
+
+export const getServerSideProps: GetServerSideProps = async () => {
+    const url = "https://us-central1-impowered-funnel.cloudfunctions.net/funnel/bundles";
+    const result = await impoweredRequest(url, "POST", {bun_uuid: ""});
+
+    console.log(" ==> SERVER SIDE");
+    console.log(result);
+
+    if (!result) {
+        throw new Error("Product list error");
+    }
+
+    console.log(" ==> SERVER SIDE");
+    console.log(result);
+
+    let bundles = [{}] as Bundle[];
+    let size = 0;
+
+    if (result?.result) {
+        bundles = result?.result?.bundles,
+        size = result?.result?.size
+    }
+
+    return {
+        props: {
+            size: size,
+            bundles: bundles
+        }
+    }
+}
+
 
 export default Bundles;
