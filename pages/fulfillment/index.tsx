@@ -1,15 +1,5 @@
 import styles from "../../styles/Main.module.css";
 
-// export const AllOrders = () => {
-//     return (
-//         <div className={`${styles.col}`}>
-//             hello
-//         </div>
-//     );
-// }
-
-// export default AllOrders;
-
 import AllItemHeader from "../../components/ui/headers/AllItemHeader";
 import { useState } from "react";
 import {
@@ -26,60 +16,112 @@ import Underline from "../../components/ui/Underline";
 import * as crypto from "crypto"
 import { MainRowContainerHeader } from "../../components/ui/headers/MainRowContainerHeader";
 import { MainRowContainer } from "../../components/ui/rows/MainRowContainer";
-import { Subscriptions } from "../../lib/types/products";
 import { GetServerSideProps } from "next";
 import { numberFormat } from "../../lib/helpers/formatters";
 import { Fulfillment } from "../../lib/types/fulfillment";
 
-const fulfillments: Subscriptions[] = [
+const fulfillments: Fulfillment[] = [
     {
-        order_name: "#SH-92834592454",
-        status: true,
-        customer: {
-            cus_uuid: "",
-            email: "allMight@gobigly.com",
-            first_name: "All",
-            last_name: "Might",
-            addresses: [
+        status: false,
+        id: "ful_" + crypto.randomBytes(10).toString("hex"),
+        merchant_address: {
+            line1: "420 Bigly St",
+            line2: "",
+            city: "South Park",
+            state: "NM",
+            zip: "42069",
+            country: "72704",
+            name: "Bigly",
+            contact: "thanks@gobigly.com"
+        },
+        recipient_address: {
+            line1: "420 Bigly St",
+            line2: "",
+            city: "South Park",
+            state: "NM",
+            zip: "42069",
+            country: "72704",
+            name: "obi",
+            contact: "obi@gobigly.com"
+        },
+        shipping_detail: {
+            service: "USPS",
+            type: "STANDARD",
+            packaging: "PACKAGE",
+            weight: 0.22,
+            insurance: false,
+        },
+        order_summary: {
+            order_number: "#SH-IJBH934H",
+            total_price: 6500,
+            line_items: [
                 {
-                    line1: "420 Bigly ln",
-                    line2: "",
-                    city: "South Park",
-                    state: "AR",
-                    zip: "72704",
-                    country: "US",
-                    type: "BOTH", 
-                    name: ""
+                    url: "", 
+                    title: "Vip Product",
+                    quantity: 3,
+                    price: 3000,
+                    options1: "COLOR",
+                    options2: "SIZE",
+                    options3: "",
                 }
             ]
         },
-        payment_method: "STRIPE",
-        schedule: {
-            next_charge_date: new Date().toDateString(),
-            interval: "MONTHLY",
-            total_charges: 3,
-            total_value: 9000,
-        },
-        product: {
-            product_id: "pro_" + crypto.randomBytes(10).toString("hex"),
-            variant_id: "var_" + crypto.randomBytes(10).toString("hex"),
-            title: "Hoodie",
-            price: 3000,
-            options1: "",
-            options2: "",
-            options3: "",
-            url: ""
-        },
-        id: "sub_" + crypto.randomBytes(10).toString("hex"),
-        value: 3000
+        label_url: ""
     },
+    {
+        status: false,
+        id: "ful_" + crypto.randomBytes(10).toString("hex"),
+        merchant_address: {
+            line1: "420 Bigly St",
+            line2: "",
+            city: "South Park",
+            state: "NM",
+            zip: "42069",
+            country: "72704",
+            name: "Bigly",
+            contact: "thanks@gobigly.com"
+        },
+        recipient_address: {
+            line1: "420 Bigly St",
+            line2: "",
+            city: "South Park",
+            state: "NM",
+            zip: "42069",
+            country: "72704",
+            name: "obi",
+            contact: "obi@gobigly.com"
+        },
+        shipping_detail: {
+            service: "USPS",
+            type: "STANDARD",
+            packaging: "PACKAGE",
+            weight: 0.22,
+            insurance: false,
+        },
+        order_summary: {
+            order_number: "#SH-IJBH934H",
+            total_price: 6500,
+            line_items: [
+                {
+                    url: "", 
+                    title: "Vip Product",
+                    quantity: 3,
+                    price: 3000,
+                    options1: "COLOR",
+                    options2: "SIZE",
+                    options3: "",
+                }
+            ]
+        },
+        label_url: ""
+    }
 ]
 
 interface Prop {
     fulfillments: Fulfillment[]
 }
 
-const Fulfillment = ({}: Prop) => {
+const AllfFlfillments = ({}: Prop) => {
     const [itemSearch, setItemSearch] = useState("");
     const [list, setOrders] = useState<any[]>(fulfillments);
     const [filterState, setFilter] = useState<"" | "INACTIVE" | "ACTIVE">("");
@@ -87,15 +129,15 @@ const Fulfillment = ({}: Prop) => {
     return (
         <div className={`${styles.col}`}>
             <AllItemHeader 
-                title={"Subscriptions"}
-                createPage={"/products/subscriptions/create"}
-                createTxt={"Create Subscriptions"}
+                title={"Fulfillment"}
+                createPage={""}
+                createTxt={""}
                 />
             <main className={`${styles.col} ${styles.container}`}>
                 <div className={`${styles.col} ${styles.card}`}>
                     <div style={{ alignItems: "center"}} className={`${styles.row} ${styles.itemRowHContainer}`}>
                         <MainRowContainerHeader
-                            list={fulfillments}
+                            list={list}
                             type={filterState}
                             setState={setOrders}
                             setFilter={setFilter} />
@@ -110,7 +152,7 @@ const Fulfillment = ({}: Prop) => {
                                         placeholder="" />
                                     <label style={{ 
                                         top: itemSearch != "" ? "-5px" : "", 
-                                        fontSize: itemSearch != "" ? "10px" : ""}}>{` 🔍 Search orders` }</label>
+                                        fontSize: itemSearch != "" ? "10px" : ""}}>{` 🔍 Search Fulfillment` }</label>
                                 </div>
                             </div>
                             <div className={`${styles.row} ${styles.itemsFilterBtn}`}>
@@ -122,26 +164,26 @@ const Fulfillment = ({}: Prop) => {
 
                     <div className={`${styles.col} ${styles.itemsContainer}`}>
                         <ItemContainerHeader 
-                            rowOneUpper={"Subscription ID"}
+                            rowOneUpper={"Order Type"}
                             rowOneLower={"Full Name"}
                             rowTwoUpper={"Product Value"}
                             rowTwoLower={"Status"}
-                            rowThree={"Schedule"}
-                            rowFour={"Total Sub Value"}/>
-                        {list && list.map((s: Subscriptions) => {
+                            rowThree={"Address"}
+                            rowFour={"Order Number"}/>
+                        {list && list.map((s: Fulfillment) => {
                             console.log(s.id);
                                 return (
                                     <div key={s.id} className={`${styles.col} ${styles.itemRow}`}>
                                         <Underline width={100} />
                                         <MainRowContainer
-                                            href={`/products/subscriptions/${s.id}`} 
+                                            href={`/fulfillment/${s.id}`} 
                                             id={s.id}
-                                            colOneTop={s?.order_name}
-                                            colOneBottom={s?.customer?.first_name + " " + s?.customer?.last_name}
-                                            colTwoTop={numberFormat(Number(s.value)/100)}
+                                            colOneTop={s?.shipping_detail?.type}
+                                            colOneBottom={s?.recipient_address?.name }
+                                            colTwoTop={numberFormat(Number(s?.order_summary?.total_price)/100)}
                                             colTwoBottom={s.status}
-                                            colThree={s?.schedule?.interval}
-                                            colFour={numberFormat(Number(s?.schedule?.total_value)/100)} />
+                                            colThree={s?.merchant_address.line1 + " " + s?.recipient_address?.city + " " + s?.recipient_address?.state}
+                                            colFour={s?.order_summary?.order_number} />
                                     </div>
                                 );
                         })}
@@ -182,4 +224,4 @@ export const getServerSideProps: GetServerSideProps = async () => {
     }
 }
 
-export default Fulfillment;
+export default AllfFlfillments;

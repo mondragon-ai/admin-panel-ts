@@ -270,7 +270,7 @@ export const CustomerDetail: FunctionComponent<CustomerDetailProps> = (props) =>
                     <div className={`${styles.col} ${styles.twoThird}`}
                         style={{padding: 0}}>
 
-                        <Card card_type="INFO"
+                        <Card card_type="DEFAULT"
                             title=""
                             header={""}>
                             <div className={`${styles.col}`}>
