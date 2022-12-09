@@ -47,4 +47,6 @@ export type LastOrder = {
     line_items: LineItem[],
     total_price: number,
     order_number: string,
+    payment_status: boolean, 
+    fulfillment_status: boolean,
 }

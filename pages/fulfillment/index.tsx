@@ -11,14 +11,14 @@ import styles from "../../styles/Main.module.css";
 // export default AllOrders;
 
 import AllItemHeader from "../../components/ui/headers/AllItemHeader";
-import { FunctionComponent, useState } from "react";
+import { useState } from "react";
 import {
     faFilter,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-    ProductContainerRow
-} from "../../components/ui/rows/ProductContainerRow";
+// import {
+//     ProductContainerRow
+// } from "../../components/ui/rows/ProductContainerRow";
 import {
     ItemContainerHeader
 } from "../../components/ui/headers/ItemContainerHeader";
@@ -26,61 +26,76 @@ import Underline from "../../components/ui/Underline";
 import * as crypto from "crypto"
 import { MainRowContainerHeader } from "../../components/ui/headers/MainRowContainerHeader";
 import { MainRowContainer } from "../../components/ui/rows/MainRowContainer";
-import { GiftCard } from "../../lib/types/products";
-import { numberFormat } from "../../lib/helpers/formatters";
-import { impoweredRequest } from "../../lib/helpers/requests";
+import { Subscriptions } from "../../lib/types/products";
 import { GetServerSideProps } from "next";
+import { numberFormat } from "../../lib/helpers/formatters";
+import { Fulfillment } from "../../lib/types/fulfillment";
 
-const giftCards: GiftCard[] = [
+const fulfillments: Subscriptions[] = [
     {
-        first_name: "Darth",
-        last_name: "Vader",
-        email: "vader@gobigly.com",
-        status: false,
-        id: "gif_" + crypto.randomBytes(10).toString("hex"),
-        tags: ["SALE", "Shirts"],
-        balance: 0,
-        value: 40
-    },
-    {
-        first_name: "Darth",
-        last_name: "Maul",
-        email: "maul@gobigly.com",
+        order_name: "#SH-92834592454",
         status: true,
-        id: "gif_" + crypto.randomBytes(10).toString("hex"),
-        tags: ["SALE", "Shirts"],
-        balance: 27.93,
-        value: 40
-    }
+        customer: {
+            cus_uuid: "",
+            email: "allMight@gobigly.com",
+            first_name: "All",
+            last_name: "Might",
+            addresses: [
+                {
+                    line1: "420 Bigly ln",
+                    line2: "",
+                    city: "South Park",
+                    state: "AR",
+                    zip: "72704",
+                    country: "US",
+                    type: "BOTH", 
+                    name: ""
+                }
+            ]
+        },
+        payment_method: "STRIPE",
+        schedule: {
+            next_charge_date: new Date().toDateString(),
+            interval: "MONTHLY",
+            total_charges: 3,
+            total_value: 9000,
+        },
+        product: {
+            product_id: "pro_" + crypto.randomBytes(10).toString("hex"),
+            variant_id: "var_" + crypto.randomBytes(10).toString("hex"),
+            title: "Hoodie",
+            price: 3000,
+            options1: "",
+            options2: "",
+            options3: "",
+            url: ""
+        },
+        id: "sub_" + crypto.randomBytes(10).toString("hex"),
+        value: 3000
+    },
 ]
 
 interface Prop {
-    gift_cards: GiftCard[]
+    fulfillments: Fulfillment[]
 }
 
-const GiftCards = ({
-    gift_cards
-}: Prop) => {
-    
-    if (!gift_cards) {
-        // throw new Error("Data not fetched");        
-    }
+const Fulfillment = ({}: Prop) => {
     const [itemSearch, setItemSearch] = useState("");
-    const [list, setOrders] = useState<any[]>(gift_cards);
+    const [list, setOrders] = useState<any[]>(fulfillments);
     const [filterState, setFilter] = useState<"" | "INACTIVE" | "ACTIVE">("");
 
     return (
         <div className={`${styles.col}`}>
             <AllItemHeader 
-                title={"Gift Cards"}
-                createPage={"/products/collections/create"}
-                createTxt={"Create Gift Card"}
+                title={"Subscriptions"}
+                createPage={"/products/subscriptions/create"}
+                createTxt={"Create Subscriptions"}
                 />
             <main className={`${styles.col} ${styles.container}`}>
                 <div className={`${styles.col} ${styles.card}`}>
                     <div style={{ alignItems: "center"}} className={`${styles.row} ${styles.itemRowHContainer}`}>
                         <MainRowContainerHeader
-                            list={giftCards}
+                            list={fulfillments}
                             type={filterState}
                             setState={setOrders}
                             setFilter={setFilter} />
@@ -95,7 +110,7 @@ const GiftCards = ({
                                         placeholder="" />
                                     <label style={{ 
                                         top: itemSearch != "" ? "-5px" : "", 
-                                        fontSize: itemSearch != "" ? "10px" : ""}}>{` 🔍 Search Gift Cards` }</label>
+                                        fontSize: itemSearch != "" ? "10px" : ""}}>{` 🔍 Search orders` }</label>
                                 </div>
                             </div>
                             <div className={`${styles.row} ${styles.itemsFilterBtn}`}>
@@ -107,26 +122,26 @@ const GiftCards = ({
 
                     <div className={`${styles.col} ${styles.itemsContainer}`}>
                         <ItemContainerHeader 
-                            rowOneUpper={"Full Name"}
-                            rowOneLower={"Email"}
-                            rowTwoUpper={""}
+                            rowOneUpper={"Subscription ID"}
+                            rowOneLower={"Full Name"}
+                            rowTwoUpper={"Product Value"}
                             rowTwoLower={"Status"}
-                            rowThree={"Value / Balance"}
-                            rowFour={"Tags"}/>
-                        {list && list.map((s: GiftCard) => {
+                            rowThree={"Schedule"}
+                            rowFour={"Total Sub Value"}/>
+                        {list && list.map((s: Subscriptions) => {
                             console.log(s.id);
                                 return (
                                     <div key={s.id} className={`${styles.col} ${styles.itemRow}`}>
                                         <Underline width={100} />
                                         <MainRowContainer
-                                            href={`/products/gift_cards/${s.id}`} 
+                                            href={`/products/subscriptions/${s.id}`} 
                                             id={s.id}
-                                            colOneTop={s.first_name + " " + s.last_name}
-                                            colOneBottom={s.email}
-                                            colTwoTop={""}
+                                            colOneTop={s?.order_name}
+                                            colOneBottom={s?.customer?.first_name + " " + s?.customer?.last_name}
+                                            colTwoTop={numberFormat(Number(s.value)/100)}
                                             colTwoBottom={s.status}
-                                            colThree={numberFormat(s.value) + " / " +  numberFormat(s.balance)}
-                                            colFour={s.tags} />
+                                            colThree={s?.schedule?.interval}
+                                            colFour={numberFormat(Number(s?.schedule?.total_value)/100)} />
                                     </div>
                                 );
                         })}
@@ -136,8 +151,6 @@ const GiftCards = ({
         </div>
     )
 }
-
-
 
 export const getServerSideProps: GetServerSideProps = async () => {
     // const url = "https://us-central1-impowered-funnel.cloudfunctions.net/funnel/gift_cards";
@@ -169,4 +182,4 @@ export const getServerSideProps: GetServerSideProps = async () => {
     }
 }
 
-export default GiftCards;
+export default Fulfillment;

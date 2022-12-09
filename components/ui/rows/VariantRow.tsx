@@ -49,9 +49,9 @@ export const VariantRow: React.FC<Props> = ({
                     paddingTop: "0.5rem",
                     color: "grey"
                 }}>
-                    {item.option1 != "" ? "" + item.option1 : "-"}
-                    {item.option2 != "" ? " / " + item.option2 : ""}
-                    {item.option3 != "" ? " / " + item.option3 : ""}
+                    {item.options1 != "" ? "" + item.options1 : "-"}
+                    {item.options2 != "" ? " / " + item.options2 : ""}
+                    {item.options3 != "" ? " / " + item.options3 : ""}
                 </p>
             </div>
             <div 

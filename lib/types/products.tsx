@@ -1,3 +1,5 @@
+import { Address } from "./customers";
+
 export interface Product {
     title: string;
     price: number;
@@ -98,17 +100,33 @@ export interface ProdCollection {
 
 export interface Subscriptions {
     id: string,
-    title: string,
+    order_name: string,
     status: boolean,
-    product_id: string,
-    collections?: string[],
-    tags: string[],
-    options?: string[]
-    email: string,
-    first_name: string,
-    last_name: string,
-    schedule: Scheudle,
-    value: string
+    product: {
+        product_id: string,
+        variant_id: string,
+        title: "Hoodie",
+        price: 3000,
+        options1: ""
+        options2: ""
+        options3: "",
+        url: ""
+    },
+    customer: {
+        cus_uuid: string,
+        email: string,
+        first_name: string,
+        last_name: string,
+        addresses: Address[]
+    },
+    payment_method: "STRIPE" | "SQUARE" | "",
+    schedule: {
+        next_charge_date: string,
+        interval: "MONTHLY" | "DAILY" | "ANNUALLY" | "TRIAL",
+        total_charges: 3,
+        total_value: 9000,
+    },
+    value: number
 }
 
 export interface Scheudle {

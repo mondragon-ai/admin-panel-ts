@@ -12,54 +12,11 @@ import { algoliasearch } from "algoliasearch";
 import { DetailPageHeader } from "../../../components/ui/headers/DetailPageHeader";
 import { GetServerSideProps } from "next";
 import { impoweredRequest } from "../../../lib/helpers/requests";
-import { ProdCollection } from "../../../lib/types/products";
+import { ProdCollection, Subscriptions } from "../../../lib/types/products";
+import { numberFormat } from "../../../lib/helpers/formatters";
+import Link from "next/link";
 const client = algoliasearch('9HC6EQSC7S', 'de139a052d86174f4b708e160db11c4b');
 
-type Bundle = {
-    title: string,
-    type_to_compare: "TAGS" | "DATE" | "BEST_SELLERS" | "SOLD" | "QUANITY",
-    condition: "===" | ">=" | "<=" | "!==",
-    compare_against: string,
-    notes: string,
-    products: 
-    {
-        id: string,
-        title: string,
-
-    }[],
-    image: {
-        url: string,
-        alt: string, 
-        id: string
-    }
-}
-
-type Props = {
-    setProduct:  Dispatch<SetStateAction<Bundle>>,
-    product: Bundle,
-    navForm?: Dispatch<SetStateAction<string>>,
-    setTags?: Dispatch<SetStateAction<string[]>>,
-    setTagState?: Dispatch<SetStateAction<string>>,
-    tags?: string[],
-    setIndex?: Dispatch<SetStateAction<{
-        required: boolean;
-        complete: boolean;
-        active: boolean;
-        title: string;
-        step: string;
-    }[]>>,
-    steps?: {
-        required: boolean;
-        complete: boolean;
-        active: boolean;
-        title: string;
-        step: string;
-    }[],
-    state?: any;
-    checkboxes?: any;
-    setCheckboxes?: any;
-}
- 
 const s = [
     {
         required: true,
@@ -70,36 +27,63 @@ const s = [
     },
     
 ]
-const c = {
-    title: "T-Shirt",
-    type_to_compare: "TAGS",
-    condition: "===",
-    compare_against: "",
-    notes: "Nothing to see here, just new shit",
-    products: [
-        {
-            id: "prod_" + crypto.randomBytes(10).toString('hex'),
-            title: "test prod",
-            url: "",
-            option1: "",
-            option2: "",
-            option3: "",
-            compare_at_price: 0,
-            price: 42000,
-        }
-    ]
-}
+const subscriptions: Subscriptions[] = [
+    {
+        order_name: "#SH-92834592454",
+        status: true,
+        customer: {
+            cus_uuid: "",
+            email: "allMight@gobigly.com",
+            first_name: "All",
+            last_name: "Might",
+            addresses: [
+                {
+                    line1: "420 Bigly ln",
+                    line2: "",
+                    city: "South Park",
+                    state: "AR",
+                    zip: "72704",
+                    country: "US",
+                    type: "BOTH", 
+                    name: ""
+                }
+            ]
+        },
+        payment_method: "STRIPE",
+        schedule: {
+            next_charge_date: new Date().toDateString(),
+            interval: "MONTHLY",
+            total_charges: 3,
+            total_value: 9000,
+        },
+        product: {
+            product_id: "pro_" + crypto.randomBytes(10).toString("hex"),
+            variant_id: "var_" + crypto.randomBytes(10).toString("hex"),
+            title: "Hoodie",
+            price: 3000,
+            options1: "",
+            options2: "",
+            options3: "",
+            url: ""
+        },
+        id: "sub_" + crypto.randomBytes(10).toString("hex"),
+        value: 3000
+    },
+]
+
 
 interface Prop {
-    bundles: Bundle[]
+    subscriptions: Subscriptions[]
 }
 
-const SubscriptionDetail: FunctionComponent<Prop> = ({bundles}) => {
+const SubscriptionDetail: FunctionComponent<Prop> = ({
+    // subscriptions
+}) => {
 
     const [steps, setIndex] = useState(s);
     const [formStep, setFormStep] = useState("STEP_ONE")
 
-    const [bundle, setBundle] = useState(bundles && bundles.length > 0 ? bundles[0] : {} as Bundle);
+    const [subscription, setSubscription] = useState(subscriptions && subscriptions.length > 0 ? subscriptions[0] : {} as Subscriptions);
 
 
     const [query, setQuery] = useState<string>("")
@@ -174,14 +158,14 @@ const SubscriptionDetail: FunctionComponent<Prop> = ({bundles}) => {
         // })
     };
 
-    console.log(bundle)
+    console.log(subscription)
 
     return (
         <div className={`${styles.col}`}>
             {/* Sub Header - page specific */}
             <DetailPageHeader
                 back_route={"/products/collections"}
-                title={bundle.title}
+                title={subscription?.order_name}
                 special_btn={"Delete"}
                 special_btn_route={"/products/collections"} />
             
@@ -191,98 +175,151 @@ const SubscriptionDetail: FunctionComponent<Prop> = ({bundles}) => {
 
                     <div className={`${styles.col} ${styles.oneThird}`}>
 
-                        <Card title={"Collection Detail"}
-                            header={""}
-                            card_type={"DEFAULT"}
-                            >
-                            <div className={`${styles.col}`}>
-                                
-                                
-                                <div className={`${styles.formItem} ${styles.row}`}>
-                                    <textarea style={{
-                                            color: "white",
-                                            width: "100%",
-                                            height: "100px",
-                                            background: "transparent",
-                                            border: "px solid white",
-                                            padding: "1rem 0.8rem",
-                                            borderRadius: "4px"
-                                        }}
-                                        id={"options2"}
-                                        onChange={(e) => setBundle({
-                                            ...bundle,
-                                            notes: e.target.value
-                                        })}
-                                        
-                                        value={bundle?.notes}
-                                        name="options2"/>
-                                    <label style={{ 
-                                        top: bundle?.notes && bundle?.notes !== "" ? "-5px" : "", 
-                                        fontSize: bundle?.notes && bundle?.notes !== "" ? "10px" : ""}}>Notes</label>
-                                </div>
+                    <Card  
+                        title="Customer Details"
+                        header={""}
+                        subHeader={""}
+                        card_type="INFO"
+                    >
+                        <div className={`${styles.col}`}>
+                            <div style={{ justifyContent: "flex-start",  paddingBottom: "1rem"}} className={`${styles.row}`}>
+                                <p>{subscription?.customer?.first_name} {subscription?.customer?.last_name}</p>
                             </div>
-                        </Card>
+                            <h5>Contact</h5>
+                            <div style={{ paddingBottom: "1rem"}} className={`${styles.row}`}>
+                                <p style={{paddingTop: "0rem"}}>{subscription?.customer?.email}</p>
+                                <p style={{paddingTop: "0rem"}}>📋</p>
+                            </div>
+                            {
+                                subscription?.customer?.addresses && subscription?.customer?.addresses.map(a => {
+                                    if (a.type == "BOTH") {
+                                        return (
+                                            <div className={`${styles.col}`}>
+                                                <h5>Shipppig Address</h5>
+                                                <div className={`${styles.row}`}>
+                                                    <p style={{paddingTop: "0rem",lineHeight: "1.3rem"}}>
+                                                        {a.line1} <br /> 
+                                                        {a.line2 ? <>{a.line2} <br /></> : null} 
+                                                        {a.city} <br /> 
+                                                        {a.state} <br /> 
+                                                        {a.country} <br /> 
+                                                        {a.type} <br /> 
+                                                    </p>
+                                                    <p style={{paddingTop: "0rem"}}>📋</p>
+                                                </div> 
+                                                <h5 style={{marginTop: "1.2rem"}}>Billing Address</h5>
+                                                <div className={`${styles.row}`}>
+                                                    <p style={{paddingTop: "0rem",lineHeight: "1.3rem"}}>
+                                                        {a.line1} <br /> 
+                                                        {a.line2 ? <>{a.line2} <br /></> : null} 
+                                                        {a.city} <br /> 
+                                                        {a.state} <br /> 
+                                                        {a.country} <br /> 
+                                                        {a.type} <br /> 
+                                                    </p>
+                                                    <p style={{paddingTop: "0rem"}}>📋</p>
+                                                </div> 
+                                            </div>
+                                        )
+                                    }
+                                    if (a.type == "SHIPPING") {
+                                        return (
+                                            <div className={`${styles.col}`}>
+                                                <h5>Shipppig Address</h5>
+                                                <div className={`${styles.row}`}>
+                                                    <p style={{paddingTop: "0rem",lineHeight: "1.3rem"}}>
+                                                        {a.line1} <br /> 
+                                                        {a.line2 ? <>{a.line2} <br /></> : null} 
+                                                        {a.city} <br /> 
+                                                        {a.state} <br /> 
+                                                        {a.country} <br /> 
+                                                        {a.type} <br /> 
+                                                    </p>
+                                                    <p style={{paddingTop: "0rem"}}>📋</p>
+                                                </div> 
+                                            </div>
+                                        )
+                                    }
+
+                                    if (a.type == "BILLING") {
+                                        return (
+                                            <div className={`${styles.col}`} style={{marginTop: "1.2rem"}}>
+                                                <h5>Shipppig Address</h5>
+                                                <div className={`${styles.row}`}>
+                                                    <p style={{paddingTop: "0rem",lineHeight: "1.3rem"}}>
+                                                        {a.line1} <br /> 
+                                                        {a.line2 ? <>{a.line2} <br /></> : null} 
+                                                        {a.city} <br /> 
+                                                        {a.state} <br /> 
+                                                        {a.country} <br /> 
+                                                        {a.type} <br /> 
+                                                    </p>
+                                                    <p style={{paddingTop: "0rem"}}>📋</p>
+                                                </div> 
+                                            </div>
+                                        )
+                                    }
+                                })
+                            }
+                        </div>
+                    </Card>
+
+                    <Card 
+                        title="Payment Methods"
+                        header={""}
+                        subHeader={""}
+                        card_type="INFO"
+                    >
+                        <div className={`${styles.col}`}>
+                            <div className={`${styles.col}`} style={{padding: "1rem 0"}}> 
+                                {/* <h5>Shipppig Address</h5> */}
+                                <div className={`${styles.row}`}>
+                                    <p style={{paddingTop: "0rem",lineHeight: "1.3rem"}}>{
+                                        subscription?.payment_method == "STRIPE" ? "Stripe" : "Square"
+                                    } payments</p>
+                                </div> 
+                            </div>
+                        </div>
+                    </Card>
                         
                     
                     </div>
                     <div className={`${styles.col} ${styles.twoThird}`} style={{paddingTop: "0"}} >
 
-                        <Card title={"Collection Detail"}
+
+                        <Card title={"Order Schedule"}
                             header={""}
                             card_type={"DEFAULT"}
-                            >
+                        >
                             <div className={`${styles.col}`}>
                                 
-                                <div className={`${styles.col}`}>
-                                    
-                                    <div className={`${styles.formItem} ${styles.row}`}
-                                        style={{
-                                            width:"100%",
-                                            padding: "0 5px"
-                                        }}>
-                                        <input
-                                            style={{
-                                                color: "white",
-                                                width: "100%"
-                                            }}
-                                            onChange={(e) => setBundle({
-                                                ...bundle,
-                                                title: e.target.value
-                                            })}
-                                            value={bundle?.title}
-                                            type="text"
-                                            name="title" />
-                                        <label htmlFor="title" style={{ 
-                                            top: bundle?.title && bundle.title !== "" ? "-5px" : "", 
-                                            fontSize: bundle?.title && bundle.title !== "" ? "10px" : ""}}>Collection Title</label>
+                                <div className={`${styles.row}`} style={{padding: "1rem 0"}}>
+                                    <div className={`${styles.col}`}>
+                                        <h5>Next Charge Date</h5>
+                                        <p>{subscription?.schedule?.next_charge_date}</p>
                                     </div>
-                                </div>
-                                <div className={`${styles.row}`}
-                                    style={{
-                                        padding: "2rem 0"
-                                    }}
-                                >
+                                    <div className={`${styles.col}`}>
+                                        <h5>Interval</h5>
+                                        <p>{subscription?.schedule?.interval}</p>
+                                    </div>
+                                    <div className={`${styles.col}`}>
+                                        <h5>Total Charges</h5>
+                                        <p>{numberFormat(Number(subscription?.schedule?.total_value)/100)}</p>
+                                    </div>
                                 </div>
                             </div>
                         </Card>
-
-                        <Card title={"Products In Collection"}
+                        <Card title={"Products in Subscription"}
                             header={""}
                             card_type={"DEFAULT"}
                             >
                             <div className={`${styles.col}`} style={{position: "relative"}}>
                                 <div className={`${styles.col}`} style={{ padding: "1rem 0" }}>
                                     <div className={`${styles.col}`} style={{ padding: "0em 0.5rem 0rem 0.5rem " }}>
-                                        {
-                                            query === "" && bundle.products && bundle.products.map(product => {
-                                                return (
-                                                    <div key={product.id} className={`${styles.col}`}>
-                                                        <VariantRow item={product} />
-                                                        <Underline width={100} />
-                                                    </div>
-                                                )
-                                            })
-                                        }
+                                        <div className={`${styles.col}`}>
+                                            <VariantRow item={subscription.product} />
+                                            <Underline width={100} />
+                                        </div>
                                         {/* {
                                             query !== "" && hits.length > 0 && hits.map((product) => {
                                                 return (
@@ -294,6 +331,10 @@ const SubscriptionDetail: FunctionComponent<Prop> = ({bundles}) => {
                                             })
                                         } */}
                                     </div>
+                                </div>
+
+                                <div style={{paddingTop: "4rem"}}className={`${styles.row}`}>
+                                    <Link href={"/fulfillment/create"}><button className="altBtn">View order</button></Link>
                                 </div>
                             </div>
                         </Card>
@@ -307,31 +348,31 @@ const SubscriptionDetail: FunctionComponent<Prop> = ({bundles}) => {
 
 
 export const getServerSideProps: GetServerSideProps = async () => {
-    const url = "https://us-central1-impowered-funnel.cloudfunctions.net/funnel/bundles";
-    const result = await impoweredRequest(url, "POST", {bun_uuid: ""});
+    // const url = "https://us-central1-impowered-funnel.cloudfunctions.net/funnel/bundles";
+    // const result = await impoweredRequest(url, "POST", {bun_uuid: ""});
 
-    console.log(" ==> SERVER SIDE");
-    console.log(result);
+    // console.log(" ==> SERVER SIDE");
+    // console.log(result);
 
-    if (!result) {
-        throw new Error("Bundle list error");
-    }
+    // if (!result) {
+    //     throw new Error("Bundle list error");
+    // }
 
-    console.log(" ==> SERVER SIDE");
-    console.log(result);
+    // console.log(" ==> SERVER SIDE");
+    // console.log(result);
 
-    let bundles = [{}] as Bundle[];
-    let size = 0;
+    // let bundles = [{}] as Bundle[];
+    // let size = 0;
 
-    if (result?.result) {
-        bundles = result?.result?.bundles,
-        size = result?.result?.size
-    }
+    // if (result?.result) {
+    //     bundles = result?.result?.bundles,
+    //     size = result?.result?.size
+    // }
 
     return {
         props: {
-            size: size,
-            bundles: bundles
+            // size: size,
+            // bundles: bundles
         }
     }
 }

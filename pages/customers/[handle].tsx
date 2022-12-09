@@ -305,8 +305,12 @@ export const CustomerDetail: FunctionComponent<CustomerDetailProps> = (props) =>
                                             <div className={`${styles.row}  ${styles.mobileContainer}`} style={{justifyContent: "flex-start", alignItems: window?.innerWidth > 720 ? "center" : "flex-start"}}>
                                                 <h4>{last_order?.order_number ? last_order?.order_number : ""}</h4>
                                                 <p className={`${styles.tag}`}
-                                                    style={{margin:  window?.innerWidth > 720 ? "0 0.5rem" : "0.5rem 0"}}>{"Paid 💰"}</p>
-                                                <p className={`${styles.tag}`}>{"Unfulfilled 📦"}</p>
+                                                    style={{
+                                                        margin: window?.innerWidth > 720 ? "0 0.5rem" : "0.5rem 0",
+                                                        background: last_order?.payment_status ? "green" : ""
+                                                    }}>{last_order?.payment_status ? "Paid 💰" : "Unpaid 🚨"}</p>
+                                                <p className={`${styles.tag}`}
+                                                    style={{margin:  window?.innerWidth > 720 ? "0 0.5rem" : "0.5rem 0"}}>{"Unfulfilled 📦"}</p>
                                             </div>
                                             {window.innerWidth > 720 ? null : <div className={`${styles.row}`} style={{justifyContent: "flex-start", alignItems: "center"}}>
                                                     <span>{date}</span>

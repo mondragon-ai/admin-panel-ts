@@ -102,7 +102,7 @@ export const Menu: FunctionComponent<Props> = ({openState, toggleMenu}) => {
                             onClick={(e) => toggleMenu(!openState)}
                             className={`${styles.row}`}
                             style={{
-                                borderLeft: router.pathname == "/analytics/daily" ? "4px solid white" : "4px solid transparent",
+                                borderLeft: router.pathname.includes("/analytics") ? "4px solid white" : "4px solid transparent",
                             }}
                             href={'/analytics/daily'}>
                             <div className={`${styles.row} ${styles.menuItem} `}>
@@ -164,7 +164,7 @@ export const Menu: FunctionComponent<Props> = ({openState, toggleMenu}) => {
                             onClick={(e) => toggleMenu(!openState)}
                             className={`${styles.row}`}
                             style={{
-                                borderLeft: router.pathname == "/products/all" ? "4px solid white" : "4px solid transparent"
+                                borderLeft: router.pathname.includes("/products") ? "4px solid white" : "4px solid transparent"
                             }}
                             href={'/products/all'}>
                             <div className={`${styles.row} ${styles.menuItem} `}>
@@ -342,17 +342,17 @@ export const Menu: FunctionComponent<Props> = ({openState, toggleMenu}) => {
                             onClick={(e) => toggleMenu(!openState)}
                             className={`${styles.row}`}
                             style={{
-                                borderLeft: router.pathname.includes("/fullfilment") ? "4px solid white" : "4px solid transparent"
+                                borderLeft: router.pathname.includes("/fulfillment") ? "4px solid white" : "4px solid transparent"
                             }}
-                            href={'/fullfilment/all'}>
+                            href={'/fulfillment'}>
                             <div className={`${styles.row} ${styles.menuItem} `}>
                                 <i
                                     style={{
-                                        color: router.pathname.includes("/fullfilment") ? "white" : ""
+                                        color: router.pathname.includes("/fulfillment") ? "white" : ""
                                     }}><FontAwesomeIcon icon={faTruckFast} /></i>
                                 <span
                                     style={{
-                                        color: router.pathname.includes("/fullfilment") ? "white" : ""
+                                        color: router.pathname.includes("/fulfillment") ? "white" : ""
                                     }}>Fulfilment</span>
                             </div>
                         </Link>

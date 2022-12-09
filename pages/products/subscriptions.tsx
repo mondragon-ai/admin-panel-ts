@@ -27,47 +27,99 @@ import * as crypto from "crypto"
 import { MainRowContainerHeader } from "../../components/ui/headers/MainRowContainerHeader";
 import { MainRowContainer } from "../../components/ui/rows/MainRowContainer";
 import { Subscriptions } from "../../lib/types/products";
+import { GetServerSideProps } from "next";
+import { numberFormat } from "../../lib/helpers/formatters";
 
 const subscriptions: Subscriptions[] = [
     {
-        title: "#SH-912398982",
-        status: false,
-        id: crypto.randomBytes(10).toString("hex"),
-        product_id:  crypto.randomBytes(10).toString("hex"),
-        tags: ["SALE", "Shirts"],
-        email: "allMight@gobigly.com",
-        first_name: "All",
-        last_name: "Might",
-        schedule: {
-            frequency: "MONTHLY",
-            date: String(1),
-            trial: 0
+        order_name: "#SH-92834592454",
+        status: true,
+        customer: {
+            cus_uuid: "",
+            email: "allMight@gobigly.com",
+            first_name: "All",
+            last_name: "Might",
+            addresses: [
+                {
+                    line1: "420 Bigly ln",
+                    line2: "",
+                    city: "South Park",
+                    state: "AR",
+                    zip: "72704",
+                    country: "US",
+                    type: "BOTH", 
+                    name: ""
+                }
+            ]
         },
-        value: "$30.00"
+        payment_method: "STRIPE",
+        schedule: {
+            next_charge_date: new Date().toDateString(),
+            interval: "MONTHLY",
+            total_charges: 3,
+            total_value: 9000,
+        },
+        product: {
+            product_id: "pro_" + crypto.randomBytes(10).toString("hex"),
+            variant_id: "var_" + crypto.randomBytes(10).toString("hex"),
+            title: "Hoodie",
+            price: 3000,
+            options1: "",
+            options2: "",
+            options3: "",
+            url: ""
+        },
+        id: "sub_" + crypto.randomBytes(10).toString("hex"),
+        value: 3000
     },
     {
-        title: "#SH-92834592454",
+        order_name: "#SH-92834592454",
         status: true,
-        id: crypto.randomBytes(10).toString("hex"),
-        product_id:  crypto.randomBytes(10).toString("hex"),
-        tags: ["VIP_ONLY", "CLICK_FUNNEL"],
-        email: "allMight@gobigly.com",
-        first_name: "All",
-        last_name: "Might",
-        schedule: {
-            frequency: "TRIAL",
-            date: String(1),
-            trial: 7
+        customer: {
+            cus_uuid: "",
+            email: "allMight@gobigly.com",
+            first_name: "All",
+            last_name: "Might",
+            addresses: [
+                {
+                    line1: "420 Bigly ln",
+                    line2: "",
+                    city: "South Park",
+                    state: "AR",
+                    zip: "72704",
+                    country: "US",
+                    type: "BOTH", 
+                    name: ""
+                }
+            ]
         },
-        value: "$30.00"
+        payment_method: "STRIPE",
+        schedule: {
+            next_charge_date: new Date().toDateString(),
+            interval: "MONTHLY",
+            total_charges: 3,
+            total_value: 9000,
+        },
+        product: {
+            product_id: "pro_" + crypto.randomBytes(10).toString("hex"),
+            variant_id: "var_" + crypto.randomBytes(10).toString("hex"),
+            title: "Hoodie",
+            price: 3000,
+            options1: "",
+            options2: "",
+            options3: "",
+            url: ""
+        },
+        id: "sub_" + crypto.randomBytes(10).toString("hex"),
+        value: 3000
     }
 ]
 
 interface Prop {
-    itemTxt: string
+    subscriptions: Subscriptions[]
 }
 
-const Subscriptions = (props: Prop) => {
+const Subscriptions = ({}: Prop) => {
     const [itemSearch, setItemSearch] = useState("");
     const [list, setOrders] = useState<any[]>(subscriptions);
     const [filterState, setFilter] = useState<"" | "INACTIVE" | "ACTIVE">("");
@@ -112,10 +164,10 @@ const Subscriptions = (props: Prop) => {
                         <ItemContainerHeader 
                             rowOneUpper={"Subscription ID"}
                             rowOneLower={"Full Name"}
-                            rowTwoUpper={"Order Value"}
+                            rowTwoUpper={"Product Value"}
                             rowTwoLower={"Status"}
                             rowThree={"Schedule"}
-                            rowFour={"Tags"}/>
+                            rowFour={"Total Sub Value"}/>
                         {list && list.map((s: Subscriptions) => {
                             console.log(s.id);
                                 return (
@@ -124,12 +176,12 @@ const Subscriptions = (props: Prop) => {
                                         <MainRowContainer
                                             href={`/products/subscriptions/${s.id}`} 
                                             id={s.id}
-                                            colOneTop={s.title}
-                                            colOneBottom={s.first_name + " " + s.last_name}
-                                            colTwoTop={s.value}
+                                            colOneTop={s?.order_name}
+                                            colOneBottom={s?.customer?.first_name + " " + s?.customer?.last_name}
+                                            colTwoTop={numberFormat(Number(s.value)/100)}
                                             colTwoBottom={s.status}
-                                            colThree={s.schedule}
-                                            colFour={s.tags} />
+                                            colThree={s?.schedule?.interval}
+                                            colFour={numberFormat(Number(s?.schedule?.total_value)/100)} />
                                     </div>
                                 );
                         })}
@@ -138,6 +190,36 @@ const Subscriptions = (props: Prop) => {
             </main>
         </div>
     )
+}
+
+export const getServerSideProps: GetServerSideProps = async () => {
+    // const url = "https://us-central1-impowered-funnel.cloudfunctions.net/funnel/gift_cards";
+    // const result = await impoweredRequest(url, "POST", {gif_uuid: ""});
+
+    // console.log(" ==> SERVER SIDE");
+    // console.log(result);
+
+    // if (!result) {
+    //     throw new Error("Product list error");
+    // }
+
+    // console.log(" ==> SERVER SIDE");
+    // console.log(result);
+
+    // let gift_cards = [{}] as GiftCard[];
+    // let size = 0;
+
+    // if (result?.data) {
+    //     gift_cards = result?.data?.gift_cards,
+    //     size = result?.data?.size
+    // }
+
+    return {
+        props: {
+            // size: size,
+            // gift_cards: gift_cards
+        }
+    }
 }
 
 export default Subscriptions;
