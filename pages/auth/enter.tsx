@@ -235,8 +235,8 @@ export default function Enter() {
                                 name="first_name"
                                 placeholder="" />
                             <label style={{ 
-                                top: first_name != "" ? "-5px" : "", 
-                                fontSize: first_name != "" ? "10px" : ""}}>First Name </label>
+                                top: first_name && first_name != "" ? "-5px" : "", 
+                                fontSize: first_name && first_name != "" ? "10px" : ""}}>First Name </label>
                         </label>
                     </div> : null}
                     <div className={`${styles.row} ${styles.topLeft}`}>
@@ -249,8 +249,8 @@ export default function Enter() {
                                 name="email"
                                 placeholder="" />
                             <label style={{ 
-                                top: email != "" ? "-5px" : "", 
-                                fontSize: email != "" ? "10px" : ""}}>Email </label>
+                                top: email && email != "" ? "-5px" : "", 
+                                fontSize: email && email != ""  ? "10px" : ""}}>Email </label>
                         </label>
                     </div>
                     <div className={`${styles.row} ${styles.topLeft}`}>
@@ -264,8 +264,8 @@ export default function Enter() {
                                 placeholder="" />
                             <label 
                                 style={{ 
-                                    top: password != "" ? "-5px" : "", 
-                                    fontSize: password != "" ? "10px" : ""}}
+                                    top: password && password != "" ? "-5px" : "", 
+                                    fontSize: password && password != "" ? "10px" : ""}}
                                 onClick={() => hidePass(!showPass)}>
                                     Password 
                                     <FontAwesomeIcon icon={showPass ? faEyeSlash : faEye } />

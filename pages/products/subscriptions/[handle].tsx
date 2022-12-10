@@ -164,10 +164,10 @@ const SubscriptionDetail: FunctionComponent<Prop> = ({
         <div className={`${styles.col}`}>
             {/* Sub Header - page specific */}
             <DetailPageHeader
-                back_route={"/products/collections"}
+                back_route={"/products/subscriptions"}
                 title={subscription?.order_name}
                 special_btn={"Delete"}
-                special_btn_route={"/products/collections"} />
+                special_btn_route={"/products/subscriptions"} />
             
             {/* Main container */}
             <main className={`${styles.col} ${styles.container}`}>
@@ -293,7 +293,7 @@ const SubscriptionDetail: FunctionComponent<Prop> = ({
                         >
                             <div className={`${styles.col}`}>
                                 
-                                <div className={`${styles.row}`} style={{padding: "1rem 0"}}>
+                                {window?.innerWidth > 720 ? <div className={`${styles.row}`} style={{padding: "1rem 0"}}>
                                     <div className={`${styles.col}`}>
                                         <h5>Next Charge Date</h5>
                                         <p>{subscription?.schedule?.next_charge_date}</p>
@@ -306,7 +306,35 @@ const SubscriptionDetail: FunctionComponent<Prop> = ({
                                         <h5>Total Charges</h5>
                                         <p>{numberFormat(Number(subscription?.schedule?.total_value)/100)}</p>
                                     </div>
-                                </div>
+                                </div> : <div className={`${styles.col}`} style={{padding: "0"}}>
+                                    
+                                    <div className={`${styles.row}`}>
+                                        <div style={{ justifyContent: "flex-start",  paddingBottom: "1rem"}} className={`${styles.row}`}>
+                                            <p>Next Charge Date</p>
+                                        </div>
+                                        <div style={{ justifyContent: "flex-end",  paddingBottom: "1rem"}} className={`${styles.row}`}>
+                                            <p>{subscription?.schedule?.next_charge_date}</p>
+                                        </div>
+                                    </div>
+
+                                    <div className={`${styles.row}`}>
+                                        <div style={{ justifyContent: "flex-start",  paddingBottom: "1rem"}} className={`${styles.row}`}>
+                                            <p>Interval</p>
+                                        </div>
+                                        <div style={{ justifyContent: "flex-end",  paddingBottom: "1rem"}} className={`${styles.row}`}>
+                                            <p>{subscription?.schedule?.interval}</p>
+                                        </div>
+                                    </div>
+
+                                    <div className={`${styles.row}`}>
+                                        <div style={{ justifyContent: "flex-start",  paddingBottom: "1rem"}} className={`${styles.row}`}>
+                                            <p>Total Charges</p>
+                                        </div>
+                                        <div style={{ justifyContent: "flex-end",  paddingBottom: "1rem"}} className={`${styles.row}`}>
+                                        <p>{numberFormat(Number(subscription?.schedule?.total_value)/100)}</p>
+                                        </div>
+                                    </div>
+                                </div>}
                             </div>
                         </Card>
                         <Card title={"Products in Subscription"}
@@ -334,7 +362,7 @@ const SubscriptionDetail: FunctionComponent<Prop> = ({
                                 </div>
 
                                 <div style={{paddingTop: "4rem"}}className={`${styles.row}`}>
-                                    <Link href={"/fulfillment/create"}><button className="altBtn">View order</button></Link>
+                                    <Link href={`/orders/${subscription?.id}`}><button className="altBtn">View order</button></Link>
                                 </div>
                             </div>
                         </Card>

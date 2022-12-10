@@ -17,21 +17,20 @@ const client = algoliasearch('9HC6EQSC7S', 'de139a052d86174f4b708e160db11c4b');
 
 type Bundle = {
     title: string,
-    type_to_compare: "TAGS" | "DATE" | "BEST_SELLERS" | "SOLD" | "QUANITY",
-    condition: "===" | ">=" | "<=" | "!==",
-    compare_against: string,
+    total: number,
+    new_price: number,
+    tags: string[],
     notes: string,
-    products: 
-    {
+    products: {
         id: string,
         title: string,
-
-    }[],
-    image: {
         url: string,
-        alt: string, 
-        id: string
-    }
+        option1: string,
+        option2: string,
+        option3: string,
+        compare_at_price: number,
+        price: number,
+    }[]
 }
 
 type Props = {
@@ -70,22 +69,22 @@ const s = [
     },
     
 ]
-const c = {
-    title: "T-Shirt",
-    type_to_compare: "TAGS",
-    condition: "===",
-    compare_against: "",
-    notes: "Nothing to see here, just new shit",
+const b = {
+    title: "",
+    total: 0,
+    new_price: 0,
+    tags: [],
+    notes: "",
     products: [
         {
-            id: "prod_" + crypto.randomBytes(10).toString('hex'),
-            title: "test prod",
+            id: "",
+            title: "",
             url: "",
             option1: "",
             option2: "",
             option3: "",
             compare_at_price: 0,
-            price: 42000,
+            price: 0,
         }
     ]
 }
@@ -180,59 +179,36 @@ const BundleDetail: FunctionComponent<Prop> = ({bundles}) => {
         <div className={`${styles.col}`}>
             {/* Sub Header - page specific */}
             <DetailPageHeader
-                back_route={"/products/collections"}
+                back_route={"/products/bundles"}
                 title={bundle.title}
                 special_btn={"Delete"}
-                special_btn_route={"/products/collections"} />
+                special_btn_route={"/products/bundles"} />
             
             {/* Main container */}
             <main className={`${styles.col} ${styles.container}`}>
-                <div className={`${styles.row} ${styles.mobileContainer}`}>
+                {/* <div className={`${styles.row} ${styles.mobileContainer}`}> */}
 
-                    <div className={`${styles.col} ${styles.oneThird}`}>
-
-                        <Card title={"Collection Detail"}
-                            header={""}
-                            card_type={"DEFAULT"}
-                            >
-                            <div className={`${styles.col}`}>
-                                
-                                
-                                <div className={`${styles.formItem} ${styles.row}`}>
-                                    <textarea style={{
-                                            color: "white",
-                                            width: "100%",
-                                            height: "100px",
-                                            background: "transparent",
-                                            border: "px solid white",
-                                            padding: "1rem 0.8rem",
-                                            borderRadius: "4px"
-                                        }}
-                                        id={"options2"}
-                                        onChange={(e) => setBundle({
-                                            ...bundle,
-                                            notes: e.target.value
-                                        })}
-                                        
-                                        value={bundle?.notes}
-                                        name="options2"/>
-                                    <label style={{ 
-                                        top: bundle?.notes && bundle?.notes !== "" ? "-5px" : "", 
-                                        fontSize: bundle?.notes && bundle?.notes !== "" ? "10px" : ""}}>Notes</label>
-                                </div>
-                            </div>
-                        </Card>
-                        
                     
-                    </div>
-                    <div className={`${styles.col} ${styles.twoThird}`} style={{paddingTop: "0"}} >
-
-                        <Card title={"Collection Detail"}
-                            header={""}
-                            card_type={"DEFAULT"}
-                            >
+            <div className={`${styles.col} ${styles.container}`}
+                style={{
+                    justifyContent: "center",
+                    alignItems: "center"
+                }}
+            >
+                <div className={`${styles.col} ${styles.twoThird}`}>
+                    <Card title={"Bundle Detail"}
+                        header={""}
+                        card_type={"CREATE"}
+                        next={"SAVE"}
+                        prev={""}
+                        request_key={"bundle"}
+                        resource={"/bundles/create"}
+                        redirect={"/products/bundles"}
+                        state={bundle}
+                    >
+                        <div className={`${styles.col}`}>
+                            
                             <div className={`${styles.col}`}>
-                                
                                 <div className={`${styles.col}`}>
                                     
                                     <div className={`${styles.formItem} ${styles.row}`}
@@ -249,55 +225,122 @@ const BundleDetail: FunctionComponent<Prop> = ({bundles}) => {
                                                 ...bundle,
                                                 title: e.target.value
                                             })}
-                                            value={bundle?.title}
+                                            value={bundle?.title && bundle.title}
                                             type="text"
                                             name="title" />
                                         <label htmlFor="title" style={{ 
-                                            top: bundle?.title && bundle.title !== "" ? "-5px" : "", 
-                                            fontSize: bundle?.title && bundle.title !== "" ? "10px" : ""}}>Collection Title</label>
+                                            top: bundle?.title &&bundle.title !== "" ? "-5px" : "", 
+                                            fontSize: bundle?.title &&bundle.title !== "" ? "10px" : ""}}>Bundle Title</label>
                                     </div>
                                 </div>
-                                <div className={`${styles.row}`}
-                                    style={{
-                                        padding: "2rem 0"
-                                    }}
-                                >
-                                </div>
-                            </div>
-                        </Card>
 
-                        <Card title={"Products In Collection"}
-                            header={""}
-                            card_type={"DEFAULT"}
-                            >
-                            <div className={`${styles.col}`} style={{position: "relative"}}>
-                                <div className={`${styles.col}`} style={{ padding: "1rem 0" }}>
-                                    <div className={`${styles.col}`} style={{ padding: "0em 0.5rem 0rem 0.5rem " }}>
-                                        {
-                                            query === "" && bundle.products && bundle.products.map(product => {
-                                                return (
-                                                    <div key={product.id} className={`${styles.col}`}>
-                                                        <VariantRow item={product} />
-                                                        <Underline width={100} />
-                                                    </div>
-                                                )
-                                            })
-                                        }
-                                        {/* {
-                                            query !== "" && hits.length > 0 && hits.map((product) => {
-                                                return (
-                                                    <div key={product.id} className={`${styles.col} ${styles.itemRow}`} onClick={() => setCollection({...collection, products: [...collection.products, product]})}>
-                                                        <Underline width={100} />
-                                                        <VariantRow item={product} />
-                                                    </div>
-                                                );
-                                            })
-                                        } */}
+                                <div className={`${styles.row}`} style={{}}>
+                                    <div className={`${styles.formItem} ${styles.row}`}
+                                        style={{
+                                            width:"100%",
+                                            padding: "1rem 5px"
+                                        }}>
+                                        <input
+                                            style={{
+                                                color: "white",
+                                                width: "100%"
+                                            }}
+                                            onChange={(e) => setBundle({
+                                                ...bundle,
+                                                total: Number(e.target.value)
+                                            })}
+                                            value={bundle?.total}
+                                            type="number"
+                                            name="price" />
+                                        <label htmlFor="price" style={{ 
+                                            top: bundle?.total && bundle.total > 0  ? "-5px" : "", 
+                                            fontSize: bundle?.total && bundle.total > 0 ?  "10px" : ""}}>Bundle Price</label>
                                     </div>
+
+                                    <div className={`${styles.formItem} ${styles.row}`}
+                                        style={{
+                                            width:"100%",
+                                            padding: "1rem 5px"
+                                        }}>
+                                        <input
+                                            style={{
+                                                color: "white",
+                                                width: "100%"
+                                            }}
+                                            onChange={(e) => setBundle({
+                                                ...bundle,
+                                                new_price: Number(e.target.value)
+                                            })}
+                                            value={bundle?.new_price}
+                                            type="number"
+                                            name="compare_at_price" />
+                                        <label htmlFor="compare_at_price" style={{ 
+                                            top: bundle?.new_price && bundle.new_price > 0 ? "-5px" : "", 
+                                            fontSize: bundle?.new_price && bundle.new_price > 0 ? "10px" : ""}}>Sale Price</label>
+                                    </div>
+                                    
                                 </div>
                             </div>
-                        </Card>
-                    </div>
+                        </div>
+                    </Card>
+
+                    <Card title={"Products in Bundle"}
+                        header={""}
+                        card_type={"DEFAULT"}
+                    >
+                        <div className={`${styles.col}`} style={{position: "relative"}}>
+                            <div className={`${styles.col}`} style={{background: "black"}}>
+                                
+                            </div>
+                                
+                            <div className={`${styles.formItem} ${styles.row}`}
+                                style={{
+                                    width:"100%",
+                                    padding: "0 5px"
+                                }}>
+                                <input
+                                    style={{
+                                        color: "white",
+                                        width: "100%"
+                                    }}
+                                    onChange={(e) => updateSearch(e.target.value)}
+                                    value={query}
+                                    type="text"
+                                    name="query" />
+                                <label htmlFor="query" style={{ 
+                                    top: query !=="" ? "-5px" : "", 
+                                    fontSize: query !== "" ? "10px" : ""}}>Search Products</label>
+                            </div>
+                            <div className={`${styles.col}`} style={{ padding: "2rem 0" }}>
+                                <h5 style={{ padding: "0rem 0.5rem 0rem 0.5rem " }}>
+                                    Products
+                                </h5>
+                                <div className={`${styles.col}`} style={{ padding: "2rem 0.5rem 0rem 0.5rem " }}>
+                                    {
+                                        query === "" && bundle.products && bundle.products.map(product => {
+                                            return (
+                                                <div key={product.id} className={`${styles.col}`}>
+                                                    <Underline width={100} />
+                                                    <VariantRow item={product} />
+                                                </div>
+                                            )
+                                        })
+                                    }
+                                    {
+                                        hits.length < 4 && query !== "" && hits.length > 0 && hits.map((product) => {
+                                            return (
+                                                <div key={product.id} className={`${styles.col} ${styles.itemRow}`} onClick={() => setBundle({...bundle, products: [...bundle.products, product]})}>
+                                                    <Underline width={100} />
+                                                    <VariantRow item={product} />
+                                                </div>
+                                            );
+                                        })
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </Card>
+                </div>
                 </div>
             </main>
         </div>

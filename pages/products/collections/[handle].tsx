@@ -190,46 +190,16 @@ const CollectionDetail: FunctionComponent<Prop> = ({collections}) => {
                 <div className={`${styles.row} ${styles.mobileContainer}`}>
 
                     <div className={`${styles.col} ${styles.oneThird}`}>
-
-                        <Card title={"Collection Detail"}
-                            header={""}
-                            card_type={"DEFAULT"}
-                            >
-                            <div className={`${styles.col}`}>
-                                
-                                
-                                <div className={`${styles.formItem} ${styles.row}`}>
-                                    <textarea style={{
-                                            color: "white",
-                                            width: "100%",
-                                            height: "100px",
-                                            background: "transparent",
-                                            border: "px solid white",
-                                            padding: "1rem 0.8rem",
-                                            borderRadius: "4px"
-                                        }}
-                                        id={"options2"}
-                                        onChange={(e) => setCollection({
-                                            ...collection,
-                                            notes: e.target.value
-                                        })}
-                                        
-                                        value={collection?.notes}
-                                        name="options2"/>
-                                    <label style={{ 
-                                        top: collection?.notes && collection?.notes !== "" ? "-5px" : "", 
-                                        fontSize: collection?.notes && collection?.notes !== "" ? "10px" : ""}}>Notes</label>
-                                </div>
-                            </div>
-                        </Card>
-                        
                     
                     </div>
                     <div className={`${styles.col} ${styles.twoThird}`} style={{paddingTop: "0"}} >
 
                         <Card title={"Collection Detail"}
                             header={""}
-                            card_type={"DEFAULT"}
+                            card_type={"CREATE"}
+                            next={"UPDATE"}
+                            prev={""}
+
                             >
                             <div className={`${styles.col}`}>
                                 
@@ -257,59 +227,63 @@ const CollectionDetail: FunctionComponent<Prop> = ({collections}) => {
                                             fontSize: collection?.title &&collection.title !== "" ? "10px" : ""}}>Collection Title</label>
                                     </div>
                                 </div>
-                                <div className={`${styles.row}`}
+                                <div className={`${styles.row}  ${styles.mobileContainer}`}
                                     style={{
                                         padding: "2rem 0"
                                     }}
                                 >
                                     
-                                    <div className={`${styles.formItem} ${styles.row}`}
-                                        style={{
-                                            width:"40%",
-                                            padding: "0 5px"
-                                        }}>
-                                        <input
+
+                                    <div className={`${styles.formItem} ${styles.row}`}>
+                                        <div className={`${styles.formItem} ${styles.row}`}
                                             style={{
-                                                color: "white",
-                                                width: "100%"
-                                            }}
-                                            onChange={(e) => setCollection({
-                                                ...collection,
-                                                type_to_compare: e.target.value
-                                            })}
-                                            disabled={true}
-                                            value={collection?.type_to_compare}
-                                            type="text"
-                                            name="type_to_compare" />
-                                        <label htmlFor="type_to_compare" style={{ 
-                                            top: collection?.type_to_compare && collection.type_to_compare !== "" ? "-5px" : "", 
-                                            fontSize: collection?.type_to_compare && collection.type_to_compare !== "" ? "10px" : ""}}>Type to Compare</label>
+                                                width: window?.innerWidth > 720 ? "40%" : "60%",
+                                                padding: "0 5px"
+                                            }}>
+                                            <input
+                                                style={{
+                                                    color: "white",
+                                                    width: "100%"
+                                                }}
+                                                onChange={(e) => setCollection({
+                                                    ...collection,
+                                                    type_to_compare: e.target.value
+                                                })}
+                                                disabled={true}
+                                                value={collection?.type_to_compare}
+                                                type="text"
+                                                name="type_to_compare" />
+                                            <label htmlFor="type_to_compare" style={{ 
+                                                top: collection?.type_to_compare && collection.type_to_compare !== "" ? "-5px" : "", 
+                                                fontSize: collection?.type_to_compare && collection.type_to_compare !== "" ? "10px" : ""}}>Type to Compare</label>
+                                        </div>
+                                        <div className={`${styles.formItem} ${styles.row}`}
+                                            style={{
+                                                width: window?.innerWidth > 720 ? "40%" : "40%",
+                                                padding: "0 5px"
+                                            }}>
+                                            <input
+                                                style={{
+                                                    color: "white",
+                                                    width: "100%"
+                                                }}
+                                                onChange={(e) => setCollection({
+                                                    ...collection,
+                                                    condition: e.target.value
+                                                })}
+                                                disabled={true}
+                                                value={collection?.condition}
+                                                type="text"
+                                                name="condition" />
+                                            <label htmlFor="condition" style={{ 
+                                                top: collection?.condition && collection.condition !== "" ? "-5px" : "", 
+                                                fontSize: collection?.condition && collection.condition !== "" ? "10px" : ""}}>Condition</label>
+                                        </div>
+
                                     </div>
                                     <div className={`${styles.formItem} ${styles.row}`}
                                         style={{
-                                            width:"20%",
-                                            padding: "0 5px"
-                                        }}>
-                                        <input
-                                            style={{
-                                                color: "white",
-                                                width: "100%"
-                                            }}
-                                            onChange={(e) => setCollection({
-                                                ...collection,
-                                                condition: e.target.value
-                                            })}
-                                            disabled={true}
-                                            value={collection?.condition}
-                                            type="text"
-                                            name="condition" />
-                                        <label htmlFor="condition" style={{ 
-                                            top: collection?.condition && collection.condition !== "" ? "-5px" : "", 
-                                            fontSize: collection?.condition && collection.condition !== "" ? "10px" : ""}}>Condition</label>
-                                    </div>
-                                    <div className={`${styles.formItem} ${styles.row}`}
-                                        style={{
-                                            width:"40%",
+                                            width: window?.innerWidth > 720 ? "40%" : "100%",
                                             padding: "0 5px"
                                         }}>
                                         <input
@@ -331,7 +305,7 @@ const CollectionDetail: FunctionComponent<Prop> = ({collections}) => {
 
                         <Card title={"Products In Collection"}
                             header={""}
-                            card_type={"DEFAULT"}
+                            card_type={"INFO"}
                             >
                             <div className={`${styles.col}`} style={{position: "relative"}}>
                                 <div className={`${styles.col}`} style={{ padding: "1rem 0" }}>

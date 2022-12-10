@@ -177,154 +177,157 @@ export const CreateCollection: FunctionComponent<Props> = () => {
                 }}>
                 <FormProgress steps={steps} formStep={formStep} />
             </div>
-            <div className={`${styles.col} ${styles.container}`}
-                style={{
-                    justifyContent: "center",
-                    alignItems: "center"
-                }}
-            >
-                <div className={`${styles.col} ${styles.twoThird}`}>
-                    <Card title={"Collection Detail"}
-                        header={""}
-                        card_type={"CREATE"}
-                        next={"SAVE"}
-                        prev={""}
-                        request_key={"collection"}
-                        resource={"/collections/create"}
-                        redirect={"/products/collections"}
-                        state={collection}
-                    >
-                        <div className={`${styles.col}`}>
-                            
+            <main className={`${styles.col} ${styles.container}`}>
+                <div className={`${styles.row} ${styles.mobileContainer}`}>
+
+                    <div className={`${styles.col} ${styles.oneThird}`}>
+                    
+                    </div>
+                    <div className={`${styles.col} ${styles.twoThird}`} style={{paddingTop: "0"}} >
+
+                        <Card title={"Collection Detail"}
+                            header={""}
+                            card_type={"CREATE"}
+                            next={"UPDATE"}
+                            prev={""}
+
+                            >
                             <div className={`${styles.col}`}>
                                 
-                                <div className={`${styles.formItem} ${styles.row}`}
-                                    style={{
-                                        width:"100%",
-                                        padding: "0 5px"
-                                    }}>
-                                    <input
+                                <div className={`${styles.col}`}>
+                                    
+                                    <div className={`${styles.formItem} ${styles.row}`}
                                         style={{
-                                            color: "white",
-                                            width: "100%"
-                                        }}
-                                        onChange={(e) => setCollection({
-                                            ...collection,
-                                            title: e.target.value
-                                        })}
-                                        value={collection?.title}
-                                        type="text"
-                                        name="title" />
-                                    <label htmlFor="title" style={{ 
-                                        top: collection?.title && collection.title !== "" ? "-5px" : "", 
-                                        fontSize: collection?.title &&collection.title !== "" ? "10px" : ""}}>Collections</label>
+                                            width:"100%",
+                                            padding: "0 5px"
+                                        }}>
+                                        <input
+                                            style={{
+                                                color: "white",
+                                                width: "100%"
+                                            }}
+                                            onChange={(e) => setCollection({
+                                                ...collection,
+                                                title: e.target.value
+                                            })}
+                                            value={collection?.title}
+                                            type="text"
+                                            name="title" />
+                                        <label htmlFor="title" style={{ 
+                                            top: collection?.title && collection.title !== "" ? "-5px" : "", 
+                                            fontSize: collection?.title &&collection.title !== "" ? "10px" : ""}}>Collection Title</label>
+                                    </div>
                                 </div>
-                            </div>
-                            <div className={`${styles.row}`}
-                                style={{
-                                    padding: "2rem 0"
-                                }}
-                            >
-                                
-                                <div className={`${styles.formItem} ${styles.row}`}
+                                <div className={`${styles.row}  ${styles.mobileContainer}`}
                                     style={{
-                                        width:"40%",
-                                        padding: "0 5px"
-                                    }}>
-                                    <input
-                                        style={{
-                                            color: "white",
-                                            width: "100%"
-                                        }}
-                                        onChange={(e) => setCollection({
-                                            ...collection,
-                                            type_to_compare: e.target.value
-                                        })}
-                                        disabled={true}
-                                        value={collection?.type_to_compare}
-                                        type="text"
-                                        name="type_to_compare" />
-                                    <label htmlFor="type_to_compare" style={{ 
-                                        top: collection?.type_to_compare && collection.type_to_compare !== "" ? "-5px" : "", 
-                                        fontSize: collection?.type_to_compare && collection.type_to_compare !== "" ? "10px" : ""}}>Type to Compare</label>
-                                </div>
-                                <div className={`${styles.formItem} ${styles.row}`}
-                                    style={{
-                                        width:"20%",
-                                        padding: "0 5px"
-                                    }}>
-                                    <input
-                                        style={{
-                                            color: "white",
-                                            width: "100%"
-                                        }}
-                                        onChange={(e) => setCollection({
-                                            ...collection,
-                                            condition: e.target.value
-                                        })}
-                                        disabled={true}
-                                        value={collection?.condition}
-                                        type="text"
-                                        name="condition" />
-                                    <label htmlFor="condition" style={{ 
-                                        top: collection?.condition && collection.condition !== "" ? "-5px" : "", 
-                                        fontSize: collection?.condition && collection.condition !== "" ? "10px" : ""}}>Condition</label>
-                                </div>
-                                <div className={`${styles.formItem} ${styles.row}`}
-                                    style={{
-                                        width:"40%",
-                                        padding: "0 5px"
-                                    }}>
-                                    <input
-                                        style={{
-                                            color: "white",
-                                            width: "100%"
-                                        }}
-                                        onChange={(e) => updateSearch(e.target.value)}
-                                        value={query}
-                                        type="text"
-                                        name="query" />
-                                    <label htmlFor="query" style={{ 
-                                        top: query !== "" ? "-5px" : "", 
-                                        fontSize: query !== "" ? "10px" : ""}}>Compare Against</label>
-                                </div>
-                            </div>
-                        </div>
-                    </Card>
+                                        padding: "2rem 0"
+                                    }}
+                                >
+                                    
 
-                    <Card title={"Products In Collection"}
-                        header={""}
-                        card_type={"DEFAULT"}
-                    >
-                        <div className={`${styles.col}`} style={{position: "relative"}}>
-                            <div className={`${styles.col}`} style={{ padding: "1rem 0" }}>
-                                <div className={`${styles.col}`} style={{ padding: "0em 0.5rem 0rem 0.5rem " }}>
-                                    {
-                                        query === "" && collection.products && collection.products.map(product => {
-                                            return (
-                                                <div key={product.id} className={`${styles.col}`}>
-                                                    <VariantRow item={product} />
-                                                    <Underline width={100} />
-                                                </div>
-                                            )
-                                        })
-                                    }
-                                    {
-                                        query !== "" && hits.length > 0 && hits.map((product) => {
-                                            return (
-                                                <div key={product.id} className={`${styles.col} ${styles.itemRow}`} onClick={() => setCollection({...collection, products: [...collection.products, product]})}>
-                                                    <Underline width={100} />
-                                                    <VariantRow item={product} />
-                                                </div>
-                                            );
-                                        })
-                                    }
+                                    <div className={`${styles.formItem} ${styles.row}`}>
+                                        <div className={`${styles.formItem} ${styles.row}`}
+                                            style={{
+                                                width: window?.innerWidth > 720 ? "40%" : "60%",
+                                                padding: "0 5px"
+                                            }}>
+                                            <input
+                                                style={{
+                                                    color: "var(--accent)",
+                                                    width: "100%"
+                                                }}
+                                                onChange={(e) => setCollection({
+                                                    ...collection,
+                                                    type_to_compare: e.target.value
+                                                })}
+                                                disabled={true}
+                                                value={collection?.type_to_compare}
+                                                type="text"
+                                                name="type_to_compare" />
+                                            <label htmlFor="type_to_compare" style={{ 
+                                                top: collection?.type_to_compare && collection.type_to_compare !== "" ? "-5px" : "", 
+                                                fontSize: collection?.type_to_compare && collection.type_to_compare !== "" ? "10px" : ""}}>Type to Compare</label>
+                                        </div>
+                                        <div className={`${styles.formItem} ${styles.row}`}
+                                            style={{
+                                                width: window?.innerWidth > 720 ? "40%" : "40%",
+                                                padding: "0 5px"
+                                            }}>
+                                            <input
+                                                style={{
+                                                    color: "var(--accent)",
+                                                    width: "100%"
+                                                }}
+                                                onChange={(e) => setCollection({
+                                                    ...collection,
+                                                    condition: e.target.value
+                                                })}
+                                                disabled={true}
+                                                value={collection?.condition}
+                                                type="text"
+                                                name="condition" />
+                                            <label htmlFor="condition" style={{ 
+                                                top: collection?.condition && collection.condition !== "" ? "-5px" : "", 
+                                                fontSize: collection?.condition && collection.condition !== "" ? "10px" : ""}}>Condition</label>
+                                        </div>
+
+                                    </div>
+                                    <div className={`${styles.formItem} ${styles.row}`}
+                                        style={{
+                                            width: window?.innerWidth > 720 ? "40%" : "100%",
+                                            padding: "0 5px"
+                                        }}>
+                                        <input
+                                            style={{
+                                                color: "white",
+                                                width: "100%"
+                                            }}
+                                            onChange={(e) => updateSearch(e.target.value)}
+                                            value={collection?.compare_against}
+                                            type="text"
+                                            name="query" />
+                                        <label htmlFor="query" style={{ 
+                                            top: collection?.compare_against !== "" ? "-5px" : "", 
+                                            fontSize: collection?.compare_against !== "" ? "10px" : ""}}>Compare Against</label>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </Card>
+                        </Card>
+
+                        <Card title={"Products In Collection"}
+                            header={""}
+                            card_type={"INFO"}
+                            >
+                            <div className={`${styles.col}`} style={{position: "relative"}}>
+                                <div className={`${styles.col}`} style={{ padding: "1rem 0" }}>
+                                    <div className={`${styles.col}`} style={{ padding: "0em 0.5rem 0rem 0.5rem " }}>
+                                        {
+                                            query === "" && collection.products && collection.products.map(product => {
+                                                return (
+                                                    <div key={product.id} className={`${styles.col}`}>
+                                                        <VariantRow item={product} />
+                                                        <Underline width={100} />
+                                                    </div>
+                                                )
+                                            })
+                                        }
+                                        {/* {
+                                            query !== "" && hits.length > 0 && hits.map((product) => {
+                                                return (
+                                                    <div key={product.id} className={`${styles.col} ${styles.itemRow}`} onClick={() => setCollection({...collection, products: [...collection.products, product]})}>
+                                                        <Underline width={100} />
+                                                        <VariantRow item={product} />
+                                                    </div>
+                                                );
+                                            })
+                                        } */}
+                                    </div>
+                                </div>
+                            </div>
+                        </Card>
+                    </div>
                 </div>
-            </div>
+            </main>
         </div>
     ) 
 }

@@ -9,6 +9,7 @@ import { VariantRow } from "../../../components/ui/rows/VariantRow";
 
 // Instantiate the client
 import { algoliasearch } from "algoliasearch";
+import { numberFormat } from "../../../lib/helpers/formatters";
 const client = algoliasearch('9HC6EQSC7S', 'de139a052d86174f4b708e160db11c4b');
 
 export type Bundle = {
@@ -26,7 +27,7 @@ export type Bundle = {
         option3: string,
         compare_at_price: number,
         price: number,
-    }[]
+    }[] | []
 }
 
 type Props = {
@@ -66,24 +67,13 @@ const s = [
     
 ]
 
-const b = {
+const b: Bundle = {
     title: "",
     total: 0,
     new_price: 0,
     tags: [],
     notes: "",
-    products: [
-        {
-            id: "",
-            title: "",
-            url: "",
-            option1: "",
-            option2: "",
-            option3: "",
-            compare_at_price: 0,
-            price: 0,
-        }
-    ]
+    products: []
 }
 
 
@@ -155,12 +145,27 @@ export const createBundle: FunctionComponent<Props> = () => {
                 }
             ]
         })
+    };
+
+    const addToColleciton = (product: {
+        id: string,
+        title: string,
+        url: string,
+        option1: string,
+        option2: string,
+        option3: string,
+        compare_at_price: number,
+        price: number,
+    }) => {
 
         setBundle({
             ...bundle,
-            products: product_list
-        })
-    };
+            total: product.price + bundle?.total,
+            products: [...bundle.products, product]
+        });
+
+        setQuery("");
+    }
 
     return (
         <div className={`${styles.col}`}>
@@ -171,6 +176,10 @@ export const createBundle: FunctionComponent<Props> = () => {
                 }}>
                 <FormProgress steps={steps} formStep={formStep} />
             </div>
+            <main className={`${styles.col} ${styles.container}`}>
+                {/* <div className={`${styles.row} ${styles.mobileContainer}`}> */}
+
+                    
             <div className={`${styles.col} ${styles.container}`}
                 style={{
                     justifyContent: "center",
@@ -191,27 +200,76 @@ export const createBundle: FunctionComponent<Props> = () => {
                         <div className={`${styles.col}`}>
                             
                             <div className={`${styles.col}`}>
-                                
-                                <div className={`${styles.formItem} ${styles.row}`}
-                                    style={{
-                                        width:"100%",
-                                        padding: "0 5px"
-                                    }}>
-                                    <input
+                                <div className={`${styles.col}`}>
+                                    
+                                    <div className={`${styles.formItem} ${styles.row}`}
                                         style={{
-                                            color: "white",
-                                            width: "100%"
-                                        }}
-                                        onChange={(e) => setBundle({
-                                            ...bundle,
-                                            title: e.target.value
-                                        })}
-                                        value={bundle?.title}
-                                        type="text"
-                                        name="title" />
-                                    <label htmlFor="title" style={{ 
-                                        top: bundle?.title && bundle.title !== "" ? "-5px" : "", 
-                                        fontSize: bundle?.title &&bundle.title !== "" ? "10px" : ""}}>Bundle Name</label>
+                                            width:"100%",
+                                            padding: "0 5px"
+                                        }}>
+                                        <input
+                                            style={{
+                                                color: "white",
+                                                width: "100%"
+                                            }}
+                                            onChange={(e) => setBundle({
+                                                ...bundle,
+                                                title: e.target.value
+                                            })}
+                                            value={bundle?.title && bundle.title}
+                                            type="text"
+                                            name="title" />
+                                        <label htmlFor="title" style={{ 
+                                            top: bundle?.title &&bundle.title !== "" ? "-5px" : "", 
+                                            fontSize: bundle?.title &&bundle.title !== "" ? "10px" : ""}}>Bundle Title</label>
+                                    </div>
+                                </div>
+
+                                <div className={`${styles.row}`} style={{}}>
+                                    <div className={`${styles.formItem} ${styles.row}`}
+                                        style={{
+                                            width:"100%",
+                                            padding: "1rem 5px"
+                                        }}>
+                                        <input
+                                            style={{
+                                                color: "white",
+                                                width: "100%"
+                                            }}
+                                            onChange={(e) => setBundle({
+                                                ...bundle,
+                                                total: Number(e.target.value.replace("$", "").replace(".", "").replace(",", ""))
+                                            })}
+                                            value={numberFormat(Number(bundle?.total)/100)}
+                                            type="text"
+                                            name="price" />
+                                        <label htmlFor="price" style={{ 
+                                            top: bundle?.total && bundle.total > 0  ? "-5px" : "", 
+                                            fontSize: bundle?.total && bundle.total > 0 ?  "10px" : ""}}>Bundle Price</label>
+                                    </div>
+
+                                    <div className={`${styles.formItem} ${styles.row}`}
+                                        style={{
+                                            width:"100%",
+                                            padding: "1rem 5px"
+                                        }}>
+                                        <input
+                                            style={{
+                                                color: "white",
+                                                width: "100%"
+                                            }}
+                                            onChange={(e) => setBundle({
+                                                ...bundle,
+                                                new_price: Number(e.target.value.replace("$", "").replace(".", "").replace(",", ""))
+                                            })}
+                                            value={numberFormat(Number(bundle?.new_price)/100)}
+                                            type="text"
+                                            name="compare_at_price" />
+                                        <label htmlFor="compare_at_price" style={{ 
+                                            top: bundle?.new_price && bundle.new_price > 0 ? "-5px" : "", 
+                                            fontSize: bundle?.new_price && bundle.new_price > 0 ? "10px" : ""}}>Sale Price</label>
+                                    </div>
+                                    
                                 </div>
                             </div>
                         </div>
@@ -225,26 +283,24 @@ export const createBundle: FunctionComponent<Props> = () => {
                             <div className={`${styles.col}`} style={{background: "black"}}>
                                 
                             </div>
-                            <div className={`${styles.col}`}>
                                 
-                                <div className={`${styles.formItem} ${styles.row}`}
+                            <div className={`${styles.formItem} ${styles.row}`}
+                                style={{
+                                    width:"100%",
+                                    padding: "0 5px"
+                                }}>
+                                <input
                                     style={{
-                                        width:"100%",
-                                        padding: "0 5px"
-                                    }}>
-                                    <input
-                                        style={{
-                                            color: "white",
-                                            width: "100%"
-                                        }}
-                                        onChange={(e) => updateSearch(e.target.value)}
-                                        value={query}
-                                        type="text"
-                                        name="query" />
-                                    <label htmlFor="query" style={{ 
-                                        top: query !== "" ? "-5px" : "", 
-                                        fontSize: query !== "" ? "10px" : ""}}>Search Products</label>
-                                </div>
+                                        color: "white",
+                                        width: "100%"
+                                    }}
+                                    onChange={(e) => updateSearch(e.target.value)}
+                                    value={query}
+                                    type="text"
+                                    name="query" />
+                                <label htmlFor="query" style={{ 
+                                    top: query !=="" ? "-5px" : "", 
+                                    fontSize: query !== "" ? "10px" : ""}}>Search Products</label>
                             </div>
                             <div className={`${styles.col}`} style={{ padding: "2rem 0" }}>
                                 <h5 style={{ padding: "0rem 0.5rem 0rem 0.5rem " }}>
@@ -252,31 +308,32 @@ export const createBundle: FunctionComponent<Props> = () => {
                                 </h5>
                                 <div className={`${styles.col}`} style={{ padding: "2rem 0.5rem 0rem 0.5rem " }}>
                                     {
-                                        query === "" && bundle.products && bundle.products.map(product => {
+                                        query === "" && bundle.products ? bundle.products.map(product => {
                                             return (
                                                 <div key={product.id} className={`${styles.col}`}>
                                                     <Underline width={100} />
                                                     <VariantRow item={product} />
                                                 </div>
                                             )
-                                        })
+                                        }) : null
                                     }
                                     {
-                                        hits.length < 4 && query !== "" && hits.length > 0 && hits.map((product) => {
+                                        query !== "" && hits.length > 0 ? hits.map((product) => {
                                             return (
-                                                <div key={product.id} className={`${styles.col} ${styles.itemRow}`} onClick={() => setBundle({...bundle, products: [...bundle.products, product]})}>
+                                                <div key={product.id} className={`${styles.col} ${styles.itemRow}`} onClick={() => addToColleciton(product)}>
                                                     <Underline width={100} />
                                                     <VariantRow item={product} />
                                                 </div>
                                             );
-                                        })
+                                        }) : null
                                     }
                                 </div>
                             </div>
                         </div>
                     </Card>
                 </div>
-            </div>
+                </div>
+            </main>
         </div>
     ) 
 }

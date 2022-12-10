@@ -303,7 +303,7 @@ export const CustomerDetail: FunctionComponent<CustomerDetailProps> = (props) =>
                                     <div className={`${styles.col}`}>
                                         <div className={`${styles.row} ${styles.mobileContainer} `} style={{justifyContent: "space-between", alignItems: "center"}}>
                                             <div className={`${styles.row}  ${styles.mobileContainer}`} style={{justifyContent: "flex-start", alignItems: window?.innerWidth > 720 ? "center" : "flex-start"}}>
-                                                <h4>{last_order?.order_number ? last_order?.order_number : ""}</h4>
+                                                <h4>{last_order?.id ? "#" + last_order?.id.toUpperCase() : ""}</h4>
                                                 <p className={`${styles.tag}`}
                                                     style={{
                                                         margin: window?.innerWidth > 720 ? "0 0.5rem" : "0.5rem 0",
@@ -328,7 +328,6 @@ export const CustomerDetail: FunctionComponent<CustomerDetailProps> = (props) =>
                                                     <div key={item.id} className={`${styles.col}`} style={{marginTop: "3rem"}}>
                                                         <Underline width={100} />
                                                         <VariantRow item={item as LineItem} />
-                                                        <Underline width={100} />
                                                     </div>
                                                 )
                                             })

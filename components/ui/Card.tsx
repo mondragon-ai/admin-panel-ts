@@ -212,7 +212,7 @@ export const CreateHeader: React.FC<CardHeaderProps> = ({
                     <div className={`${styles.row}`}>
                         <h5 
                         style={{
-                            fontSize: window.innerWidth > 720 ? 15 : "1.3vh",
+                            fontSize: window.innerWidth > 720 ? 15 : "1rem",
                             lineHeight: window.innerWidth > 720 ? "" : "",
                         }}>{title + ""} </h5>
                     </div>
@@ -228,7 +228,7 @@ export const CreateHeader: React.FC<CardHeaderProps> = ({
                                     cursor: "pointer"
                                 }}  
                                 className={`${styles.tag}`}>Previous</p> : null}
-                            {next !== ""  && next != "SAVE" && next !== "OPTIONS" ? <p 
+                            {next !== ""  && next != "SAVE" && next !== "OPTIONS" && next !== "UPDATE" ? <p 
                                 onClick={() =>  handleNav(next as string)}
                                 style={{
                                     marginLeft: "0.5rem",
@@ -263,6 +263,17 @@ export const CreateHeader: React.FC<CardHeaderProps> = ({
                                     cursor: "pointer"
                                 }}  
                                 className={`${styles.tag}`}>Next</p> 
+                                <p 
+                                onClick={() =>  createVariants(product as Product, setProduct as Dispatch<SetStateAction<any>>)}
+                                style={{
+                                    marginLeft: "0.5rem",
+                                    backgroundColor:  "rgb(138, 242, 138)",
+                                    color:  "rgb(56, 56, 56)",
+                                    lineHeight: window.innerWidth > 720 ? "" : "",
+                                    cursor: "pointer"
+                                }}  
+                                className={`${styles.tag}`}>Update</p></>: null}
+                                {next === "UPDATE" ? <>
                                 <p 
                                 onClick={() =>  createVariants(product as Product, setProduct as Dispatch<SetStateAction<any>>)}
                                 style={{

@@ -55,7 +55,10 @@ export const ProductContainerRow: FunctionComponent<any>  = ({p}) => {
                         alignItems: "center", 
                     }} 
                     className={`${styles.row} ${styles.rowOneMobile}`}>
-                    <div className={`${styles.col}`} style={{paddingRight: "1rem", width: 'auto', justifySelf: "center"}}>
+                    <div className={`${styles.col}`} style={{
+                        paddingRight: window?.innerWidth > 720 ? "1rem" : 0,
+                        width: 'auto',
+                        justifySelf: "center"}}>
                         <Image 
                             style={{borderRadius: "3px", border: "1px solid black"}}
                             src={URL}

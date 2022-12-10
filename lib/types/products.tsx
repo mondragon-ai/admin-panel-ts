@@ -95,6 +95,7 @@ export interface ProdCollection {
         option3: string,
         compare_at_price: number,
         price: number,
+        order_prority?: number
     }[]
 }
 
