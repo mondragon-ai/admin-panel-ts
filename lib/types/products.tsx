@@ -58,11 +58,23 @@ export interface Variant
 export interface Bundle {
     id: string,
     title: string,
+    total: number,
     status: boolean,
-    collections: string[],
+    new_price: number,
     tags: string[],
-    products: string[],
-    price: number
+    notes: string,
+    products: {
+        id: string,
+        title: string,
+        url: string,
+        option1: string,
+        option2: string,
+        option3: string,
+        compare_at_price: number,
+        price: number,
+    }[],
+    updated_at: FirebaseFirestore.Timestamp;
+    created_at: FirebaseFirestore.Timestamp;
 }
 
 export interface GiftCard {

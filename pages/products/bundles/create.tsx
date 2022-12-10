@@ -167,6 +167,26 @@ export const createBundle: FunctionComponent<Props> = () => {
         setQuery("");
     }
 
+    const removeFromColllection = (product: {
+        id: string,
+        title: string,
+        url: string,
+        option1: string,
+        option2: string,
+        option3: string,
+        compare_at_price: number,
+        price: number,
+    }) => {
+
+        let list = bundle.products ? bundle.products.filter(p => p.id !== product.id) : [];
+
+        setBundle({
+            ...bundle,
+            total: bundle?.total - product.price,
+            products: list
+        });
+    }
+
     return (
         <div className={`${styles.col}`}>
             <div className={`${styles.col} ${styles.container}`} 
@@ -233,13 +253,14 @@ export const createBundle: FunctionComponent<Props> = () => {
                                         }}>
                                         <input
                                             style={{
-                                                color: "white",
+                                                color: "var(--accent)",
                                                 width: "100%"
                                             }}
                                             onChange={(e) => setBundle({
                                                 ...bundle,
                                                 total: Number(e.target.value.replace("$", "").replace(".", "").replace(",", ""))
                                             })}
+                                            disabled={true}
                                             value={numberFormat(Number(bundle?.total)/100)}
                                             type="text"
                                             name="price" />
@@ -310,7 +331,7 @@ export const createBundle: FunctionComponent<Props> = () => {
                                     {
                                         query === "" && bundle.products ? bundle.products.map(product => {
                                             return (
-                                                <div key={product.id} className={`${styles.col}`}>
+                                                <div key={product.id} className={`${styles.col}`} onClick={() => removeFromColllection(product)} style={{cursor: "pointer"}}>
                                                     <Underline width={100} />
                                                     <VariantRow item={product} />
                                                 </div>

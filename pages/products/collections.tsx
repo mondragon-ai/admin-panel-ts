@@ -57,7 +57,7 @@ interface Prop {
 
 const Collections: FunctionComponent<Prop> = ({collections}) => {
     const [itemSearch, setItemSearch] = useState("");
-    const [list, setOrders] = useState<any[]>(collections);
+    const [list, setOrders] = useState<ProdCollection[]>(collections);
     const [filterState, setFilter] = useState<"" | "INACTIVE" | "ACTIVE">("");
 
     return (
@@ -86,7 +86,7 @@ const Collections: FunctionComponent<Prop> = ({collections}) => {
                                         placeholder="" />
                                     <label style={{ 
                                         top: itemSearch != "" ? "-5px" : "", 
-                                        fontSize: itemSearch != "" ? "10px" : ""}}>{` 🔍 Search orders` }</label>
+                                        fontSize: itemSearch != "" ? "10px" : ""}}>{` 🔍 Search Collections` }</label>
                                 </div>
                             </div>
                             <div className={`${styles.row} ${styles.itemsFilterBtn}`}>
@@ -102,22 +102,22 @@ const Collections: FunctionComponent<Prop> = ({collections}) => {
                             rowOneLower={""}
                             rowTwoUpper={"Product Count"}
                             rowTwoLower={"Status"}
-                            rowThree={""}
-                            rowFour={"Tags"}/>
+                            rowThree={"Compare Against"}
+                            rowFour={"-"}/>
                         {list && list.map((s: ProdCollection) => {
-                            console.log(s.id);
+                            console.log(s?.id);
                                 return (
-                                    <div key={s.id} className={`${styles.col} ${styles.itemRow}`}>
+                                    <div key={s?.id} className={`${styles.col} ${styles.itemRow}`}>
                                         <Underline width={100} />
                                         <MainRowContainer
                                             href={`/products/collections/${s.id}`} 
-                                            id={s.id}
-                                            colOneTop={s.title}
+                                            id={s?.id}
+                                            colOneTop={s?.title}
                                             colOneBottom={""}
-                                            colTwoTop={s.products.length}
-                                            colTwoBottom={s.status}
-                                            colThree={""}
-                                            colFour={s.tags} />
+                                            colTwoTop={s?.products?.length}
+                                            colTwoBottom={s?.status}
+                                            colThree={s?.compare_against}
+                                            colFour={s?.tags} />
                                     </div>
                                 );
                         })}

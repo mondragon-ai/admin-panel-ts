@@ -169,7 +169,8 @@ export const CreateHeader: React.FC<CardHeaderProps> = ({
        
     }
 
-    const url = "https://us-central1-impowered-funnel.cloudfunctions.net/funnel";
+    // const url = "https://us-central1-impowered-funnel.cloudfunctions.net/funnel";
+    const DEV_SERVER = "http://localhost:5001/impowered-funnel/us-central1/funnel";
 
     const handleSave = async (
         resource: string,
@@ -181,13 +182,31 @@ export const CreateHeader: React.FC<CardHeaderProps> = ({
         console.log(" => KEY: " + resource);
         console.log(" => KEY: " + redirect);
         console.log(" => KEY: " + data);
-        const response = await impoweredRequest(url + resource, "POST", {[key]: data});
+        const response = await impoweredRequest(DEV_SERVER + resource, "POST", {[key]: data});
         console.log("198: HANDLE CREATE -->\n", response);
 
         if (String(response.text).includes("SUCCESS")) {
             window.location.href = redirect
         }
     }
+
+
+    const update = async (
+        resource: string,
+        redirect: string,
+        data: any,
+    ) => {
+        console.log(" => KEY: " + resource);
+        console.log(" => KEY: " + redirect);
+        console.log(" => KEY: " + data);
+        const response = await impoweredRequest(DEV_SERVER + resource, "POST", data);
+        console.log("198: HANDLE CREATE -->\n", response);
+
+        if (String(response.text).includes("SUCCESS")) {
+            window.location.href = redirect
+        }
+    }
+
 
     const createVariants = async (
         product: Product,
@@ -275,7 +294,10 @@ export const CreateHeader: React.FC<CardHeaderProps> = ({
                                 className={`${styles.tag}`}>Update</p></>: null}
                                 {next === "UPDATE" ? <>
                                 <p 
-                                onClick={() =>  createVariants(product as Product, setProduct as Dispatch<SetStateAction<any>>)}
+                                onClick={() =>  update(
+                                    resource as string, 
+                                    redirect as string,
+                                    data)}
                                 style={{
                                     marginLeft: "0.5rem",
                                     backgroundColor:  "rgb(138, 242, 138)",

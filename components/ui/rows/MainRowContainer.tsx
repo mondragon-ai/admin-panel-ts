@@ -102,14 +102,14 @@ export const MainRowContainer: FunctionComponent<Props>  = ({
                     }} 
                     className={`${styles.row} ${styles.noneMobile}`}>
                     {typeof(colThree) == "string" ?  <p>{colThree == "" ? "-" : colThree}</p>  : 
-                        colThree.trial > 0 ?  <p>{
-                            colThree.frequency + " " + 
-                            colThree.trial 
-                        }</p>   : colThree.frequency == "DAILY" ||
-                            colThree.frequency == "ANNUALLY" || 
-                            colThree.frequency == "MONTHLY" ?  <p>{
-                            colThree.frequency + " " + 
-                            colThree.date 
+                        colThree?.trial > 0 ?  <p>{
+                            colThree?.frequency + " " + 
+                            colThree?.trial 
+                        }</p>   : colThree?.frequency == "DAILY" ||
+                            colThree?.frequency == "ANNUALLY" || 
+                            colThree?.frequency == "MONTHLY" ?  <p>{
+                            colThree?.frequency + " " + 
+                            colThree?.date 
                         }</p> : <div>TEST</div> }
                     {/* <p>{colThree}</p> */}
                 </div>

@@ -108,19 +108,19 @@ const Bundles: FunctionComponent<Prop> = ({bundles}) => {
                             rowThree={"Total Count"}
                             rowFour={"Tags"}/>
                         {list && list.map((s: Bundle) => {
-                            console.log(s.id);
+                            console.log(s?.id);
                                 return (
                                     <div key={s.id} className={`${styles.col} ${styles.itemRow}`}>
                                         <Underline width={100} />
                                         <MainRowContainer
-                                            href={`/products/bundles/${s.id}`} 
-                                            id={s.id}
-                                            colOneTop={s.title}
+                                            href={`/products/bundles/${s?.id}`} 
+                                            id={s?.id}
+                                            colOneTop={s?.title}
                                             colOneBottom={""}
-                                            colTwoTop={numberFormat(s.price)}
-                                            colTwoBottom={s.status}
-                                            colThree={"" + s.products.length + " products in this bundle"}
-                                            colFour={s.tags} />
+                                            colTwoTop={numberFormat(Number(s?.total)/100)}
+                                            colTwoBottom={s?.status}
+                                            colThree={"" + s?.products.length + " products in this bundle"}
+                                            colFour={s?.tags} />
                                     </div>
                                 );
                         })}
