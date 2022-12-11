@@ -169,8 +169,8 @@ export const CreateHeader: React.FC<CardHeaderProps> = ({
        
     }
 
-    // const url = "https://us-central1-impowered-funnel.cloudfunctions.net/funnel";
-    const DEV_SERVER = "http://localhost:5001/impowered-funnel/us-central1/funnel";
+    const LIVE_SERVER = "https://us-central1-impowered-funnel.cloudfunctions.net/funnel";
+    // const DEV_SERVER = "http://localhost:5001/impowered-funnel/us-central1/funnel";
 
     const handleSave = async (
         resource: string,
@@ -182,7 +182,7 @@ export const CreateHeader: React.FC<CardHeaderProps> = ({
         console.log(" => KEY: " + resource);
         console.log(" => KEY: " + redirect);
         console.log(" => KEY: " + data);
-        const response = await impoweredRequest(DEV_SERVER + resource, "POST", {[key]: data});
+        const response = await impoweredRequest(LIVE_SERVER + resource, "POST", {[key]: data});
         console.log("198: HANDLE CREATE -->\n", response);
 
         if (String(response.text).includes("SUCCESS")) {
@@ -199,7 +199,7 @@ export const CreateHeader: React.FC<CardHeaderProps> = ({
         console.log(" => KEY: " + resource);
         console.log(" => KEY: " + redirect);
         console.log(" => KEY: " + data);
-        const response = await impoweredRequest(DEV_SERVER + resource, "POST", data);
+        const response = await impoweredRequest(LIVE_SERVER + resource, "POST", data);
         console.log("198: HANDLE CREATE -->\n", response);
 
         if (String(response.text).includes("SUCCESS")) {
