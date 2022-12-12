@@ -196,9 +196,9 @@ export const CreateHeader: React.FC<CardHeaderProps> = ({
         redirect: string,
         data: any,
     ) => {
-        console.log(" => KEY: " + resource);
-        console.log(" => KEY: " + redirect);
-        console.log(" => KEY: " + data);
+        console.log(" => [Resource]: " + resource);
+        console.log(" => [Redirect]: " + redirect);
+        console.log(" => [Data]: " + data);
         const response = await impoweredRequest(LIVE_SERVER + resource, "POST", data);
         console.log("198: HANDLE CREATE -->\n", response);
 

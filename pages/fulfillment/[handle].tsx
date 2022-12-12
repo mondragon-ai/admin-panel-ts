@@ -19,100 +19,58 @@ import Underline from "../../components/ui/Underline";
 import { VariantRow } from "../../components/ui/rows/VariantRow";
 import { LineItem } from "../../lib/types/orders";
 import Image from "next/image";
+import { ParsedUrlQuery } from "querystring";
+import { impoweredRequest } from "../../lib/helpers/requests";
 const client = algoliasearch('9HC6EQSC7S', 'de139a052d86174f4b708e160db11c4b');
 
-type Bundle = {
-    title: string,
-    type_to_compare: "TAGS" | "DATE" | "BEST_SELLERS" | "SOLD" | "QUANITY",
-    condition: "===" | ">=" | "<=" | "!==",
-    compare_against: string,
-    notes: string,
-    products: 
-    {
-        id: string,
-        title: string,
-
-    }[],
-    image: {
-        url: string,
-        alt: string, 
-        id: string
-    }
-}
-
-type Props = {
-    setProduct:  Dispatch<SetStateAction<Bundle>>,
-    product: Bundle,
-    navForm?: Dispatch<SetStateAction<string>>,
-    setTags?: Dispatch<SetStateAction<string[]>>,
-    setTagState?: Dispatch<SetStateAction<string>>,
-    tags?: string[],
-    setIndex?: Dispatch<SetStateAction<{
-        required: boolean;
-        complete: boolean;
-        active: boolean;
-        title: string;
-        step: string;
-    }[]>>,
-    steps?: {
-        required: boolean;
-        complete: boolean;
-        active: boolean;
-        title: string;
-        step: string;
-    }[],
-    state?: any;
-    checkboxes?: any;
-    setCheckboxes?: any;
-}
-const f: Fulfillment = 
-    {
-        status: false,
-        id: "ful_" + crypto.randomBytes(10).toString("hex"),
-        merchant_address: {
-            line1: "420 Bigly St",
-            line2: "",
-            city: "South Park",
-            state: "NM",
-            zip: "42069",
-            country: "72704",
-            name: "Bigly",
-            contact: "thanks@gobigly.com"
-        },
-        recipient_address: {
-            line1: "420 Bigly St",
-            line2: "",
-            city: "South Park",
-            state: "NM",
-            zip: "42069",
-            country: "72704",
-            name: "obi",
-            contact: "obi@gobigly.com"
-        },
-        shipping_detail: {
-            service: "USPS",
-            type: "STANDARD",
-            packaging: "PACKAGE",
-            weight: 0.22,
-            insurance: false,
-        },
-        order_summary: {
-            order_number: "#SH-IJBH934H",
-            total_price: 6500,
-            line_items: [
-                {
-                    url: "", 
-                    title: "Vip Product",
-                    quantity: 3,
-                    price: 3000,
-                    options1: "COLOR",
-                    options2: "SIZE",
-                    options3: "",
-                }
-            ]
-        },
-        label_url: ""
-}
+// const f: Fulfillment = 
+//     {
+//         status: false,
+//         id: "ful_" + crypto.randomBytes(10).toString("hex"),
+//         merchant_address: {
+//             line1: "420 Bigly St",
+//             line2: "",
+//             city: "South Park",
+//             state: "NM",
+//             zip: "42069",
+//             country: "72704",
+//             name: "Bigly",
+//             contact: "thanks@gobigly.com"
+//         },
+//         recipient_address: {
+//             line1: "420 Bigly St",
+//             line2: "",
+//             city: "South Park",
+//             state: "NM",
+//             zip: "42069",
+//             country: "72704",
+//             name: "obi",
+//             contact: "obi@gobigly.com"
+//         },
+//         shipping_detail: {
+//             service: "USPS",
+//             type: "STANDARD",
+//             packaging: "PACKAGE",
+//             weight: 0.22,
+//             insurance: false,
+//         },
+//         order_summary: {
+//             order_number: "#SH-IJBH934H",
+//             total_price: 6500,
+//             line_items: [
+//                 {
+//                     url: "", 
+//                     title: "Vip Product",
+//                     quantity: 3,
+//                     price: 3000,
+//                     options1: "COLOR",
+//                     options2: "SIZE",
+//                     options3: "",
+//                 }
+//             ]
+//         },
+//         label_url: ""
+// }
 interface Prop {
     fulfillments: Fulfillment[]
 }
@@ -124,10 +82,10 @@ const FulfillmentDetail: FunctionComponent<Prop> = ({
         // throw new Error("Data not fetched");        
     }
 
-    const [steps, setIndex] = useState(f);
-    const [formStep, setFormStep] = useState("STEP_ONE");
+    // const [steps, setIndex] = useState(f);
+    // const [formStep, setFormStep] = useState("STEP_ONE");
 
-    const [fulfillment, setFulfillment] = useState(f); //giftCards && giftCards.length > 0 ? giftCards[0] : {} as GiftCard);
+    const [fulfillment, setFulfillment] = useState(fulfillments && fulfillments.length > 0 ? fulfillments[0] : {} as Fulfillment);
 
 
     const [query, setQuery] = useState<string>("")
@@ -243,19 +201,18 @@ const FulfillmentDetail: FunctionComponent<Prop> = ({
                             >
                                 <div className={`${styles.col}`}>
                                     {
-                                        fulfillment.merchant_address ?
+                                        fulfillment.return_address ?
                                         <div className={`${styles.col}`}>
                                             <h5>Merchant Address</h5>
                                             <div className={`${styles.row}`}>
                                                 <p style={{paddingTop: "0rem",lineHeight: "1.3rem"}}>
-                                                    {fulfillment.merchant_address.line1} <br /> 
-                                                    {fulfillment.merchant_address.line2 ? <>{fulfillment.merchant_address.line2} <br /></> : null} 
-                                                    {fulfillment.merchant_address.city} <br /> 
-                                                    {fulfillment.merchant_address.state} <br /> 
-                                                    {fulfillment.merchant_address.country} <br /> 
+                                                    {fulfillment.return_address.line1} <br /> 
+                                                    {fulfillment.return_address.line2 ? <>{fulfillment.return_address.line2} <br /></> : null} 
+                                                    {fulfillment.return_address.city} <br /> 
+                                                    {fulfillment.return_address.state} <br /> 
+                                                    {fulfillment.return_address.country} <br /> 
                                                     <br /> 
-                                                    {fulfillment.merchant_address.name} <br /> 
-                                                    {fulfillment.merchant_address.contact} <br /> 
+                                                    {fulfillment.return_address.name} <br /> 
                                                 </p>
                                                 <p style={{paddingTop: "0rem"}}>📋</p>
                                             </div> 
@@ -265,18 +222,17 @@ const FulfillmentDetail: FunctionComponent<Prop> = ({
                                         <Underline width={100} />
                                     </div>
                                     {
-                                        fulfillment.merchant_address ?
+                                        fulfillment?.customer?.addresses[0]? 
                                         <div className={`${styles.col}`} style={{paddingTop: "1rem"}}>
                                             <h5>Recipient Address</h5>
                                             <div className={`${styles.row}`}>
                                                 <p style={{paddingTop: "0rem",lineHeight: "1.3rem"}}>
-                                                    {fulfillment.recipient_address.line1} <br /> 
-                                                    {fulfillment?.recipient_address?.line2 ? <>{fulfillment.merchant_address.line2} <br /></> : null} 
-                                                    {fulfillment?.recipient_address?.city} <br /> 
-                                                    {fulfillment?.recipient_address?.state} <br /> 
+                                                    {fulfillment?.customer?.addresses[0]?.line1} <br /> 
+                                                    {fulfillment?.customer?.addresses[0]?.line2 ? <>{fulfillment.customer?.addresses[0]?.line2} <br /></> : null} 
+                                                    {fulfillment?.customer?.addresses[0]?.city} <br /> 
+                                                    {fulfillment?.customer?.addresses[0]?.state} <br /> 
                                                     <br /> 
-                                                    {fulfillment?.recipient_address?.name} <br /> 
-                                                    {fulfillment?.recipient_address?.contact} <br /> 
+                                                    {fulfillment?.customer?.addresses[0]?.name} <br /> 
                                                 </p>
                                                 <p style={{paddingTop: "0rem"}}>📋</p>
                                             </div> 
@@ -293,14 +249,14 @@ const FulfillmentDetail: FunctionComponent<Prop> = ({
                             >
                                 <div className={`${styles.col}`}>
                                     {
-                                        fulfillment?.shipping_detail ?
+                                        fulfillment?.shipping_line ?
                                         <div className={`${styles.col}`}>
                                             <div className={`${styles.row}`}>
                                                 <div style={{ justifyContent: "flex-start",  paddingBottom: "1rem"}} className={`${styles.row}`}>
                                                     <p>Provider</p>
                                                 </div>
                                                 <div style={{ justifyContent: "flex-end",  paddingBottom: "1rem"}} className={`${styles.row}`}>
-                                                    <p> {fulfillment.shipping_detail?.service}</p>
+                                                    <p> {fulfillment.shipping_line?.provider}</p>
                                                 </div>
                                             </div>
 
@@ -309,7 +265,7 @@ const FulfillmentDetail: FunctionComponent<Prop> = ({
                                                     <p>Priority Type</p>
                                                 </div>
                                                 <div style={{ justifyContent: "flex-end",  paddingBottom: "1rem"}} className={`${styles.row}`}>
-                                                    <p> {fulfillment.shipping_detail?.type}</p>
+                                                    <p> {fulfillment?.shipping_line?.rate}</p>
                                                 </div>
                                             </div>
 
@@ -320,7 +276,7 @@ const FulfillmentDetail: FunctionComponent<Prop> = ({
                                                     <p>Packaging Type</p>
                                                 </div>
                                                 <div style={{ justifyContent: "flex-end",  paddingBottom: "1rem"}} className={`${styles.row}`}>
-                                                    <p> {fulfillment.shipping_detail?.packaging}</p>
+                                                    <p> {fulfillment?.shipping_line?.packaging_type}</p>
                                                 </div>
                                             </div>
 
@@ -330,7 +286,7 @@ const FulfillmentDetail: FunctionComponent<Prop> = ({
                                                     <p>Weight</p>
                                                 </div>
                                                 <div style={{ justifyContent: "flex-end",  paddingBottom: "1rem"}} className={`${styles.row}`}>
-                                                    <p> {fulfillment.shipping_detail?.weight} Oz </p>
+                                                    <p> {fulfillment?.shipping_line?.weight} Oz </p>
                                                 </div>
                                             </div>
                                             
@@ -431,36 +387,38 @@ const FulfillmentDetail: FunctionComponent<Prop> = ({
 
 
 
-export const getServerSideProps: GetServerSideProps = async () => {
-    // const url = "https://us-central1-impowered-funnel.cloudfunctions.net/funnel/gift_cards";
-    // const result = await impoweredRequest(url, "POST", {gif_uuid: ""});
 
-    // console.log(" ==> SERVER SIDE");
-    // console.log(result);
+export const getServerSideProps: GetServerSideProps = async ({params}) => {
+    const { handle } = params as ParsedUrlQuery;
+    // const url = "https://us-central1-impowered-funnel.cloudfunctions.net/funnel/fulfillments";
+    const DEV_SERVER = "http://localhost:5001/impowered-funnel/us-central1/funnel/fulfillments";
+    const result = await impoweredRequest(DEV_SERVER, "POST", {ful_uuid: handle});
 
-    // if (!result) {
-    //     throw new Error("Product list error");
-    // }
+    console.log(" ==> SERVER SIDE");
+    console.log(result);
 
-    // console.log(" ==> SERVER SIDE");
-    // console.log(result);
+    if (!result) {
+        throw new Error("Product list error");
+    }
 
-    // let gift_cards = [{}] as GiftCard[];
-    // let size = 0;
+    console.log(" ==> SERVER SIDE");
+    console.log(result);
 
-    // if (result?.data) {
-    //     gift_cards = result?.data?.gift_cards,
-    //     size = result?.data?.size
-    // }
+    let fulfillments = [{}] as Fulfillment[];
+    let size = 0;
+
+    if (result?.result) {
+        fulfillments = result?.result?.fulfillments,
+        size = result?.result?.size
+    }
 
     return {
         props: {
-            // size: size,
-            // gift_cards: gift_cards
+            size: size,
+            fulfillments: fulfillments
         }
     }
 }
-
 
 export default FulfillmentDetail;
 

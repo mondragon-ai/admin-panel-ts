@@ -78,14 +78,17 @@ export interface Bundle {
 }
 
 export interface GiftCard {
+    customer:{
+        cus_uuid: string,
+        first_name: string,
+        last_name:string,
+        email: string,
+    },
     id: string,
-    status: boolean,
-    balance: number,
-    value: number,
-    tags: string[],
-    first_name: string,
-    last_name: string,
-    email: string,
+    notes: string,
+    starting_balance: number,
+    current_balance: number,
+    code: string
 }
 
 export interface ProdCollection { 
@@ -113,17 +116,17 @@ export interface ProdCollection {
 
 export interface Subscriptions {
     id: string,
-    order_name: string,
+    order_number: string,
     status: boolean,
     product: {
         product_id: string,
         variant_id: string,
-        title: "Hoodie",
-        price: 3000,
-        options1: ""
-        options2: ""
-        options3: "",
-        url: ""
+        title: string,
+        price: number,
+        options1: string
+        options2: string,
+        options3: string,
+        url: string
     },
     customer: {
         cus_uuid: string,
@@ -135,11 +138,11 @@ export interface Subscriptions {
     payment_method: "STRIPE" | "SQUARE" | "",
     schedule: {
         next_charge_date: string,
-        interval: "MONTHLY" | "DAILY" | "ANNUALLY" | "TRIAL",
-        total_charges: 3,
-        total_value: 9000,
+        interval: number,
+        type: "MONTH" | "DAY" | "YEAR" | "TRIAL" | ""
+        total_charges: number,
+        total_value: number,
     },
-    value: number
 }
 
 export interface Scheudle {

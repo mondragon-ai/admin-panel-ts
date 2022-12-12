@@ -31,28 +31,28 @@ import { numberFormat } from "../../lib/helpers/formatters";
 import { impoweredRequest } from "../../lib/helpers/requests";
 import { GetServerSideProps } from "next";
 
-const giftCards: GiftCard[] = [
-    {
-        first_name: "Darth",
-        last_name: "Vader",
-        email: "vader@gobigly.com",
-        status: false,
-        id: "gif_" + crypto.randomBytes(10).toString("hex"),
-        tags: ["SALE", "Shirts"],
-        balance: 0,
-        value: 40
-    },
-    {
-        first_name: "Darth",
-        last_name: "Maul",
-        email: "maul@gobigly.com",
-        status: true,
-        id: "gif_" + crypto.randomBytes(10).toString("hex"),
-        tags: ["SALE", "Shirts"],
-        balance: 27.93,
-        value: 40
-    }
-]
+// const giftCards: GiftCard[] = [
+//     {
+//         first_name: "Darth",
+//         last_name: "Vader",
+//         email: "vader@gobigly.com",
+//         status: false,
+//         id: "gif_" + crypto.randomBytes(10).toString("hex"),
+//         tags: ["SALE", "Shirts"],
+//         balance: 0,
+//         value: 40
+//     },
+//     {
+//         first_name: "Darth",
+//         last_name: "Maul",
+//         email: "maul@gobigly.com",
+//         status: true,
+//         id: "gif_" + crypto.randomBytes(10).toString("hex"),
+//         tags: ["SALE", "Shirts"],
+//         balance: 27.93,
+//         value: 40
+//     }
+// ]
 
 interface Prop {
     gift_cards: GiftCard[]
@@ -80,7 +80,7 @@ const GiftCards = ({
                 <div className={`${styles.col} ${styles.card}`}>
                     <div style={{ alignItems: "center"}} className={`${styles.row} ${styles.itemRowHContainer}`}>
                         <MainRowContainerHeader
-                            list={giftCards}
+                            list={list}
                             type={filterState}
                             setState={setOrders}
                             setFilter={setFilter} />
@@ -112,7 +112,7 @@ const GiftCards = ({
                             rowTwoUpper={""}
                             rowTwoLower={"Status"}
                             rowThree={"Value / Balance"}
-                            rowFour={"Tags"}/>
+                            rowFour={"-"}/>
                         {list && list.map((s: GiftCard) => {
                             console.log(s.id);
                                 return (
@@ -121,12 +121,12 @@ const GiftCards = ({
                                         <MainRowContainer
                                             href={`/products/gift_cards/${s.id}`} 
                                             id={s.id}
-                                            colOneTop={s.first_name + " " + s.last_name}
-                                            colOneBottom={s.email}
+                                            colOneTop={s.customer.first_name + " " + s?.customer?.last_name}
+                                            colOneBottom={s?.customer?.email}
                                             colTwoTop={""}
-                                            colTwoBottom={s.status}
-                                            colThree={numberFormat(s.value) + " / " +  numberFormat(s.balance)}
-                                            colFour={s.tags} />
+                                            colTwoBottom={s?.current_balance > 0 ? true : false}
+                                            colThree={numberFormat(s?.starting_balance/100) + " / " +  numberFormat(s?.current_balance/100)}
+                                            colFour={[]} />
                                     </div>
                                 );
                         })}
@@ -141,30 +141,31 @@ const GiftCards = ({
 
 export const getServerSideProps: GetServerSideProps = async () => {
     // const url = "https://us-central1-impowered-funnel.cloudfunctions.net/funnel/gift_cards";
-    // const result = await impoweredRequest(url, "POST", {gif_uuid: ""});
+    const DEV_SERVER = "http://localhost:5001/impowered-funnel/us-central1/funnel/gift_cards";
+    const result = await impoweredRequest(DEV_SERVER, "POST", {gif_uuid: ""});
 
-    // console.log(" ==> SERVER SIDE");
-    // console.log(result);
+    console.log(" ==> SERVER SIDE");
+    console.log(result);
 
-    // if (!result) {
-    //     throw new Error("Product list error");
-    // }
+    if (!result) {
+        throw new Error("Product list error");
+    }
 
-    // console.log(" ==> SERVER SIDE");
-    // console.log(result);
+    console.log(" ==> SERVER SIDE");
+    console.log(result);
 
-    // let gift_cards = [{}] as GiftCard[];
-    // let size = 0;
+    let gift_cards = [{}] as GiftCard[];
+    let size = 0;
 
-    // if (result?.data) {
-    //     gift_cards = result?.data?.gift_cards,
-    //     size = result?.data?.size
-    // }
+    if (result?.result) {
+        gift_cards = result?.result?.gift_cards,
+        size = result?.result?.size
+    }
 
     return {
         props: {
-            // size: size,
-            // gift_cards: gift_cards
+            size: size,
+            gift_cards: gift_cards
         }
     }
 }

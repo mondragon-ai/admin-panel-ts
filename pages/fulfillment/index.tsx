@@ -19,109 +19,110 @@ import { MainRowContainer } from "../../components/ui/rows/MainRowContainer";
 import { GetServerSideProps } from "next";
 import { numberFormat } from "../../lib/helpers/formatters";
 import { Fulfillment } from "../../lib/types/fulfillment";
+import { impoweredRequest } from "../../lib/helpers/requests";
 
-const fulfillments: Fulfillment[] = [
-    {
-        status: false,
-        id: "ful_" + crypto.randomBytes(10).toString("hex"),
-        merchant_address: {
-            line1: "420 Bigly St",
-            line2: "",
-            city: "South Park",
-            state: "NM",
-            zip: "42069",
-            country: "72704",
-            name: "Bigly",
-            contact: "thanks@gobigly.com"
-        },
-        recipient_address: {
-            line1: "420 Bigly St",
-            line2: "",
-            city: "South Park",
-            state: "NM",
-            zip: "42069",
-            country: "72704",
-            name: "obi",
-            contact: "obi@gobigly.com"
-        },
-        shipping_detail: {
-            service: "USPS",
-            type: "STANDARD",
-            packaging: "PACKAGE",
-            weight: 0.22,
-            insurance: false,
-        },
-        order_summary: {
-            order_number: "#SH-IJBH934H",
-            total_price: 6500,
-            line_items: [
-                {
-                    url: "", 
-                    title: "Vip Product",
-                    quantity: 3,
-                    price: 3000,
-                    options1: "COLOR",
-                    options2: "SIZE",
-                    options3: "",
-                }
-            ]
-        },
-        label_url: ""
-    },
-    {
-        status: false,
-        id: "ful_" + crypto.randomBytes(10).toString("hex"),
-        merchant_address: {
-            line1: "420 Bigly St",
-            line2: "",
-            city: "South Park",
-            state: "NM",
-            zip: "42069",
-            country: "72704",
-            name: "Bigly",
-            contact: "thanks@gobigly.com"
-        },
-        recipient_address: {
-            line1: "420 Bigly St",
-            line2: "",
-            city: "South Park",
-            state: "NM",
-            zip: "42069",
-            country: "72704",
-            name: "obi",
-            contact: "obi@gobigly.com"
-        },
-        shipping_detail: {
-            service: "USPS",
-            type: "STANDARD",
-            packaging: "PACKAGE",
-            weight: 0.22,
-            insurance: false,
-        },
-        order_summary: {
-            order_number: "#SH-IJBH934H",
-            total_price: 6500,
-            line_items: [
-                {
-                    url: "", 
-                    title: "Vip Product",
-                    quantity: 3,
-                    price: 3000,
-                    options1: "COLOR",
-                    options2: "SIZE",
-                    options3: "",
-                }
-            ]
-        },
-        label_url: ""
-    }
-]
+// const fulfillments: Fulfillment[] = [
+//     {
+//         status: false,
+//         id: "ful_" + crypto.randomBytes(10).toString("hex"),
+//         merchant_address: {
+//             line1: "420 Bigly St",
+//             line2: "",
+//             city: "South Park",
+//             state: "NM",
+//             zip: "42069",
+//             country: "72704",
+//             name: "Bigly",
+//             contact: "thanks@gobigly.com"
+//         },
+//         recipient_address: {
+//             line1: "420 Bigly St",
+//             line2: "",
+//             city: "South Park",
+//             state: "NM",
+//             zip: "42069",
+//             country: "72704",
+//             name: "obi",
+//             contact: "obi@gobigly.com"
+//         },
+//         shipping_detail: {
+//             service: "USPS",
+//             type: "STANDARD",
+//             packaging: "PACKAGE",
+//             weight: 0.22,
+//             insurance: false,
+//         },
+//         order_summary: {
+//             order_number: "#SH-IJBH934H",
+//             total_price: 6500,
+//             line_items: [
+//                 {
+//                     url: "", 
+//                     title: "Vip Product",
+//                     quantity: 3,
+//                     price: 3000,
+//                     options1: "COLOR",
+//                     options2: "SIZE",
+//                     options3: "",
+//                 }
+//             ]
+//         },
+//         label_url: ""
+//     },
+//     {
+//         status: false,
+//         id: "ful_" + crypto.randomBytes(10).toString("hex"),
+//         merchant_address: {
+//             line1: "420 Bigly St",
+//             line2: "",
+//             city: "South Park",
+//             state: "NM",
+//             zip: "42069",
+//             country: "72704",
+//             name: "Bigly",
+//             contact: "thanks@gobigly.com"
+//         },
+//         recipient_address: {
+//             line1: "420 Bigly St",
+//             line2: "",
+//             city: "South Park",
+//             state: "NM",
+//             zip: "42069",
+//             country: "72704",
+//             name: "obi",
+//             contact: "obi@gobigly.com"
+//         },
+//         shipping_detail: {
+//             service: "USPS",
+//             type: "STANDARD",
+//             packaging: "PACKAGE",
+//             weight: 0.22,
+//             insurance: false,
+//         },
+//         order_summary: {
+//             order_number: "#SH-IJBH934H",
+//             total_price: 6500,
+//             line_items: [
+//                 {
+//                     url: "", 
+//                     title: "Vip Product",
+//                     quantity: 3,
+//                     price: 3000,
+//                     options1: "COLOR",
+//                     options2: "SIZE",
+//                     options3: "",
+//                 }
+//             ]
+//         },
+//         label_url: ""
+//     }
+// ]
 
 interface Prop {
     fulfillments: Fulfillment[]
 }
 
-const AllfFlfillments = ({}: Prop) => {
+const AllfFlfillments = ({fulfillments}: Prop) => {
     const [itemSearch, setItemSearch] = useState("");
     const [list, setOrders] = useState<any[]>(fulfillments);
     const [filterState, setFilter] = useState<"" | "INACTIVE" | "ACTIVE">("");
@@ -178,11 +179,11 @@ const AllfFlfillments = ({}: Prop) => {
                                         <MainRowContainer
                                             href={`/fulfillment/${s.id}`} 
                                             id={s.id}
-                                            colOneTop={s?.shipping_detail?.type}
-                                            colOneBottom={s?.recipient_address?.name }
-                                            colTwoTop={numberFormat(Number(s?.order_summary?.total_price)/100)}
+                                            colOneTop={s?.shipping_line?.rate}
+                                            colOneBottom={s?.customer?.first_name }
+                                            colTwoTop={numberFormat(Number(s?.order_summary?.total_price ? s?.order_summary?.total_price : 0)/100)}
                                             colTwoBottom={s.status}
-                                            colThree={s?.merchant_address.line1 + " " + s?.recipient_address?.city + " " + s?.recipient_address?.state}
+                                            colThree={s?.customer?.addresses[0]?.line1 + " " + s?.customer?.addresses[0]?.city + " " + s?.customer?.addresses[0]?.state}
                                             colFour={s?.order_summary?.order_number} />
                                     </div>
                                 );
@@ -195,33 +196,35 @@ const AllfFlfillments = ({}: Prop) => {
 }
 
 export const getServerSideProps: GetServerSideProps = async () => {
-    // const url = "https://us-central1-impowered-funnel.cloudfunctions.net/funnel/gift_cards";
-    // const result = await impoweredRequest(url, "POST", {gif_uuid: ""});
+    // const url = "https://us-central1-impowered-funnel.cloudfunctions.net/funnel/fulfillments";
+    const DEV_SERVER = "http://localhost:5001/impowered-funnel/us-central1/funnel/fulfillments";
+    const result = await impoweredRequest(DEV_SERVER, "POST", {ful_uuid: ""});
 
-    // console.log(" ==> SERVER SIDE");
-    // console.log(result);
+    console.log(" ==> SERVER SIDE");
+    console.log(result);
 
-    // if (!result) {
-    //     throw new Error("Product list error");
-    // }
+    if (!result) {
+        throw new Error("Product list error");
+    }
 
-    // console.log(" ==> SERVER SIDE");
-    // console.log(result);
+    console.log(" ==> SERVER SIDE");
+    console.log(result);
 
-    // let gift_cards = [{}] as GiftCard[];
-    // let size = 0;
+    let fulfillments = [{}] as Fulfillment[];
+    let size = 0;
 
-    // if (result?.data) {
-    //     gift_cards = result?.data?.gift_cards,
-    //     size = result?.data?.size
-    // }
+    if (result?.result) {
+        fulfillments = result?.result?.fulfillments,
+        size = result?.result?.size
+    }
 
     return {
         props: {
-            // size: size,
-            // gift_cards: gift_cards
+            size: size,
+            fulfillments: fulfillments
         }
     }
 }
+
 
 export default AllfFlfillments;

@@ -29,97 +29,98 @@ import { MainRowContainer } from "../../components/ui/rows/MainRowContainer";
 import { Subscriptions } from "../../lib/types/products";
 import { GetServerSideProps } from "next";
 import { numberFormat } from "../../lib/helpers/formatters";
+import { impoweredRequest } from "../../lib/helpers/requests";
 
-const subscriptions: Subscriptions[] = [
-    {
-        order_name: "#SH-92834592454",
-        status: true,
-        customer: {
-            cus_uuid: "",
-            email: "allMight@gobigly.com",
-            first_name: "All",
-            last_name: "Might",
-            addresses: [
-                {
-                    line1: "420 Bigly ln",
-                    line2: "",
-                    city: "South Park",
-                    state: "AR",
-                    zip: "72704",
-                    country: "US",
-                    type: "BOTH", 
-                    name: ""
-                }
-            ]
-        },
-        payment_method: "STRIPE",
-        schedule: {
-            next_charge_date: new Date().toDateString(),
-            interval: "MONTHLY",
-            total_charges: 3,
-            total_value: 9000,
-        },
-        product: {
-            product_id: "pro_" + crypto.randomBytes(10).toString("hex"),
-            variant_id: "var_" + crypto.randomBytes(10).toString("hex"),
-            title: "Hoodie",
-            price: 3000,
-            options1: "",
-            options2: "",
-            options3: "",
-            url: ""
-        },
-        id: "sub_" + crypto.randomBytes(10).toString("hex"),
-        value: 3000
-    },
-    {
-        order_name: "#SH-92834592454",
-        status: true,
-        customer: {
-            cus_uuid: "",
-            email: "allMight@gobigly.com",
-            first_name: "All",
-            last_name: "Might",
-            addresses: [
-                {
-                    line1: "420 Bigly ln",
-                    line2: "",
-                    city: "South Park",
-                    state: "AR",
-                    zip: "72704",
-                    country: "US",
-                    type: "BOTH", 
-                    name: ""
-                }
-            ]
-        },
-        payment_method: "STRIPE",
-        schedule: {
-            next_charge_date: new Date().toDateString(),
-            interval: "MONTHLY",
-            total_charges: 3,
-            total_value: 9000,
-        },
-        product: {
-            product_id: "pro_" + crypto.randomBytes(10).toString("hex"),
-            variant_id: "var_" + crypto.randomBytes(10).toString("hex"),
-            title: "Hoodie",
-            price: 3000,
-            options1: "",
-            options2: "",
-            options3: "",
-            url: ""
-        },
-        id: "sub_" + crypto.randomBytes(10).toString("hex"),
-        value: 3000
-    }
-]
+// const subscriptions: Subscriptions[] = [
+//     {
+//         order_name: "#SH-92834592454",
+//         status: true,
+//         customer: {
+//             cus_uuid: "",
+//             email: "allMight@gobigly.com",
+//             first_name: "All",
+//             last_name: "Might",
+//             addresses: [
+//                 {
+//                     line1: "420 Bigly ln",
+//                     line2: "",
+//                     city: "South Park",
+//                     state: "AR",
+//                     zip: "72704",
+//                     country: "US",
+//                     type: "BOTH", 
+//                     name: ""
+//                 }
+//             ]
+//         },
+//         payment_method: "STRIPE",
+//         schedule: {
+//             next_charge_date: new Date().toDateString(),
+//             interval: "MONTHLY",
+//             total_charges: 3,
+//             total_value: 9000,
+//         },
+//         product: {
+//             product_id: "pro_" + crypto.randomBytes(10).toString("hex"),
+//             variant_id: "var_" + crypto.randomBytes(10).toString("hex"),
+//             title: "Hoodie",
+//             price: 3000,
+//             options1: "",
+//             options2: "",
+//             options3: "",
+//             url: ""
+//         },
+//         id: "sub_" + crypto.randomBytes(10).toString("hex"),
+//         value: 3000
+//     },
+//     {
+//         order_name: "#SH-92834592454",
+//         status: true,
+//         customer: {
+//             cus_uuid: "",
+//             email: "allMight@gobigly.com",
+//             first_name: "All",
+//             last_name: "Might",
+//             addresses: [
+//                 {
+//                     line1: "420 Bigly ln",
+//                     line2: "",
+//                     city: "South Park",
+//                     state: "AR",
+//                     zip: "72704",
+//                     country: "US",
+//                     type: "BOTH", 
+//                     name: ""
+//                 }
+//             ]
+//         },
+//         payment_method: "STRIPE",
+//         schedule: {
+//             next_charge_date: new Date().toDateString(),
+//             interval: "MONTHLY",
+//             total_charges: 3,
+//             total_value: 9000,
+//         },
+//         product: {
+//             product_id: "pro_" + crypto.randomBytes(10).toString("hex"),
+//             variant_id: "var_" + crypto.randomBytes(10).toString("hex"),
+//             title: "Hoodie",
+//             price: 3000,
+//             options1: "",
+//             options2: "",
+//             options3: "",
+//             url: ""
+//         },
+//         id: "sub_" + crypto.randomBytes(10).toString("hex"),
+//         value: 3000
+//     }
+// ]
 
 interface Prop {
     subscriptions: Subscriptions[]
 }
 
-const Subscriptions = ({}: Prop) => {
+const Subscriptions = ({subscriptions}: Prop) => {
     const [itemSearch, setItemSearch] = useState("");
     const [list, setOrders] = useState<any[]>(subscriptions);
     const [filterState, setFilter] = useState<"" | "INACTIVE" | "ACTIVE">("");
@@ -176,11 +177,11 @@ const Subscriptions = ({}: Prop) => {
                                         <MainRowContainer
                                             href={`/products/subscriptions/${s.id}`} 
                                             id={s.id}
-                                            colOneTop={s?.order_name}
+                                            colOneTop={s?.order_number}
                                             colOneBottom={s?.customer?.first_name + " " + s?.customer?.last_name}
-                                            colTwoTop={numberFormat(Number(s.value)/100)}
+                                            colTwoTop={numberFormat(Number(s?.product?.price)/100)}
                                             colTwoBottom={s.status}
-                                            colThree={s?.schedule?.interval}
+                                            colThree={s?.schedule?.type}
                                             colFour={numberFormat(Number(s?.schedule?.total_value)/100)} />
                                     </div>
                                 );
@@ -193,33 +194,35 @@ const Subscriptions = ({}: Prop) => {
 }
 
 export const getServerSideProps: GetServerSideProps = async () => {
-    // const url = "https://us-central1-impowered-funnel.cloudfunctions.net/funnel/gift_cards";
-    // const result = await impoweredRequest(url, "POST", {gif_uuid: ""});
+    // const url = "https://us-central1-impowered-funnel.cloudfunctions.net/funnel/subscriptions";
+    const DEV_SERVER = "http://localhost:5001/impowered-funnel/us-central1/funnel/subscriptions";
+    const result = await impoweredRequest(DEV_SERVER, "POST", {sub_uuid: ""});
 
-    // console.log(" ==> SERVER SIDE");
-    // console.log(result);
+    console.log(" ==> SERVER SIDE");
+    console.log(result);
 
-    // if (!result) {
-    //     throw new Error("Product list error");
-    // }
+    if (!result) {
+        throw new Error("Product list error");
+    }
 
-    // console.log(" ==> SERVER SIDE");
-    // console.log(result);
+    console.log(" ==> SERVER SIDE");
+    console.log(result);
 
-    // let gift_cards = [{}] as GiftCard[];
-    // let size = 0;
+    let subscriptions = [{}] as Subscriptions[];
+    let size = 0;
 
-    // if (result?.data) {
-    //     gift_cards = result?.data?.gift_cards,
-    //     size = result?.data?.size
-    // }
+    if (result?.result) {
+        subscriptions = result?.result?.subscriptions,
+        size = result?.result?.size
+    }
 
     return {
         props: {
-            // size: size,
-            // gift_cards: gift_cards
+            size: size,
+            subscriptions: subscriptions
         }
     }
 }
+
 
 export default Subscriptions;

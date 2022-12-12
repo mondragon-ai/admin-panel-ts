@@ -1,3 +1,5 @@
+import { Address } from "./customers";
+
 export type Fulfillment = {
     status: boolean,
     id: string,
@@ -11,22 +13,15 @@ export type Fulfillment = {
         name: string,
         contact: string
     },
-    recipient_address: {
-        line1: string,
-        line2: string,
-        city: string,
-        state: string,
-        zip: string,
-        country: string,
-        name: string,
-        contact: string
-    },
-    shipping_detail: {
-        service: string,
-        type: string,
-        packaging: string,
-        weight: number,
-        insurance: boolean
+    label_url: string,
+    updated_at: FirebaseFirestore.Timestamp;
+    created_at: FirebaseFirestore.Timestamp;
+    customer:{
+        cus_uuid: string,
+        first_name: string,
+        last_name:string,
+        email: string,
+        addresses: Address[]
     },
     order_summary: {
         order_number: string
@@ -43,5 +38,14 @@ export type Fulfillment = {
             }
         ]
     },
-    label_url: ""
+    return_address: Address,
+    shipping_line: {
+        provider: "USPS" | "UPS",
+        rate: "STANDARD" | "INTERNATIONAL" | "EXPRESS" | "EXPRESS_I"
+        packaging_type: "ENVELOPE" | "PACKAGE",
+        weight: number,
+        insurance: boolean
+        price: number
+    },
+    tracking_id: string, 
 }

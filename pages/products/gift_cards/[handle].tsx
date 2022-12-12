@@ -15,6 +15,7 @@ import { impoweredRequest } from "../../../lib/helpers/requests";
 import { GiftCard, ProdCollection } from "../../../lib/types/products";
 import { ApiTimeline } from "../../../components/ui/ApiTimeline";
 import { numberFormat } from "../../../lib/helpers/formatters";
+import { ParsedUrlQuery } from "querystring";
 const client = algoliasearch('9HC6EQSC7S', 'de139a052d86174f4b708e160db11c4b');
 
 type Bundle = {
@@ -100,7 +101,7 @@ const GiftCardDetail: FunctionComponent<Prop> = ({
     const [steps, setIndex] = useState(s);
     const [formStep, setFormStep] = useState("STEP_ONE");
 
-    const [giftCard, setGiftCard] = useState(g); //giftCards && giftCards.length > 0 ? giftCards[0] : {} as GiftCard);
+    const [giftCard, setGiftCard] = useState(gift_cards && gift_cards.length > 0 ? gift_cards[0] : {} as GiftCard);
 
 
     const [query, setQuery] = useState<string>("")
@@ -277,32 +278,33 @@ const GiftCardDetail: FunctionComponent<Prop> = ({
 
 
 export const getServerSideProps: GetServerSideProps = async ({params}) => {
-    // const { handle } = params;
+    const { handle } = params as ParsedUrlQuery;
     // const url = "https://us-central1-impowered-funnel.cloudfunctions.net/funnel/gift_cards";
-    // const result = await impoweredRequest(url, "POST", {gif_uuid: handle});
+    const DEV_SERVER = "http://localhost:5001/impowered-funnel/us-central1/funnel/gift_cards";
+    const result = await impoweredRequest(DEV_SERVER, "POST", {gif_uuid: handle});
 
-    // console.log(" ==> SERVER SIDE");
-    // console.log(result);
+    console.log(" ==> SERVER SIDE");
+    console.log(result);
 
-    // if (!result) {
-    //     throw new Error("Product list error");
-    // }
+    if (!result) {
+        throw new Error("Product list error");
+    }
 
-    // console.log(" ==> SERVER SIDE");
-    // console.log(result);
+    console.log(" ==> SERVER SIDE");
+    console.log(result);
 
-    // let gift_cards = [{}] as GiftCard[];
-    // let size = 0;
+    let gift_cards = [{}] as GiftCard[];
+    let size = 0;
 
-    // if (result?.data) {
-    //     gift_cards = result?.data?.gift_cards,
-    //     size = result?.data?.size
-    // }
+    if (result?.result) {
+        gift_cards = result?.result?.gift_cards,
+        size = result?.result?.size
+    }
 
     return {
         props: {
-            // size: size,
-            // gift_cards: gift_cards
+            size: size,
+            gift_cards: gift_cards
         }
     }
 }
