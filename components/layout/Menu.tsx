@@ -364,7 +364,7 @@ export const Menu: FunctionComponent<Props> = ({openState, toggleMenu}) => {
                             style={{
                                 borderLeft: router.pathname == "/themes/all" ? "4px solid white" : "4px solid transparent",
                             }}
-                            href={'/themes/all'}>
+                            href={'/themes'}>
                             <div className={`${styles.row} ${styles.menuItem} `}>
                                 <i 
                                     style={{

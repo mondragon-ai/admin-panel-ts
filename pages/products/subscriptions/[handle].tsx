@@ -378,9 +378,9 @@ const SubscriptionDetail: FunctionComponent<Prop> = ({
 
 export const getServerSideProps: GetServerSideProps = async ({params}) => {
     const { handle } = params as ParsedUrlQuery;
-    // const url = "https://us-central1-impowered-funnel.cloudfunctions.net/funnel/subscriptions";
-    const DEV_SERVER = "http://localhost:5001/impowered-funnel/us-central1/funnel/subscriptions";
-    const result = await impoweredRequest(DEV_SERVER, "POST", {sub_uuid: handle});
+    const LIVE_SERVER = "https://us-central1-impowered-funnel.cloudfunctions.net/funnel/subscriptions";
+    // const DEV_SERVER = "http://localhost:5001/impowered-funnel/us-central1/funnel/subscriptions";
+    const result = await impoweredRequest(LIVE_SERVER, "POST", {sub_uuid: handle});
 
     console.log(" ==> SERVER SIDE");
     console.log(result);

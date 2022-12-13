@@ -1,236 +1,171 @@
 import styles from "../../styles/Main.module.css";
 import AllItemHeader from "../../components/ui/headers/AllItemHeader";
 import { useState } from "react";
-import {
-    faFilter,
-} from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-    ProductContainerRow
-} from "../../components/ui/rows/ProductContainerRow";
-import {
-    ItemContainerHeader
-} from "../../components/ui/headers/ItemContainerHeader";
-import { Product } from "../../lib/types/products";
-import Underline from "../../components/ui/Underline";
-import * as crypto from "crypto"
-// import { filterActive, filterAll } from "../../lib/helpers/ActiveFilter";
-import { MainRowContainerHeader } from "../../components/ui/headers/MainRowContainerHeader";
-import { GetServerSideProps } from "next";
-import { impoweredRequest } from "../../lib/helpers/requests";
+
+import { Card } from "../../components/ui/Card";
+import Image from "next/image";
 
 
-import { algoliasearch } from "algoliasearch";
+export default function AllThemes() {
 
-// Instantiate the client
-const client = algoliasearch('9HC6EQSC7S', 'de139a052d86174f4b708e160db11c4b');
 
-// const products: Product[] = [
-//     {
-//         title: "1776 Hoodie",
-//         status: false,
-//         id: crypto.randomBytes(10).toString("hex"),
-//         price: 6840,
-//         collections: ["SALE", "Shirts"],
-//         tags: ["VIP_ONLY"],
-//         options: {
-//             options1: ["Color", "Size"],
-//             options2: ["Color", "Size"],
-//             options3: ["Color", "Size"],
+    const [list, setImages] = useState<any[]>();
+
+    const [prompt, setPrompt] = useState<string>("");
+    const [loading, setLoading] = useState<boolean>(false);
+
+    const updateSearch = async (e: any) => {
+
+        let result;
+        let url = "https://api.openai.com/v1/images/generations";
+
+        const key = e.key;
+
+        if (key == "Enter") {
+            setLoading(true);
     
-//         },
-//         quantity: 20,
-//         description: "description here",
-//         compare_at_price: 0,
-//         weight: 0.5,
-//         is_digital: false,
-//         sell_overstock: true,
-//         requires_shipping: false,
-//         videos: [
-//             {
-//                 id: "vid_" + crypto.randomBytes(10).toString("hex"),
-//                 url: "",
-//                 type: "YOUTUBE"
-//             }
-//         ],
-//     },
-//     {
-//         title: "1776 Hoodie",
-//         status: false,
-//         id: crypto.randomBytes(10).toString("hex"),
-//         price: 6840,
-//         collections: ["SALE", "Shirts"],
-//         tags: ["VIP_ONLY"],
-//         options: {
-//             options1: ["Color", "Size"],
-//             options2: ["Color", "Size"],
-//             options3: ["Color", "Size"],
-    
-//         },
-//         quantity: 20,
-//         description: "description here",
-//         compare_at_price: 0,
-//         weight: 0.5,
-//         is_digital: false,
-//         sell_overstock: true,
-//         requires_shipping: false,
-//         videos: [
-//             {
-//                 id: "vid_" + crypto.randomBytes(10).toString("hex"),
-//                 url: "",
-//                 type: "YOUTUBE"
-//             }
-//         ],
-//     }
-// ]
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer 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"
+                },
+                body: JSON.stringify({
+                    "prompt": prompt, //"design a logo for new e-Commerce store that represents the personality of Bryce Mitchell, a UFC fighter from Arkansas, USA.",
+                    "n": 10,
+                    "size": "256x256"
+                })
+            });
 
-interface Prop {
-    itemTxt: string
-    products: Product[],
-    size: number
-}
+            if (response.ok) {
+                result = await response.json();
+                setLoading(false)
+            } else {
+                throw new Error(" - Fetch Error");
+            }
 
-export default function AllThemes(props: Prop) {
-    const { products, size} = props;
+            setImages(result?.data ? result?.data : []);
 
-    const [list, setProducts] = useState<any[]>(products);
-    const [filterState, setFilter] = useState<"" | "INACTIVE" | "ACTIVE">("");
-
-    const [query, setQuery] = useState<string>("")
-    const [results, setResults] = useState<any[]>([])
-
-    const updateSearch = async (v: string) => {
-        // Add a new record to your Algolia index
-        // const { taskID } = await client.saveObject({
-        //     indexName: '9HC6EQSC7S',
-        //     body: {
-        //         title: 'My Algolia Object',
-        //     },
-        // });
-        
-        // // Poll the task status to know when it has been indexed
-        // await client.waitForTask({ indexName: '9HC6EQSC7S', taskID });
-        setQuery(v);
-        
-        // Fetch search results
-        const { results } = await client.search({
-            requests: [
-            {
-                indexName: 'prod_product_search_engine',
-                // You can make typos, we handle it
-                query: query,
-                hitsPerPage: 50,
-            },
-            ],
-        });
-    
-        if (results[0].hits) {
-            setResults(results[0].hits);
-            console.log('[Results]', results[0].hits);
         }
+
+
+        
     };
 
     return (
         <div className={`${styles.col}`}>
             <AllItemHeader 
                 title={"Products"}
-                createTxt={"Create Product"}
+                createTxt={"Logo Generater"}
                 createPage={"/products/create"}
                 />
-            <main className={`${styles.col} ${styles.container}`}>
-                <div className={`${styles.col} ${styles.card}`}>
-                    <div style={{ alignItems: "center", justifyContent: "space-between"}} className={`${styles.row} ${styles.itemRowHContainer}`}>
-                        <MainRowContainerHeader 
-                            list={products}
-                            type={filterState}
-                            setState={setProducts}
-                            setFilter={setFilter} />
-                        <div className={`${styles.row}  ${styles.itemsCardSearch}`}>
-                            <div className={`${styles.row}`}>
-                                <div
-                                    className={`${styles.formItem} ${styles.row}`} >
-                                    <input
-                                        onChange={(e) => updateSearch(e.target.value)}
-                                        type="text"
-                                        name="search_product"
-                                        placeholder="" />
-                                    <label style={{ 
-                                        top: query != "" ? "-5px" : "", 
-                                        fontSize: query != "" ? "10px" : ""}}>{` 🔍 Search Products` }</label>
+             <main className={`${styles.col} ${styles.container}`}>
+                {/* <div className={`${styles.row} ${styles.mobileContainer}`}> */}
+
+                    
+            <div className={`${styles.col} ${styles.container}`}
+                style={{
+                    justifyContent: "center",
+                    alignItems: "center"
+                }}
+            >
+                
+                <div className={`${styles.col} ${styles.twoThird}`}>
+                    <Card title={"Logo Prompt"}
+                        header={""}
+                        card_type={!loading ? "CREATE" : "DEFAULT"}
+                        next={"UPDATE"}
+                        prev={""}
+                        resource={"/bundles/update"}
+                        redirect={"/products/bundles"}
+                        // state={{bundle: bundle}}
+                    >
+                        <div className={`${styles.col}`}>
+                            
+                            <div className={`${styles.col}`}>
+                                <div className={`${styles.col}`}>
+                                    
+                                    <div className={`${styles.formItem} ${styles.row}`}
+                                        style={{
+                                            width:"100%",
+                                            padding: "0 5px"
+                                        }}>
+                                        <input
+                                            style={{
+                                                color: "white",
+                                                width: "100%"
+                                            }}
+                                            onKeyDown={updateSearch}
+                                            onChange={(e) => setPrompt(e.target.value)}
+                                            value={prompt}
+                                            type="text"
+                                            name="logo_prompt" />
+                                        <label htmlFor="logo_prompt" style={{ 
+                                            top: prompt !== "" ? "-5px" : "", 
+                                            fontSize: prompt !== "" ? "10px" : ""}}>Logo Prompt</label>
+                                    </div>
                                 </div>
                             </div>
-                            <div className={`${styles.row} ${styles.itemsFilterBtn}`}>
-                                <FontAwesomeIcon icon={faFilter} />
-                                <h5>Active</h5>
-                            </div>
                         </div>
-                    </div>
+                    </Card>
 
-                    <div className={`${styles.col} ${styles.itemsContainer}`}>
-                        <ItemContainerHeader 
-                            rowOneUpper={"Title"}
-                            rowOneLower={"Options"}
-                            rowTwoUpper={"Price"}
-                            rowTwoLower={"Status"}
-                            rowThree={"Collections"}
-                            rowFour={"Tags"}/>
-                        {query === "" && size > 0 && list && list.map((p) => {
-                            console.log(p.id);
-                                return (
-                                    <div key={p.id} className={`${styles.col} ${styles.itemRow}`}>
-                                        <Underline width={100} />
-                                        <ProductContainerRow 
-                                            key={p.id}
-                                            p={p} />
-                                    </div>
-                                );
-                        })}
-                        {query !== "" && size > 0 && results && results.map((p) => {
-                            console.log(p.id);
-                                return (
-                                    <div key={p.id} className={`${styles.col} ${styles.itemRow}`}>
-                                        <Underline width={100} />
-                                        <ProductContainerRow 
-                                            key={p.id}
-                                            p={p} />
-                                    </div>
-                                );
-                        })}
-                    </div>
+                    <Card title={"Logo Suggestions"}
+                        header={""}
+                        card_type={"DEFAULT"}
+                    >
+                        <div className={`${styles.row}`} style={{position: "relative", flexWrap: "wrap", justifyContent: "space-evenly"}}>
+                            {
+                                list && list.map((img) => {
+                                    return (
+                                        <div className={`${styles.col}`} style={{ padding: "1rem 0", width: window.innerWidth > 720 ? "20%" : "40%",  justifyContent: "space-evenly", alignItems: "center" }}>
+                                            <Image 
+                                                style={{borderRadius: "6px", border: "2px solid black", justifyContent: "center", alignItems: "center", display: "flex", objectFit: "contain"}}
+                                                src={img?.url? img?.url : ""}
+                                                alt={"imPowered Logo"}
+                                                width={120}
+                                                height={120}
+                                            />
+                                        </div>
+                                    )
+                                }) 
+                            }
+                        </div>
+                    </Card>
+                </div>
                 </div>
             </main>
         </div>
     )
 }
 
-export const getServerSideProps: GetServerSideProps = async () => {
-    const url = "https://us-central1-impowered-funnel.cloudfunctions.net/funnel/products";
-    const result = await impoweredRequest(url, "POST", {product_uuid: ""});
+// export const getServerSideProps: GetServerSideProps = async () => {
+//     const url = "https://us-central1-impowered-funnel.cloudfunctions.net/funnel/products";
+//     const result = await impoweredRequest(url, "POST", {product_uuid: ""});
 
-    console.log(" ==> SERVER SIDE");
-    console.log(result);
+//     console.log(" ==> SERVER SIDE");
+//     console.log(result);
 
-    if (!result) {
-        throw new Error("Product list error");
-    }
+//     if (!result) {
+//         throw new Error("Product list error");
+//     }
 
-    console.log(" ==> SERVER SIDE");
-    console.log(result);
+//     console.log(" ==> SERVER SIDE");
+//     console.log(result);
 
-    let products = [{}] as Product[];
-    let size = 0;
+//     let products = [{}] as Product[];
+//     let size = 0;
 
-    if (result?.data) {
-        products = result?.data?.result,
-        size = result?.data?.size
-    }
+//     if (result?.data) {
+//         products = result?.data?.result,
+//         size = result?.data?.size
+//     }
 
-    return {
-        props: {
-            size: size,
-            products: products
-        }
-    }
-}
+//     return {
+//         props: {
+//             size: size,
+//             products: products
+//         }
+//     }
+// }
 
 // export default AllProducts;
