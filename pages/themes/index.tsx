@@ -46,6 +46,7 @@ export default function AllThemes() {
                 result = await response.json();
                 setLoading(false)
             } else {
+                alert(" ERROR: " + response.status);
                 throw new Error(" - Fetch Error");
             }
 
