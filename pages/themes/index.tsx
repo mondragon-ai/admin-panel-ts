@@ -28,7 +28,7 @@ export default function AllThemes() {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": "Bearer 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"
+                    "Authorization": "Bearer " + process.env.OPEN_API_KEY,
                 },
                 body: JSON.stringify({
                     "prompt": prompt, //"design a logo for new e-Commerce store that represents the personality of Bryce Mitchell, a UFC fighter from Arkansas, USA.",
