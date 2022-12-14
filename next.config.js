@@ -31,7 +31,8 @@ const nextConfig = {
     ],
   },
   env: {
-    FIREBASE_APIKEY: 'AIzaSyDegK-SUXxGM5KJlTtlcCBQqKdkNk6n9SU',
+    NEXT_PUBLIC_OPEN_API_KEY: "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",
+    FIREBASE_APIKEY: "AIzaSyDegK-SUXxGM5KJlTtlcCBQqKdkNk6n9SU",
     FIREBASE_APP_ID: '1:637236465117:web:e0c30f8f817d0be9303a34',
   },
   experimental: {

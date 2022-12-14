@@ -390,9 +390,9 @@ const FulfillmentDetail: FunctionComponent<Prop> = ({
 
 export const getServerSideProps: GetServerSideProps = async ({params}) => {
     const { handle } = params as ParsedUrlQuery;
-    // const url = "https://us-central1-impowered-funnel.cloudfunctions.net/funnel/fulfillments";
-    const DEV_SERVER = "http://localhost:5001/impowered-funnel/us-central1/funnel/fulfillments";
-    const result = await impoweredRequest(DEV_SERVER, "POST", {ful_uuid: handle});
+    const LIVE_SERVER = "https://us-central1-impowered-funnel.cloudfunctions.net/funnel/fulfillments";
+    // const DEV_SERVER = "http://localhost:5001/impowered-funnel/us-central1/funnel/fulfillments";
+    const result = await impoweredRequest(LIVE_SERVER, "POST", {ful_uuid: handle});
 
     console.log(" ==> SERVER SIDE");
     console.log(result);

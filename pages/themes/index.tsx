@@ -23,12 +23,14 @@ export default function AllThemes() {
 
         if (key == "Enter") {
             setLoading(true);
+
+            console.log(" => " + prompt);
     
             const response = await fetch(url, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": "Bearer " + process.env.OPEN_API_KEY,
+                    "Authorization": `Bearer ${process.env.NEXT_PUBLIC_OPEN_API_KEY}`,
                 },
                 body: JSON.stringify({
                     "prompt": prompt, //"design a logo for new e-Commerce store that represents the personality of Bryce Mitchell, a UFC fighter from Arkansas, USA.",
@@ -36,6 +38,8 @@ export default function AllThemes() {
                     "size": "256x256"
                 })
             });
+
+            console.log(" => " + response);
 
             if (response.ok) {
                 result = await response.json();
