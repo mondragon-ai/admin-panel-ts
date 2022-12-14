@@ -39,7 +39,8 @@ export default function AllThemes() {
                 })
             });
 
-            console.log(" => " + response);
+            console.log(" => response");
+            console.log(response);
 
             if (response.ok) {
                 result = await response.json();
