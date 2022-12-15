@@ -363,13 +363,19 @@ const FulfillmentDetail: FunctionComponent<Prop> = ({
                             title="Order Summary"
                             header={""}>
                             <div className={`${styles.col}`} style={{alignItems: "center"}}>
-                                <div className={`${styles.col}`} style={{justifyContent: "flex-start", alignItems: "center", marginTop: "4rem"}}>
+                                <div className={`${styles.col}`} style={{
+                                    borderRadius: "6px",
+                                    justifyContent: "flex-start",
+                                    alignItems: "center",
+                                    marginTop: window.innerWidth > 720 ? "4rem" : "0",
+                                    overflow: "hidden",
+                                    padding: "10px 2px"}}>
                                     <Image 
-                                        style={{borderRadius: "3px", border: "1px solid black"}}
-                                        src={"https://boltagency.ca/content/images/2020/03/placeholder-images-product-1_large.png"} 
+                                        style={{borderRadius: "6px", border: "1px solid black", objectFit: "fill"}}
+                                        src={fulfillment?.label_url ? fulfillment?.label_url :"https://boltagency.ca/content/images/2020/03/placeholder-images-product-1_large.png"} 
                                         alt=""
-                                        width={800}
-                                        height={1000} />
+                                        width={window.innerWidth > 720 ? 600 : 250}
+                                        height={window.innerWidth > 720 ? 800 : 400} />
                                 </div> 
                                 <div className={`${styles.row}`} style={{justifyContent: "flex-start", alignItems: "center", marginTop: "4rem"}}>
                                     <button>View Order</button>

@@ -27,6 +27,10 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "**.windows.net"
+      },
+      {
+        protocol: "https",
+        hostname: "**.shipengine.com"
       }
     ],
   },
