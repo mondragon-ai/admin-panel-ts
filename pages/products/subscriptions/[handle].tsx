@@ -305,7 +305,7 @@ const SubscriptionDetail: FunctionComponent<Prop> = ({
                                     </div>
                                     <div className={`${styles.col}`}>
                                         <h5>Total Charges</h5>
-                                        <p>{numberFormat(Number(subscription?.schedule?.total_value)/100)}</p>
+                                        <p>{numberFormat(Number(subscription?.schedule?.total_value ? subscription?.schedule?.total_value : 0)/100)}</p>
                                     </div>
                                 </div> : <div className={`${styles.col}`} style={{padding: "0"}}>
                                     
@@ -332,7 +332,7 @@ const SubscriptionDetail: FunctionComponent<Prop> = ({
                                             <p>Total Charges</p>
                                         </div>
                                         <div style={{ justifyContent: "flex-end",  paddingBottom: "1rem"}} className={`${styles.row}`}>
-                                        <p>{numberFormat(Number(subscription?.schedule?.total_value)/100)}</p>
+                                        <p>{numberFormat(Number(subscription?.schedule?.total_value ? subscription?.schedule?.total_value : 0)/100)}</p>
                                         </div>
                                     </div>
                                 </div>}

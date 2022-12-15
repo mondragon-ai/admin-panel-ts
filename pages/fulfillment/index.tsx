@@ -181,10 +181,10 @@ const AllfFlfillments = ({fulfillments}: Prop) => {
                                             id={s.id}
                                             colOneTop={s?.shipping_line?.rate}
                                             colOneBottom={s?.customer?.first_name }
-                                            colTwoTop={numberFormat(Number(s?.order_summary?.total_price ? s?.order_summary?.total_price : 0)/100)}
+                                            colTwoTop={numberFormat(Number(s?.last_order?.total_price ? s?.last_order?.total_price : 0)/100)}
                                             colTwoBottom={s.status}
                                             colThree={s?.customer?.addresses[0]?.line1 + " " + s?.customer?.addresses[0]?.city + " " + s?.customer?.addresses[0]?.state}
-                                            colFour={s?.order_summary?.order_number} />
+                                            colFour={s?.last_order?.order_number} />
                                     </div>
                                 );
                         })}

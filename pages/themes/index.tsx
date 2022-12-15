@@ -120,6 +120,12 @@ export default function AllThemes() {
                         card_type={"DEFAULT"}
                     >
                         <div className={`${styles.row}`} style={{position: "relative", flexWrap: "wrap", justifyContent: "space-evenly"}}>
+                            <p>
+                                {String(process.env.NEXT_PUBLIC_OPEN_API_KEY)}
+                            </p>
+                            <p>
+                                {prompt}
+                            </p>
                             {
                                 list && list.map((img) => {
                                     return (

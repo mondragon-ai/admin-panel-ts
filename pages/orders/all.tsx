@@ -109,7 +109,7 @@ export default function  AllOrders(props: Prop) {
                                             href={`/orders/o/${p.id}`} 
                                             id={p.id as string}
                                             colOneTop={p.order_name as string}
-                                            colOneBottom={p.first_name as string + " " + p.last_name as string}
+                                            colOneBottom={p?.first_name as string + " " + (p?.last_name ? p?.last_name : "") as string}
                                             colTwoTop={numberFormat(Number(p?.current_total_price ? p.current_total_price : 0 ) /100)}
                                             colTwoBottom={p.payment_status == "PAID" ? true : false}
                                             colThree={p.email as string}

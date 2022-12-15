@@ -181,7 +181,7 @@ const FulfillmentDetail: FunctionComponent<Prop> = ({
             {/* Sub Header - page specific */}
             <DetailPageHeader
                 back_route={"/fulfillment"}
-                title={fulfillment?.order_summary?.order_number}
+                title={fulfillment?.last_order?.order_number}
                 special_btn={"Delete"}
                 special_btn_route={"/products/gift_cards"} />
             
@@ -323,7 +323,7 @@ const FulfillmentDetail: FunctionComponent<Prop> = ({
                                 <div className={`${styles.col}`}>
                                     <div className={`${styles.row} ${styles.mobileContainer} `} style={{justifyContent: "space-between", alignItems: "center"}}>
                                         <div className={`${styles.row}  ${styles.mobileContainer}`} style={{justifyContent: "flex-start", alignItems: window?.innerWidth > 720 ? "center" : "flex-start"}}>
-                                            <h4>{fulfillment?.order_summary ? fulfillment?.order_summary?.order_number : ""}</h4>
+                                            <h4>{fulfillment?.last_order ? fulfillment?.last_order?.order_number : ""}</h4>
                                             <p className={`${styles.tag}`}
                                                 style={{
                                                     margin: window?.innerWidth > 720 ? "0 0.5rem" : "0.5rem 0",
@@ -336,14 +336,14 @@ const FulfillmentDetail: FunctionComponent<Prop> = ({
                                                 <span>{new Date().toDateString()}</span>
                                             </div>}
                                         <div className={`${styles.row}`} style={{justifyContent: "flex-end"}}>
-                                            <h2>{numberFormat(Number(fulfillment?.order_summary?.total_price  ? fulfillment?.order_summary?.total_price : 0)/100)}</h2>
+                                            <h2>{numberFormat(Number(fulfillment?.last_order?.total_price  ? fulfillment?.last_order?.total_price : 0)/100)}</h2>
                                         </div>
                                     </div>  
                                     {window.innerWidth > 720 ? <div className={`${styles.row}`} style={{justifyContent: "flex-start", alignItems: "center"}}>
                                         <span>{new Date().toDateString()}</span>
                                     </div> : null}
                                     {
-                                        fulfillment?.order_summary?.line_items && fulfillment?.order_summary?.line_items.map(item => {
+                                        fulfillment?.last_order?.line_items && fulfillment?.last_order?.line_items.map(item => {
                                             return (
                                                 <div key={item.title} className={`${styles.col}`} style={{marginTop: "3rem"}}>
                                                     <Underline width={100} />

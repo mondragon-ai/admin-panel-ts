@@ -59,7 +59,7 @@ const s = [
     {
         required: true,
         complete: false,
-        active: false,
+        active: true,
         title: "Product",
         step: "STEP_ONE"
     },
@@ -80,7 +80,7 @@ const s = [
     {
         required: false,
         complete: false,
-        active: true,
+        active: false,
         title: "Media",
         step: "STEP_FOUR"
     }
@@ -99,7 +99,7 @@ const p = {
 
     },
     quantity: 20,
-    description: "description here",
+    description: "Could you please generate a product description for and e-Commerce store about a t-shirt. The t-shirt has a design placed on the front. The design has the year '1776' and 5 stars that are arched above the top of the numbers.",
     compare_at_price: 0,
     weight: 0.5,
     is_digital: false,
@@ -258,167 +258,6 @@ export const ImageContainer: FunctionComponent<ImgProps> = ({images}) => {
     )
 }
 
-// export function AddImage({
-//     maxNumber,
-//     product_id
-// }) {
-    
-
-//     const [images, setImages] = useState([]);
-//     const [addImage, toggleImg] = useState(false)
-
-//     const [percent, setPercent] = useState(0);
-//     const [alt_text, setAlt] = useState("");
-//     const uploadImg = () => {
-//         if (!images[0]) {
-//             alert("Please choose a file first!")
-//         };
-     
-//         // console.log(images[0]);
-
-//         // call FB storage bucket
-//         const storageRef = ref(storage, `/images/test/${images[0]?.file?.name}`)
-//         const uploadTask = uploadBytesResumable(storageRef, images[0]?.file);
-     
-//         // 
-//         uploadTask.on(
-//             "state_changed",
-//             (snapshot) => {
-//                 const percent = Math.round(
-//                     (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-//                 );
-     
-//                 // update progress
-//                 setPercent(percent);
-//             },
-//             (err) => console.log(err),
-//             () => {
-//                 // download url
-//                 getDownloadURL(uploadTask.snapshot.ref).then( async (url) => {
-//                     // console.log(url);
-
-//                     // Send to DB via api/ Fetch data from external API
-//                     const res = await fetch(`https://us-central1-shopify-recharge-352914.cloudfunctions.net/platform/products/add/images`,{
-//                         method: 'POST',
-//                         headers: { 'Content-Type': 'application/json' },
-//                         body: JSON.stringify({ 
-//                             FB_MERCHANT_UUID: 'QilaBD5FGdnF9iX5K9k7',
-//                             product_uuid: `pro_${handle}`,
-//                             image_data: {
-//                                 src: url, 
-//                                 alt_text: alt_text
-//                             }
-//                         })
-//                     });
-
-//                     // 
-//                     if (res.ok) {
-//                         setPercent(0);
-//                         toggleImg(!addImage);
-//                         const data = await res.json();
-
-//                         console.log(data);
-//                         alert("SUCCESS")
-//                     };
-//                 });
-//             }
-//         ); 
-//     }
-
-//     return (
-//         <div  className={`${styles.col} ${styles.moduleBkg}`}>
-//             <div className={`${styles.col}  ${styles.card} ${styles.module}`}>
-//                 <header className={`${styles.row} ${styles.justifyBtwn}`}>
-//                     <h4>Add Image Details Here</h4>
-//                     <h4 onClick={() => toggleImg(!addImage)} className={`${styles.closeBtn}`}>Close</h4>
-//                 </header>
-//                 <ImageUploading
-//                     onChange={onChange}
-//                     multiple
-//                     value={images}
-//                     maxNumber={maxNumber}
-//                     dataURLKey="data_url"
-//                 >
-
-//                     {({
-//                         imageList,
-//                         onImageUpload,
-//                         onImageRemoveAll,
-//                         onImageUpdate,
-//                         onImageRemove,
-//                         isDragging,
-//                         dragProps,
-//                         }) => (
-//                     // write your building UI
-//                     <div className={styles.upload__image_wrapper}>
-//                         <div className={styles.row}>
-//                             {imageList.length > 0 ? 
-//                                 <div className={styles.featureContainer}>
-//                                     <div className={styles.imageItem}>
-//                                         <Image
-//                                             src={imageList[0]['data_url']}
-//                                             height={100}
-//                                             width={100}
-//                                             style={{backgroundColor: "black"}}
-//                                         />
-//                                         <div className={styles.imgBtnWrappers}>
-//                                             <button onClick={() => onImageUpdate(0)}>♲</button>
-//                                             <button onClick={() => onImageRemove(0)}>🚮</button>
-//                                         </div>
-//                                     </div>
-//                                 </div> : 
-//                                 <div className={styles.featureContainer}>
-//                                     <div className={styles.imageItem}>
-//                                         <Image
-//                                             src={'https://boltagency.ca/content/images/2020/03/placeholder-images-product-1_large.png'}
-//                                             height={100}
-//                                             width={100}
-//                                             style={{backgroundColor: "none"}}
-//                                         />
-//                                     </div>
-//                                 </div>
-//                             }
-
-//                             <div className={`${styles.col} ${styles.addImage}`}>
-//                                 <label htmlFor="title">
-//                                     <p>Alt Text</p>
-//                                     <input
-//                                         type="text"
-//                                         id="title"
-//                                         name="title"
-//                                         placeholder={"Alt Title Text Here...."}
-//                                         onChange={(e) => setAlt(e.target.value)} />
-//                                 </label>
-
-//                                 <div>
-//                                     <button
-//                                     style={isDragging ? { color: 'red' } : undefined}
-//                                     onClick={onImageUpload}
-//                                     {...dragProps}
-//                                     >
-//                                         Select or Drag Image
-//                                     📸
-//                                     </button>
-//                                     {/* &nbsp; */}
-//                                     { imageList.length > 0 ? <button onClick={() => uploadImg()}>Upload Image </button> : null}
-//                                 </div>
-//                                 <div className={styles.progressbarContainer}>
-//                                     <div
-//                                         className={styles.progressbar}
-//                                         style={{
-//                                             width: `${percent}%`
-//                                         }}></div>
-//                                 </div>
-//                             </div>
-//                         </div>
-//                     </div>
-//                     )}
-
-//                 </ImageUploading>
-//             </div>
-//         </div> 
-//     )
-// }
 
 
 
@@ -1247,6 +1086,63 @@ export const ProductText: FunctionComponent<Props> = ({
     checkboxes,
     setCheckboxes
 }) => {
+    const [list, setImages] = useState<any[]>();
+
+    const [prompt, setPrompt] = useState<string>("");
+    const [loading, setLoading] = useState<boolean>(false);
+
+    const updateSearch = async (e: any) => {
+
+        let result;
+        let url = "https://api.openai.com/v1/completions";
+
+        const key = e.key;
+
+        if (key == "Enter") {
+            setLoading(true);
+            setProduct({
+                ...product,
+                description: "Loading descriptions . . . "
+            });
+
+            console.log(" => " + prompt);
+    
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${process.env.NEXT_PUBLIC_OPEN_API_KEY}`,
+                },
+                body: JSON.stringify({
+                    model: "text-davinci-002",
+                    prompt: product.description ? product.description : "",//"\n Human: Hello, who are you?\nAI: I am doing great. How can I help you today?\nCould you show me how i can use JSON data to ?",
+                    temperature: 0.9,
+                    max_tokens: 150,
+                    frequency_penalty: 0,
+                    presence_penalty: 0.6,
+                })
+            });
+
+            if (response.ok) {
+                result = await response.json();
+                console.log(" => response");
+                console.log(result);
+                setProduct({
+                    ...product,
+                    description: result?.choices[0] ? result?.choices[0]?.text : "ERROR"
+                });
+                setLoading(false)
+            } else {
+                alert(" ERROR: " + response.status);
+                throw new Error(" - Fetch Error");
+            }
+
+
+        }
+
+
+        
+    };
     return (
         <Card 
             card_type="CREATE"
@@ -1342,6 +1238,7 @@ export const ProductText: FunctionComponent<Props> = ({
                                 background: "transparent",
                                 padding: "0.8rem 0.8rem"
                             }}
+                            onKeyDown={updateSearch}
                             onChange={(e) => setProduct({
                                 ...product,
                                 description: e.target.value

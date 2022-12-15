@@ -182,7 +182,7 @@ const Subscriptions = ({subscriptions}: Prop) => {
                                             colTwoTop={numberFormat(Number(s?.product?.price)/100)}
                                             colTwoBottom={s.status}
                                             colThree={s?.schedule?.type}
-                                            colFour={numberFormat(Number(s?.schedule?.total_value)/100)} />
+                                            colFour={numberFormat(Number(s?.schedule?.total_value ? s?.schedule?.total_value : 0)/100)} />
                                     </div>
                                 );
                         })}

@@ -23,7 +23,7 @@ export type Fulfillment = {
         email: string,
         addresses: Address[]
     },
-    order_summary: {
+    last_order: {
         order_number: string
         total_price: number
         line_items: [
