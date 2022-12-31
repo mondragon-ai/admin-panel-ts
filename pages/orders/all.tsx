@@ -108,10 +108,10 @@ export default function  AllOrders(props: Prop) {
                                         <MainRowContainer
                                             href={`/orders/o/${p.id}`} 
                                             id={p.id as string}
-                                            colOneTop={p.order_name as string}
+                                            colOneTop={p.order_number as string}
                                             colOneBottom={p?.first_name as string + " " + (p?.last_name ? p?.last_name : "") as string}
                                             colTwoTop={numberFormat(Number(p?.current_total_price ? p.current_total_price : 0 ) /100)}
-                                            colTwoBottom={p.payment_status == "PAID" ? true : false}
+                                            colTwoBottom={p.fullfillment_status == "SENT" ? true : false}
                                             colThree={p.email as string}
                                             colFour={p.tags as string[]} />
                                     </div>
@@ -127,7 +127,7 @@ export default function  AllOrders(props: Prop) {
 
 
 export const getServerSideProps: GetServerSideProps = async () => {
-    const dev_server = "http://localhost:5001/impowered-funnel/us-central1/funnel"
+    // const dev_server = "http://localhost:5001/impowered-funnel/us-central1/funnel"
     const url = "https://us-central1-impowered-funnel.cloudfunctions.net/funnel";
     const result = await impoweredRequest(url + "/orders", "POST", {ord_uuid: ""});
 

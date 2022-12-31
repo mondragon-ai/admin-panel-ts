@@ -53,6 +53,7 @@ import { MainRowContainer } from "../../components/ui/rows/MainRowContainer";
 import { Carts, DraftOrders, Order } from "../../lib/types/orders";
 import { GetServerSideProps } from "next";
 import { impoweredRequest } from "../../lib/helpers/requests";
+import { numberFormat } from "../../lib/helpers/formatters";
 
 const orders: Carts[] = [
     {
@@ -78,12 +79,14 @@ const orders: Carts[] = [
 ]
 
 interface Prop {
-    itemTxt: string
+    itemTxt: string,
+    orders: DraftOrders[],
+    size: number
 }
 
 export default function  AllCart(props: Prop) {
     const [itemSearch, setItemSearch] = useState("");
-    const [list, setOrders] = useState<Carts[]>(orders);
+    const [list, setOrders] = useState<DraftOrders[]>(props.orders ? props.orders : []);
     const [filterState, setFilter] = useState<"" | "INACTIVE" | "ACTIVE">("");
 
     return (
@@ -130,20 +133,20 @@ export default function  AllCart(props: Prop) {
                             rowTwoLower={"Payment Status"}
                             rowThree={"Email"}
                             rowFour={"Tags"}/>
-                        {list && list.map((p: Carts) => {
+                        {list && list.map((p: DraftOrders) => {
                             console.log(p.id);
                                 return (
                                     <div key={p.id} className={`${styles.col} ${styles.itemRow}`}>
                                         <Underline width={100} />
                                         <MainRowContainer
                                             href={`/orders/d/${p.id}`} 
-                                            id={p.id}
-                                            colOneTop={p.title}
-                                            colOneBottom={p.first_name + " " + p.last_name}
-                                            colTwoTop={p.total_price}
-                                            colTwoBottom={p.status}
-                                            colThree={p.email}
-                                            colFour={p.tags} />
+                                            id={p.id as string}
+                                            colOneTop={p.order_number as string}
+                                            colOneBottom={p?.first_name as string + " " + (p?.last_name ? p?.last_name : "") as string}
+                                            colTwoTop={numberFormat(Number(p?.current_total_price ? p.current_total_price : 0 ) /100)}
+                                            colTwoBottom={!p.fullfillment_status?.includes("SENT") ? true : false}
+                                            colThree={p.email as string}
+                                            colFour={p.tags as string[]} />
                                     </div>
                                 );
                         })}
@@ -157,9 +160,9 @@ export default function  AllCart(props: Prop) {
 
 
 export const getServerSideProps: GetServerSideProps = async () => {
-    // const dev_server = "http://localhost:5001/impowered-funnel/us-central1/funnel"
-    const url = "https://us-central1-impowered-funnel.cloudfunctions.net/funnel";
-    const result = await impoweredRequest(url + "/draft_orders", "POST", {dra_uuid: ""});
+    const dev_server = "http://localhost:5001/impowered-funnel/us-central1/funnel"
+    // const url = "https://us-central1-impowered-funnel.cloudfunctions.net/funnel";
+    const result = await impoweredRequest(dev_server + "/draft_orders", "POST", {dra_uuid: ""});
 
     if (!result) {
         throw new Error("Product list error");

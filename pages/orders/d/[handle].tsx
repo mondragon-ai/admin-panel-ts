@@ -1,7 +1,7 @@
-import { FunctionComponent } from "react";
+import { FunctionComponent, useState } from "react";
 import { Card } from "../../../components/ui/Card";
 import { DetailPageHeader } from "../../../components/ui/headers/DetailPageHeader";
-import { LineItem } from "../../../lib/types/orders";
+import { LineItem, Order } from "../../../lib/types/orders";
 import styles from "../../../styles/Main.module.css";
 
 import * as crypto from "crypto";
@@ -10,73 +10,111 @@ import Underline from "../../../components/ui/Underline";
 import Link from "next/link";
 import { numberFormat } from "../../../lib/helpers/formatters";
 import { ApiTimeline } from "../../../components/ui/ApiTimeline";
+import { GetServerSideProps } from "next";
+import { ParsedUrlQuery } from "querystring";
+import { impoweredRequest } from "../../../lib/helpers/requests";
+import { user } from "firebase-functions/v1/auth";
 
 const date = new Date().toString(); //.substring(0,15);
 
-const line_items: LineItem[] = [
-    {
-        title: "Hoodie - 1776",
-        status: false,
-        id: "pro_" + crypto.randomBytes(10).toString('hex'),
-        url: "",
-        price: 1000,
-        tags: [""],
-        compare_at_price: 0,
-        option1: "Large",
-        option2: " Black",
-        option3: "",
-        quantity: 1
-    },
-    {
-        title: "Hoodie - 1776",
-        status: false,
-        id: "pro_" + crypto.randomBytes(10).toString('hex'),
-        url: "",
-        price: 1000,
-        tags: [""],
-        compare_at_price: 0,
-        option1: "Large",
-        option2: " Black",
-        option3: "",
-        quantity: 3
-    }
-]
+// const line_items: LineItem[] = [
+//     {
+//         title: "Hoodie - 1776",
+//         status: false,
+//         id: "pro_" + crypto.randomBytes(10).toString('hex'),
+//         url: "",
+//         price: 1000,
+//         tags: [""],
+//         compare_at_price: 0,
+//         option1: "Large",
+//         option2: " Black",
+//         option3: "",
+//         quantity: 1
+//     },
+//     {
+//         title: "Hoodie - 1776",
+//         status: false,
+//         id: "pro_" + crypto.randomBytes(10).toString('hex'),
+//         url: "",
+//         price: 1000,
+//         tags: [""],
+//         compare_at_price: 0,
+//         option1: "Large",
+//         option2: " Black",
+//         option3: "",
+//         quantity: 3
+//     }
+// ]
 
-const first_name = "Obi";
-const last_name = "Kanobi";
+// const first_name = "Obi";
+// const last_name = "Kanobi";
 
-const email = "Kanobi@gobigly.com";
+// const email = "Kanobi@gobigly.com";
 
-const addresses = [
-    {
-        line1: "420 Bigly ln",
-        line2: "",
-        city: "Denver",
-        state: "NM", 
-        zip: "72704",
-        country: "US",
-        type: "BOTH"
-    }
-]
+// const addresses = [
+//     {
+//         line1: "420 Bigly ln",
+//         line2: "",
+//         city: "Denver",
+//         state: "NM", 
+//         zip: "72704",
+//         country: "US",
+//         type: "BOTH"
+//     }
+// ]
 
-const code = "-";
-const total = 3050;
-const total_items = 0;
-const shipping_price = 599;
-const shipping_name = "Standard Shipping";
-const discount_value = 0;
+// const code = "-";
+// const total = 3050;
+// const total_items = 0;
+// const shipping_price = 599;
+// const shipping_name = "Standard Shipping";
+// const discount_value = 0;
 
-const payment_status = false;
+type OrderProps = {
+    orders: Order[]
+}
 
-export const DraftDetail: FunctionComponent = () => {
+type TimeProp = {
+    _seconds: number
+}
+
+export const OrderDetail: FunctionComponent<OrderProps> = ({orders}) => {
+
+
+
+    const [order, setOrder] = useState(orders[0] ? orders[0] : {} as Order);
+
+    const {
+        transaction_id,
+        payment_status,
+        fullfillment_status,
+        shipping_line,
+        current_total_price,
+        discount_code,
+        email,
+        addresses,
+        first_name,
+        last_name,
+        line_items,
+        order_number,
+        updated_at
+    } = order
+
+    const seconds = updated_at && (updated_at as any)._seconds ?  Number((updated_at as any)._seconds )*1000: new Date().toLocaleString();
+    console.log(fullfillment_status)
+
+    const order_date = new Date((seconds)).toLocaleString();
+    
     return (
         <div className={`${styles.col}`}>
+            <div className={`${styles.row}`} 
+                style={{height: "100%", background: "black", zIndex: 100}}></div>
             {/* Sub Header - page specific */}
             <DetailPageHeader 
-                back_route={"/draft_orders/all"}
-                title={"Draft Orders"}
-                special_btn={""}
-                special_btn_route={"/draft_orders/all"} />
+                back_route={"/orders/all"}
+                title={order_number ? order_number : ""}
+                special_btn={"Refund"}
+                special_btn_route={"/orders/refund"} />
             
             {/* Main container */}
             <main className={`${styles.col} ${styles.container}`}>
@@ -85,7 +123,7 @@ export const DraftDetail: FunctionComponent = () => {
                     {/* Left 1/3 Column Container */}
                     <div className={`${styles.oneThird}`}>
 
-                        <Card  
+                    <Card  
                             width={50}
                             title="Customer Details"
                             header={""}
@@ -101,23 +139,88 @@ export const DraftDetail: FunctionComponent = () => {
                                         <p style={{paddingTop: "0rem"}}>{email}</p>
                                         <p style={{paddingTop: "0rem"}}>📋</p>
                                     </div>
-                                    <h5>Addressess</h5>
                                     {
                                         addresses && addresses.map(a => {
-                                            return (
+                                            if (a.type == "BOTH") {
+                                                return (
+                                                    <div className={`${styles.col}`}>
+                                                        <h5>Shipppig Address</h5>
+                                                        <div className={`${styles.row}`}>
+                                                            <p style={{paddingTop: "0rem",lineHeight: "1.3rem"}}>
+                                                                {a.line1} <br /> 
+                                                                {a.line2 ? <>{a.line2} <br /></> : null} 
+                                                                {a.city} <br /> 
+                                                                {a.state} <br /> 
+                                                                {a.country} <br /> 
+                                                                {/* {a.type} <br />  */}
+                                                            </p>
+                                                            <p style={{paddingTop: "0rem"}}>📋</p>
+                                                        </div> 
+                                                        <h5 style={{marginTop: "1.2rem"}}>Billing Address</h5>
+                                                        <div className={`${styles.row}`}>
+                                                            <p style={{paddingTop: "0rem",lineHeight: "1.3rem"}}>
+                                                                {a.line1} <br /> 
+                                                                {a.line2 ? <>{a.line2} <br /></> : null} 
+                                                                {a.city} <br /> 
+                                                                {a.state} <br /> 
+                                                                {a.country} <br /> 
+                                                                {/* {a.type} <br />  */}
+                                                            </p>
+                                                            <p style={{paddingTop: "0rem"}}>📋</p>
+                                                        </div> 
+                                                    </div>
+                                                )
+                                            }
+                                            if (a.type == "SHIPPING") {
+                                                return (
+                                                    <div className={`${styles.col}`}>
+                                                        <h5>Shipppig Address</h5>
+                                                        <div className={`${styles.row}`}>
+                                                            <p style={{paddingTop: "0rem",lineHeight: "1.3rem"}}>
+                                                                {a.line1} <br /> 
+                                                                {a.line2 ? <>{a.line2} <br /></> : null} 
+                                                                {a.city} <br /> 
+                                                                {a.state} <br /> 
+                                                                {a.country} <br /> 
+                                                                {/* {a.type} <br />  */}
+                                                            </p>
+                                                            <p style={{paddingTop: "0rem"}}>📋</p>
+                                                        </div> 
+                                                        <h5 style={{marginTop: "1.2rem"}}>Billing Address</h5>
+                                                        <div className={`${styles.row}`}>
+                                                            <p style={{paddingTop: "0rem",lineHeight: "1.3rem"}}>
+                                                                -
+                                                            </p>
+                                                        </div> 
+                                                    </div>
+                                                )
+                                            }
 
-                                                <div className={`${styles.row}`}>
-                                                    <p style={{paddingTop: "0rem"}}>
-                                                        {a.line1} <br /> 
-                                                        {a.line2 ? <>a.line2 <br /></> : null} 
-                                                        {a.city} <br /> 
-                                                        {a.state} <br /> 
-                                                        {a.country} <br /> 
-                                                        {a.type} <br /> 
-                                                    </p>
-                                                    <p style={{paddingTop: "0rem"}}>📋</p>
-                                                </div> 
-                                            )
+                                            if (a.type == "BILLING") {
+                                                return (
+                                                    <div className={`${styles.col}`} style={{marginTop: "1.2rem"}}>
+                                                        
+                                                        <h5 style={{marginTop: "1.2rem"}}>Shipppig Address</h5>
+                                                        <div className={`${styles.row}`}>
+                                                            <p style={{paddingTop: "0rem",lineHeight: "1.3rem"}}>
+                                                                -
+                                                            </p>
+                                                        </div> 
+                                                        <h5>Shipppig Address</h5>
+                                                        <div className={`${styles.row}`}>
+                                                            <p style={{paddingTop: "0rem",lineHeight: "1.3rem"}}>
+                                                                {a.line1} <br /> 
+                                                                {a.line2 ? <>{a.line2} <br /></> : null} 
+                                                                {a.city} <br /> 
+                                                                {a.state} <br /> 
+                                                                {a.country} <br /> 
+                                                                {/* {a.type} <br />  */}
+                                                            </p>
+                                                            <p style={{paddingTop: "0rem"}}>📋</p>
+                                                        </div> 
+                                                    </div>
+                                                )
+                                            }
                                         })
                                     }
                                 </div>
@@ -125,9 +228,9 @@ export const DraftDetail: FunctionComponent = () => {
                         <Card  
                             width={50}
                             title="Payment Details"
-                            header={"Payment needed first."}
-                            subHeader={date}
-                            status={payment_status}
+                            header={transaction_id ? transaction_id : "Payment needed first."}
+                            subHeader={order_date}
+                            status={transaction_id !== "" ? true : false}
                             card_type="PAYMENT"
                             >
                             <div className={`${styles.col}`}>
@@ -137,10 +240,10 @@ export const DraftDetail: FunctionComponent = () => {
                                         <p>Discount</p>
                                     </div>
                                     <div style={{ justifyContent: "flex-start",  paddingBottom: "1rem"}} className={`${styles.row}`}>
-                                        <p>{code}</p>
+                                        <p>{discount_code?.title ? discount_code?.title : "-"}</p>
                                     </div>
                                     <div style={{ justifyContent: "flex-end",  paddingBottom: "1rem"}} className={`${styles.row}`}>
-                                        <p>{numberFormat(Number(discount_value)/100)}</p>
+                                        <p>{numberFormat(Number(discount_code?.value ? discount_code?.value : 0)/100)}</p>
                                     </div>
                                 </div>
 
@@ -150,10 +253,10 @@ export const DraftDetail: FunctionComponent = () => {
                                         <p>Shipping</p>
                                     </div>
                                     <div style={{ justifyContent: "flex-start",  paddingBottom: "1rem"}} className={`${styles.row}`}>
-                                        <p>{shipping_name}</p>
+                                        <p>{shipping_line?.title ? shipping_line?.title : "Shipping"}</p>
                                     </div>
                                     <div style={{ justifyContent: "flex-end",  paddingBottom: "1rem"}} className={`${styles.row}`}>
-                                        <p>{numberFormat(Number(shipping_price)/100)}</p>
+                                        <p>{numberFormat(Number(shipping_line?.price ? shipping_line?.price : 0)/100)}</p>
                                     </div>
                                 </div>
 
@@ -163,10 +266,10 @@ export const DraftDetail: FunctionComponent = () => {
                                         <p>Subtotal</p>
                                     </div>
                                     <div style={{ justifyContent: "flex-start",  paddingBottom: "1rem"}} className={`${styles.row}`}>
-                                        <p>{total_items > 1 ? " items" : "1 item"} </p>
+                                        <p>{line_items && line_items.length > 1 ? line_items.length + " items" : "1 item"} </p>
                                     </div>
                                     <div style={{ justifyContent: "flex-end",  paddingBottom: "1rem"}} className={`${styles.row}`}>
-                                        <p>{numberFormat(Number(total)/100)}</p>
+                                        <p>{numberFormat(Number(current_total_price ? current_total_price : 0)/100)}</p>
                                     </div>
                                 </div>
                                 <Underline width={100} />
@@ -182,7 +285,7 @@ export const DraftDetail: FunctionComponent = () => {
                                         <p>-</p>
                                     </div>
                                     <div style={{ justifyContent: "flex-end",  paddingBottom: "1rem"}} className={`${styles.row}`}>
-                                        <p>{numberFormat(Number(total)/100)}</p>
+                                        <p>{numberFormat(Number(current_total_price ? current_total_price : 0)/100)}</p>
                                     </div>
                                 </div>
 
@@ -202,8 +305,8 @@ export const DraftDetail: FunctionComponent = () => {
                             width={50}
                             title="Order Details"
                             header={"No tracking available yet."}
-                            subHeader={date}
-                            status={false}
+                            subHeader={order_date}
+                            status={!fullfillment_status?.includes("SENT") ? true : false}
                             card_type="ORDER"
                             >
                                 <div  className={`${styles.col}`}>
@@ -235,4 +338,33 @@ export const DraftDetail: FunctionComponent = () => {
     )
 }
 
-export default DraftDetail;
+
+export const getServerSideProps: GetServerSideProps = async ({params}) => {
+    const { handle } = params as ParsedUrlQuery;
+    const dev_server = "http://127.0.0.1:5001/impowered-funnel/us-central1/funnel"
+    // const url = "https://us-central1-impowered-funnel.cloudfunctions.net/funnel";
+    const result = await impoweredRequest(dev_server + "/draft_orders", "POST", {dra_uuid: handle});
+
+    if (!result) {
+        throw new Error("Product list error");
+    }
+
+    let orders = [{}] as Order[];
+    let size = 0;
+
+    if (result?.result) {
+        orders = result?.result?.orders,
+        size = result?.result?.size
+    }
+
+    console.log(orders);
+    console.log(size);
+
+    return {
+        props: {
+            orders: orders
+        }
+    }
+}
+
+export default OrderDetail;

@@ -85,6 +85,7 @@ export const OrderDetail: FunctionComponent<OrderProps> = ({orders}) => {
     const [order, setOrder] = useState(orders[0] ? orders[0] : {} as Order);
 
     const {
+        transaction_id,
         payment_status,
         fullfillment_status,
         shipping_line,
@@ -95,11 +96,12 @@ export const OrderDetail: FunctionComponent<OrderProps> = ({orders}) => {
         first_name,
         last_name,
         line_items,
-        updated_at
+        updated_at,
+        order_number
     } = order
 
     const seconds = updated_at && (updated_at as any)._seconds ?  Number((updated_at as any)._seconds )*1000: new Date().toLocaleString();
-    console.log(seconds)
+    console.log(fullfillment_status)
 
     const order_date = new Date((seconds)).toLocaleString();
     
@@ -110,7 +112,7 @@ export const OrderDetail: FunctionComponent<OrderProps> = ({orders}) => {
             {/* Sub Header - page specific */}
             <DetailPageHeader 
                 back_route={"/orders/all"}
-                title={"Orders"}
+                title={order_number ? order_number : ""}
                 special_btn={"Refund"}
                 special_btn_route={"/orders/refund"} />
             
@@ -226,9 +228,9 @@ export const OrderDetail: FunctionComponent<OrderProps> = ({orders}) => {
                         <Card  
                             width={50}
                             title="Payment Details"
-                            header={"Payment needed first."}
+                            header={transaction_id ? transaction_id : "Payment needed first."}
                             subHeader={order_date}
-                            status={payment_status == "PAID" ? true : false}
+                            status={transaction_id !== "" ? true : false}
                             card_type="PAYMENT"
                             >
                             <div className={`${styles.col}`}>
@@ -304,7 +306,7 @@ export const OrderDetail: FunctionComponent<OrderProps> = ({orders}) => {
                             title="Order Details"
                             header={"No tracking available yet."}
                             subHeader={order_date}
-                            status={fullfillment_status == "SENT" ? true : false}
+                            status={!fullfillment_status?.includes("SENT") ? true : false}
                             card_type="ORDER"
                             >
                                 <div  className={`${styles.col}`}>

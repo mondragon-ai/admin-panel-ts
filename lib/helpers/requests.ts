@@ -17,7 +17,8 @@ export const impoweredRequest = async (
         if (response.ok) {
             result = await response.json();
         } else {
-            throw new Error(" - Fetch Error");
+            result = response.status;
+            console.log(" - [FETCH] " + response.status);
         }
     } else {
         const response = await fetch(url, {
@@ -31,7 +32,8 @@ export const impoweredRequest = async (
         if (response.ok) {
             result = await response.json();
         } else {
-            throw new Error(" - Fetch Error");
+            result = response.status;
+            console.log(" - [FETCH] " + response.status);
         }
     }
 

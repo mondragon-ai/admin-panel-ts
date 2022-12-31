@@ -93,7 +93,7 @@ interface Prop {
 export default function AllProducts(props: Prop) {
     const { products, size} = props;
 
-    const [list, setProducts] = useState<any[]>(products);
+    const [list, setProducts] = useState<Product[]>(products);
     const [filterState, setFilter] = useState<"" | "INACTIVE" | "ACTIVE">("");
 
     const [query, setQuery] = useState<string>("")
@@ -204,8 +204,9 @@ export default function AllProducts(props: Prop) {
 }
 
 export const getServerSideProps: GetServerSideProps = async () => {
-    const url = "https://us-central1-impowered-funnel.cloudfunctions.net/funnel/products";
-    const result = await impoweredRequest(url, "POST", {product_uuid: ""});
+    // const dev_server = "http://localhost:5001/impowered-funnel/us-central1/funnel/products"
+    const LIVE_SERVER = "https://us-central1-impowered-funnel.cloudfunctions.net/funnel/products";
+    const result = await impoweredRequest(LIVE_SERVER, "POST", {product_uuid: ""});
 
     console.log(" ==> SERVER SIDE");
     console.log(result);
