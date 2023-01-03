@@ -18,7 +18,7 @@ export const impoweredRequest = async (
             result = await response.json();
         } else {
             result = response.status;
-            console.log(" - [FETCH] " + response.status);
+            console.log(" - [FETCH] - Get - " + response.status);
         }
     } else {
         const response = await fetch(url, {
@@ -33,7 +33,7 @@ export const impoweredRequest = async (
             result = await response.json();
         } else {
             result = response.status;
-            console.log(" - [FETCH] " + response.status);
+            console.log(" - [FETCH] - Post/Put - " + response.status);
         }
     }
 

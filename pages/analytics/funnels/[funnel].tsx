@@ -3,13 +3,14 @@ import {AnalyticsHeader} from "../../../components/ui/headers/AnalyticsHeader";
 import { FunnelStats } from "../../../components/ui/FunnelStats";
 import { GetServerSideProps } from "next";
 import { impoweredRequest } from "../../../lib/helpers/requests";
-import { DailyFunnel } from "../../../lib/types/analytics";
+import { DailyFunnel, FunnelAnalytics } from "../../../lib/types/analytics";
 import { numberFormat } from "../../../lib/helpers/formatters";
+import { ParsedUrlQuery } from "querystring";
 
 export  const FunnelDailyAnalytics = (props: any) => {
 
     console.log(" ==> CLIENT SIDE");
-    const ANALYTICS: DailyFunnel = props.data;
+    const ANALYTICS: FunnelAnalytics = props.data;
     console.log(ANALYTICS);
 
 
@@ -20,9 +21,9 @@ export  const FunnelDailyAnalytics = (props: any) => {
     }
     
     const {
-        total_funnel_sales,
-        total_funnel_aov,
-        order_earnings,
+        total_sales,
+        total_aov,
+        total_earnings,
     } = ANALYTICS;
 
 
@@ -32,6 +33,9 @@ export  const FunnelDailyAnalytics = (props: any) => {
             <main className={`${styles.col} ${styles.container}`}>
                 <div className={`${styles.col} ${styles.card} `}>
                     <div 
+                        style={{
+                            alignItems: "center"
+                        }}
                         className={`${styles.row} ${styles.mobileContainer}`}>
                         <div 
                             style={{
@@ -40,7 +44,7 @@ export  const FunnelDailyAnalytics = (props: any) => {
                             }}
                             className={`${styles.col}`}>
                             <h5>Earning Per Click</h5>
-                            <h2>{numberFormat(order_earnings/100)}</h2>
+                            <h2>{total_earnings ? numberFormat(total_earnings/100) : numberFormat(0)}</h2>
                         </div>
                         <div 
                             style={{
@@ -50,7 +54,7 @@ export  const FunnelDailyAnalytics = (props: any) => {
                             }}
                             className={`${styles.col}`}>
                             <h5>Gross Sales</h5>
-                            <h2>{total_funnel_sales ? numberFormat(total_funnel_sales/100) : numberFormat(0)}</h2>
+                            <h2>{total_sales ? numberFormat(total_sales/100) : numberFormat(0)}</h2>
                         </div>
                         <div 
                             style={{
@@ -59,7 +63,7 @@ export  const FunnelDailyAnalytics = (props: any) => {
                             }}
                             className={`${styles.col}`}>
                             <h5>Average Cart Values</h5>
-                            <h2>{numberFormat(total_funnel_aov/100)}</h2>
+                            <h2>{total_aov ? numberFormat(total_aov/100) : numberFormat(0)}</h2>
                         </div>
                     </div>
                 </div>
@@ -69,10 +73,11 @@ export  const FunnelDailyAnalytics = (props: any) => {
     )
 }
 
-export const getServerSideProps: GetServerSideProps = async () => {
-    const url = "https://us-central1-impowered-funnel.cloudfunctions.net/funnel/analytics/funnels";
-    // const url = "http://localhost:5001/impowered-funnel/us-central1/funnel/analytics/funnels";
-    const result = await impoweredRequest(url, "GET", null);
+export const getServerSideProps: GetServerSideProps = async ({params}) => {
+    const { funnel } = params as ParsedUrlQuery;
+    // const LIVE_SERVER = "https://us-central1-impowered-funnel.cloudfunctions.net/funnel/analytics/funnels";
+    const DEV_SERVER = "http://localhost:5001/impowered-funnel/us-central1/funnel/analytics/funnels";
+    const result = await impoweredRequest(DEV_SERVER, "POST",{fun_uuid: funnel});
 
     if (!result) {
         throw new Error("Fetching anaytics");

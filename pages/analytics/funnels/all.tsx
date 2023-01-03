@@ -13,6 +13,9 @@ import Underline from "../../../components/ui/Underline";
 import * as crypto from "crypto"
 import { AnalyticsContainerRow } from "../../../components/ui/rows/AnalyticsContainerRow";
 import { MainRowContainerHeader } from "../../../components/ui/headers/MainRowContainerHeader";
+import { GetServerSideProps } from "next";
+import { impoweredRequest } from "../../../lib/helpers/requests";
+import { Funnel } from "../../../lib/types/funnels";
 
 const funnels = [
     {
@@ -57,12 +60,14 @@ const cols = [
         id: 2
     }
 ]
-
 interface Prop {
     itemTxt: string
+    funnels: Funnel[],
+    size: number
 }
 
 export default function  AllProducts(props: Prop) {
+    const { funnels, size} = props;
     const [itemSearch, setItemSearch] = useState("");
     const [list, setProducts] = useState<any[]>(funnels);
     const [filterState, setFilter] = useState<"" | "INACTIVE" | "ACTIVE">("");
@@ -133,4 +138,33 @@ export default function  AllProducts(props: Prop) {
             </main>
         </div>
     )
+}
+
+
+export const getServerSideProps: GetServerSideProps = async () => {
+    // const dev_server = "http://localhost:5001/impowered-funnel/us-central1/funnel/funnels"
+    const url = "https://us-central1-impowered-funnel.cloudfunctions.net/funnel/funnels";
+    const result = await impoweredRequest(url, "POST", {fun_uuid: ""});
+
+    if (!result) {
+        throw new Error("Funnel list error");
+    }
+
+    let funnels = [{}] as Funnel[];
+    let size = 0;
+
+    if (result?.result) {
+        funnels = result?.result?.funnels,
+        size = result?.result?.size
+    }
+
+    console.log(funnels);
+    console.log(size);
+
+    return {
+        props: {
+            size: size,
+            funnels: funnels
+        }
+    }
 }
