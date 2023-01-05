@@ -338,7 +338,6 @@ export const OrderDetail: FunctionComponent<OrderProps> = ({orders}) => {
     )
 }
 
-
 export const getServerSideProps: GetServerSideProps = async ({params}) => {
     const { handle } = params as ParsedUrlQuery;
     // const dev_server = "http://127.0.0.1:5001/impowered-funnel/us-central1/funnel"

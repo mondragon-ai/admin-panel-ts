@@ -84,8 +84,8 @@ export const Daily: FunctionComponent<DailyAnalyticsProp> = ({daily}) => {
                                     </div>
                                     <div className={`${styles.row}`}>
                                     <p style={{width: "50%"}}>Funnels </p>
-                                    <p style={{width: "20%"}}>{total_funnel_orders ? total_funnel_orders : 0} orders</p>
-                                    <p style={{width: "20%"}}><b>{numberFormat(Number(total_funnel_sales ? total_funnel_sales : 0))}</b></p>
+                                    <p style={{width: "20%"}}>{total_funnel_orders ? total_funnel_orders /10000 : 0} orders</p>
+                                    <p style={{width: "20%"}}><b>{numberFormat(Number(total_funnel_sales ? total_funnel_sales / 100 : 0))}</b></p>
                                     </div>
                                     <div className={`${styles.row}`}>
                                     <p style={{width: "50%"}}>Tap Cart </p>

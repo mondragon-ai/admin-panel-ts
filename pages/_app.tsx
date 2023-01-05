@@ -6,6 +6,8 @@ import { auth } from "../lib/firebase";
 import { useState } from 'react';
 import Enter from './auth/enter';
 
+import NextNProgress from 'nextjs-progressbar';
+
 
 const AUTH = auth;
 
@@ -38,6 +40,7 @@ export default function App({ Component, pageProps }: AppProps) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     </head>
     <Layout state={authState}>
+      <NextNProgress color="#29D" startPosition={0.3} stopDelayMs={200} height={3} showOnShallow={true} />
       <Component {...pageProps} />
     </Layout>
     </>

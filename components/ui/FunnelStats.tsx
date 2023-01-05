@@ -67,12 +67,12 @@ export const FunnelStats: FunctionComponent<Props> = ({ANALYTICS}) => {
                     <section style={{ width: "20%", alignItems: "flex-end", height: "100%"}} className={`${styles.col}`}>
                         {
                             
-                            steps && steps.length > 0 ? steps.map(step => {
+                            steps && steps.length > 0 ? steps.map((step, i) => {
                                 return (
                                     <div style={{padding: "1rem"}} className={`${styles.row}`}>
                                         <div className={`${styles.row}`} style={{justifyContent: "space-between"}} >
                                             <h4>{String(step.name).replaceAll("_", " ").toLocaleLowerCase()}</h4>
-                                            <h4>{String(step.order)}</h4>
+                                            <h4>{Number(i) + 1}</h4>
                                         </div>
                                     </div>
                                 )
@@ -151,19 +151,34 @@ export const FunnelStats: FunctionComponent<Props> = ({ANALYTICS}) => {
 
                             {
                                     steps && steps.length > 0 ? steps.map(step => {
-                                    return (
-                                        
-                                        <div className={`${styles.row}`} style={{background: "rgb(157 215 169)"}}>
-                                            <div className={`${styles.col}`}>
-                                                <h4>{step.sales_count ? step.sales_count : 0}</h4>
-                                            </div>
-                                            <div className={`${styles.col}`}>
-                                                <h4>{step.sales_rate ? percentageFormatter(step.sales_rate) : percentageFormatter(0)}</h4>
-                                            </div>
-                                            <div className={`${styles.col}`}>
-                                                <h4>{step.sales_value ? numberFormat(step.sales_value) : numberFormat(0)}</h4>
-                                            </div>
-                                        </div>)
+                                        if (step.name === "CONFIRMED") {
+                                            return (
+                                                <div className={`${styles.row}`} style={{background: "rgb(157 215 169)"}}>
+                                                    <div className={`${styles.col}`}>
+                                                        <h4> - </h4>
+                                                    </div>
+                                                    <div className={`${styles.col}`}>
+                                                        <h4> - </h4>
+                                                    </div>
+                                                    <div className={`${styles.col}`}>
+                                                        <h4> - </h4>
+                                                    </div>
+                                                </div>)
+                                        } else {
+                                            return (
+                                                
+                                                <div className={`${styles.row}`} style={{background: "rgb(157 215 169)"}}>
+                                                    <div className={`${styles.col}`}>
+                                                        <h4>{step.sales_count ? step.sales_count : 0}</h4>
+                                                    </div>
+                                                    <div className={`${styles.col}`}>
+                                                        <h4>{step.sales_rate ? percentageFormatter(step.sales_rate) : percentageFormatter(0)}</h4>
+                                                    </div>
+                                                    <div className={`${styles.col}`}>
+                                                        <h4>{step.sales_value ? numberFormat(Number(step.sales_value)/100) : numberFormat(0)}</h4>
+                                                    </div>
+                                                </div>)
+                                        }
                                     }) : null
                             }
                         </div>
@@ -180,16 +195,28 @@ export const FunnelStats: FunctionComponent<Props> = ({ANALYTICS}) => {
                             </div>
                             {
                                     steps && steps.length > 0 ? steps.map(step => {
-                                    return (
-                                        
-                                        <div className={`${styles.row}`} style={{background: "rgb(168 255 216)"}}>
-                                            <div className={`${styles.col}`}>
-                                                <h4>{step.recurring_count ? step.recurring_count : 0}</h4>
-                                            </div>
-                                            <div className={`${styles.col}`}>
-                                                <h4>{step.recurring_value ? numberFormat(step.recurring_value) : numberFormat(0)}</h4>
-                                            </div>
-                                        </div>)
+                                        if (step.name === "CONFIRMED") {
+                                            return (
+                                                <div className={`${styles.row}`} style={{background: "rgb(174 255 225)"}}>
+                                                    <div className={`${styles.col}`}>
+                                                        <h4> - </h4>
+                                                    </div>
+                                                    <div className={`${styles.col}`}>
+                                                        <h4> - </h4>
+                                                    </div>
+                                                </div>)
+                                        } else {
+                                            return (
+                                                
+                                                <div className={`${styles.row}`} style={{background: "rgb(168 255 216)"}}>
+                                                    <div className={`${styles.col}`}>
+                                                        <h4>{step.recurring_count ? step.recurring_count : 0}</h4>
+                                                    </div>
+                                                    <div className={`${styles.col}`}>
+                                                        <h4>{step.recurring_value ? numberFormat(Number(step.recurring_value)/100) : numberFormat(0)}</h4>
+                                                    </div>
+                                                </div>)
+                                        }
                                     }) : null
                             }
                         </div>
@@ -220,7 +247,7 @@ export const FunnelStats: FunctionComponent<Props> = ({ANALYTICS}) => {
                                     return (
                                         <div className={`${styles.row}`} style={{background: "rgb(174 255 225)"}}>
                                             <div className={`${styles.col}`}>
-                                                <h4>{step.recurring_count ? numberFormat(step.recurring_count/100) : numberFormat(0/100)}</h4>
+                                                <h4>{step.recurring_count ? Number(step.recurring_count) : Number(0/100)}</h4>
                                             </div>
                                             <div className={`${styles.col}`}>
                                                 <h4>{step.recurring_value ? numberFormat(step.recurring_value/100) : numberFormat(0/100)}</h4>

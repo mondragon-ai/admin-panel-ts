@@ -2,8 +2,13 @@ export type Funnel = {
     id: string;
     title: string;
     steps: {
-        name: "OPT_IN" | " UPSELL" | "DOWNSELL" | "VIDEO" | "",
-        order: number
+        name: "OPT_IN" | "UPSELL" | "DOWNSELL" | "VIDEO" | "CONFIRMATION" | "",
+        order: number,
+        products: {
+            title: string,
+            variant_id: number | string,
+            url: string,
+        }[]
     }[],
     total_sales: number,
     status: boolean,

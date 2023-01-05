@@ -9,6 +9,7 @@ import { GetServerSideProps } from "next";
 import { ParsedUrlQuery } from "querystring";
 import { impoweredRequest } from "../../../lib/helpers/requests";
 import { Funnel } from "../../../lib/types/funnels";
+import { VariantRow } from "../../../components/ui/rows/VariantRow";
 
 // const date = new Date().toString(); //.substring(0,15);
 
@@ -77,11 +78,15 @@ export const FunnelDetail: FunctionComponent<FunnelProps> = ({funnels}) => {
 
     const [funnel, setFunnel] = useState(funnels[0] ? funnels[0] : {} as Funnel);
 
+    //
+
     const {
         title,
         steps,
         id
     } = funnel
+
+    const [currStep, setCurrStep] = useState(steps && (steps[0].name + "_" + steps[0].order));
 
     return (
         <div className={`${styles.col}`}>
@@ -127,7 +132,7 @@ export const FunnelDetail: FunctionComponent<FunnelProps> = ({funnels}) => {
                                 {
                                     steps && steps.map(step => {
                                         return (
-                                            <div style={{ paddingTop: "1rem"}} className={`${styles.col}`}>
+                                            <div style={{ paddingTop: "1rem"}} className={`${styles.col}`} onClick={(e) => setCurrStep(step.name + "_" + step.order)}>
                                                 <Underline width={100} />   
                                                 <div style={{ paddingTop: "1rem"}} className={`${styles.row}`}>
                                                     <p style={{paddingTop: "0rem"}}>{step?.name?.replaceAll("_", " ")}</p>
@@ -141,21 +146,300 @@ export const FunnelDetail: FunctionComponent<FunnelProps> = ({funnels}) => {
                         </Card>
                     </div>
 
-                    {/* Right 2/3 Column Container */}
+                    {/* Card */}
                     <div style={{paddingTop: "0"}} className={`${styles.twoThird} ${styles.col}`}>
                         {
-                            steps && steps[0] ?
-                            <Card  
-                                width={50}
-                                title="Step Details"
-                                header={""}
-                                subHeader={""}
-                                card_type="INFO"
-                            >
-                                <div  className={`${styles.col}`}>
+                            steps && steps[0] ? steps.map(step => {
+                                if (currStep == step.name + "_" + step.order) {
 
-                                </div>
-                            </Card> : null
+                                    if ("CONFIRMATION" == step.name) {
+                                        return (
+                                            <div 
+                                                style={{
+                                                    display: ""
+                                                }}
+                                                key={step.name + "_" + step.order}
+                                                className={`${styles.col}`}>
+                                                <Card  
+                                                    width={50}
+                                                    title={"Step Details - " + step.name.replaceAll("_", " ").toLocaleLowerCase()}
+                                                    header={""}
+                                                    subHeader={""}
+                                                    card_type="INFO"
+                                                >
+                                                    <div  className={`${styles.col}`}>
+
+                                                        <div  className={`${styles.row}`}>
+                                                        
+                                                        </div>
+                                                        <div  className={`${styles.row}`}>
+                                                            <div  className={`${styles.col}`}>
+                                                                <h3 style={{padding: "2rem 0 "}}>URLS</h3>
+                                                                    <div className={`${styles.formItem} ${styles.row}`}
+                                                                        style={{
+                                                                            width:"100%",
+                                                                            padding: "0 5px",
+                                                                            paddingBottom: "2rem"
+                                                                        }}>
+                                                                        <input
+                                                                            style={{
+                                                                                color: "var(--accent)",
+                                                                                width: "100%"
+                                                                            }}
+                                                                            disabled={true}
+                                                                            value={"/" + step.name}
+                                                                            type="text"
+                                                                            name="title" />
+                                                                        <label htmlFor="title" style={{ 
+                                                                            top: funnel?.title && funnel.title !== "" ? "-5px" : "", 
+                                                                            fontSize: funnel?.title &&funnel.title !== "" ? "10px" : ""}}>Current Page Url</label>
+                                                                    </div>
+                                                                    <div className={`${styles.formItem} ${styles.row}`}
+                                                                        style={{
+                                                                            width:"100%",
+                                                                            padding: "0 5px"
+                                                                        }}>
+                                                                        <input
+                                                                            style={{
+                                                                                color: "white",
+                                                                                width: "100%"
+                                                                            }}
+                                                                            onChange={(e) => setFunnel({
+                                                                                ...funnel,
+                                                                                title: e.target.value
+                                                                            })}
+                                                                            value={"/" + ( step.products ? steps.filter(s => (step.order + 1) === s.order)[0].name : "")}
+                                                                            type="text"
+                                                                            name="title" />
+                                                                        <label htmlFor="title" style={{ 
+                                                                            top: funnel?.title && funnel.title !== "" ? "-5px" : "", 
+                                                                            fontSize: funnel?.title &&funnel.title !== "" ? "10px" : ""}}>Redirect Url - Success</label>
+                                                                    </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </Card>
+                                            </div>
+                                        )
+                                    } if ("OPT_IN" == step.name) {
+                                        return (
+                                            <div 
+                                                style={{
+                                                    display: ""
+                                                }}
+                                                key={step.name + "_" + step.order}
+                                                className={`${styles.col}`}>
+                                                <Card  
+                                                    width={50}
+                                                    title={"Step Details - " + step.name.replaceAll("_", " ").toLocaleLowerCase()}
+                                                    header={""}
+                                                    subHeader={""}
+                                                    card_type="INFO"
+                                                >
+                                                    <div  className={`${styles.col}`}>
+                                                        <div  className={`${styles.col}`}>
+                                                            <h3 style={{paddingBottom: "2rem"}}>Products</h3>
+                                                            {
+                                                                step.products && step.products.map(product => {
+                                                                   return (
+                                                                        <div key={product.title}  className={`${styles.row}`}>
+                                                                            <VariantRow item={product} />
+                                                                        </div>
+                                                                    )
+                                                                })
+                                                            }
+                                                        </div>
+                                                        <div  className={`${styles.row}`}>
+                                                            
+                                                            <div className={`${styles.formItem} ${styles.row}`}
+                                                                style={{
+                                                                    width: window.innerWidth > 720 ? "33%" : "100%",
+                                                                    padding: "2rem 0px"
+                                                                }}>
+                                                                <p style={{padding: 0, width: "90%"}}>Use Bump?</p>
+                                                                <div className={`${styles.formItem} ${styles.row}`}
+                                                                    style={{padding: 0, width: "10%"}} id="">
+                                                                    <div 
+                                                                        // onClick={() => setCheckboxes({...checkboxes, is_digital: !checkboxes.is_digital}) as Dispatch<any>}
+                                                                        style={{
+                                                                        background: true ? "white" : "red",
+                                                                        height: "15px",
+                                                                        width: "15px",
+                                                                        borderRadius: "2px",
+                                                                        border: true ? "0.5px solid red" : "0.5px solid white"
+                                                                    }} id="">
+                                                                        <div></div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div  className={`${styles.row}`}>
+                                                            <div  className={`${styles.col}`}>
+                                                                <h3 style={{padding: "2rem 0 "}}>URLS</h3>
+                                                                    <div className={`${styles.formItem} ${styles.row}`}
+                                                                        style={{
+                                                                            width:"100%",
+                                                                            padding: "0 0px",
+                                                                            paddingBottom: "2rem"
+                                                                        }}>
+                                                                        <input
+                                                                            style={{
+                                                                                color: "var(--accent)",
+                                                                                width: "100%"
+                                                                            }}
+                                                                            disabled={true}
+                                                                            value={"/" + step.name}
+                                                                            type="text"
+                                                                            name="title" />
+                                                                        <label htmlFor="title" style={{ 
+                                                                            top: funnel?.title && funnel.title !== "" ? "-5px" : "", 
+                                                                            fontSize: funnel?.title &&funnel.title !== "" ? "10px" : ""}}>Current Page Url</label>
+                                                                    </div>
+                                                                    <div className={`${styles.formItem} ${styles.row}`}
+                                                                        style={{
+                                                                            width:"100%",
+                                                                            padding: "0px"
+                                                                        }}>
+                                                                        <input
+                                                                            style={{
+                                                                                color: "white",
+                                                                                width: "100%"
+                                                                            }}
+                                                                            onChange={(e) => setFunnel({
+                                                                                ...funnel,
+                                                                                title: e.target.value
+                                                                            })}
+                                                                            value={"/" + ( steps ? steps.filter(s => (step.order + 1) === s.order)[0].name : "")}
+                                                                            type="text"
+                                                                            name="title" />
+                                                                        <label htmlFor="title" style={{ 
+                                                                            top: funnel?.title && funnel.title !== "" ? "-5px" : "", 
+                                                                            fontSize: funnel?.title &&funnel.title !== "" ? "10px" : ""}}>Redirect Url - Success</label>
+                                                                    </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </Card>
+                                            </div>
+                                        )
+                                    }  if ("UPSELL" == step.name) {
+                                        return (
+                                            <div 
+                                                style={{
+                                                    display: ""
+                                                }}
+                                                key={step.name + "_" + step.order}
+                                                className={`${styles.col}`}>
+                                                <Card  
+                                                    width={50}
+                                                    title={"Step Details - " + step.name.replaceAll("_", " ").toLocaleLowerCase()}
+                                                    header={""}
+                                                    subHeader={""}
+                                                    card_type="INFO"
+                                                >
+                                                    <div  className={`${styles.col}`}>
+                                                        <div  className={`${styles.col}`}>
+                                                            <h3 style={{paddingBottom: "2rem"}}>Products</h3>
+                                                            {
+                                                                step.products && step.products.map(product => {
+                                                                   return (
+                                                                        <div key={product.title}  className={`${styles.row}`}>
+                                                                            <VariantRow item={product} />
+                                                                        </div>
+                                                                    )
+                                                                })
+                                                            }
+                                                        </div>
+                                                        <div  className={`${styles.row}`}>
+                                                        
+                                                        </div>
+                                                        <div  className={`${styles.row}`}>
+                                                            <div  className={`${styles.col}`}>
+                                                                <h3 style={{padding: "2rem 0 "}}>URLS</h3>
+                                                                    <div className={`${styles.formItem} ${styles.row}`}
+                                                                        style={{
+                                                                            width:"100%",
+                                                                            padding: "0 5px",
+                                                                            paddingBottom: "2rem"
+                                                                        }}>
+                                                                        <input
+                                                                            style={{
+                                                                                color: "var(--accent)",
+                                                                                width: "100%"
+                                                                            }}
+                                                                            disabled={true}
+                                                                            value={"/" + step.name}
+                                                                            type="text"
+                                                                            name="title" />
+                                                                        <label htmlFor="title" style={{ 
+                                                                            top: funnel?.title && funnel.title !== "" ? "-5px" : "", 
+                                                                            fontSize: funnel?.title &&funnel.title !== "" ? "10px" : ""}}>Current Page Url</label>
+                                                                    </div>
+                                                                    <div className={`${styles.formItem} ${styles.row}`}
+                                                                        style={{
+                                                                            width:"100%",
+                                                                            padding: "0 5px",
+                                                                            paddingBottom: "2rem"
+                                                                        }}>
+                                                                        <input
+                                                                            style={{
+                                                                                color: "white",
+                                                                                width: "100%"
+                                                                            }}
+                                                                            value={"/" + ( steps? steps.filter(s => (step.order + 1) === s.order)[0].name : "")}
+                                                                            type="text"
+                                                                            name="title" />
+                                                                        <label htmlFor="title" style={{ 
+                                                                            top: funnel?.title && funnel.title !== "" ? "-5px" : "", 
+                                                                            fontSize: funnel?.title &&funnel.title !== "" ? "10px" : ""}}>Redirect Url - Accept</label>
+                                                                    </div>
+                                                                    <div className={`${styles.formItem} ${styles.row}`}
+                                                                        style={{
+                                                                            width:"100%",
+                                                                            padding: "0 5px"
+                                                                        }}>
+                                                                        <input
+                                                                            style={{
+                                                                                color: "white",
+                                                                                width: "100%"
+                                                                            }}
+                                                                            value={"/" + ( steps ? steps.filter(s => (step.order + 2) === s.order || (step.order + 1) === s.order)[0].name : "")}
+                                                                            type="text"
+                                                                            name="title" />
+                                                                        <label htmlFor="title" style={{ 
+                                                                            top: funnel?.title && funnel.title !== "" ? "-5px" : "", 
+                                                                            fontSize: funnel?.title &&funnel.title !== "" ? "10px" : ""}}>Redirect Url - Decline</label>
+                                                                    </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </Card>
+                                            </div>
+                                        )
+                                    } else {
+                                        return (
+                                            <div 
+                                                style={{
+                                                    display: ""
+                                                }}
+                                                key={step.name + "_" + step.order}
+                                                className={`${styles.col}`}>
+                                                <Card  
+                                                    width={50}
+                                                    title={"Step Details - " + step.name.replaceAll("_", " ").toLocaleLowerCase()}
+                                                    header={""}
+                                                    subHeader={""}
+                                                    card_type="INFO"
+                                                >
+                                                    <div  className={`${styles.col}`}>
+    
+                                                    </div>
+                                                </Card>
+                                            </div>
+                                        )
+                                    }
+                                }
+                            }) : null
                         }
                     </div>
                 </div>

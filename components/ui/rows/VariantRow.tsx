@@ -49,9 +49,9 @@ export const VariantRow: React.FC<Props> = ({
                     paddingTop: "0.5rem",
                     color: "grey"
                 }}>
-                    {item.options1 != "" ? "" + item.options1 : "-"}
-                    {item.options2 != "" ? " / " + item.options2 : ""}
-                    {item.options3 != "" ? " / " + item.options3 : ""}
+                    {item.options1  ? "" + item.options1 : "-"}
+                    {item.options2 ? " / " + item.options2 : ""}
+                    {item.options3  ? " / " + item.options3 : ""}
                 </p>
             </div>
             <div 
@@ -67,12 +67,12 @@ export const VariantRow: React.FC<Props> = ({
                     width: "25%",
                     alignItems: "flex-end" 
                 }} className={`${styles.col}`}>
-                <h4>{item.compare_at_price > 0 ? numberFormat(Number(item.compare_at_price)/100) : numberFormat(Number(item.price)/100)}</h4>
+                <h4>{item.compare_at_price > 0 ? numberFormat(Number(item.compare_at_price ? item.compare_at_price : 0)/100) : numberFormat(Number(item.price ? item.price : 0)/100)}</h4>
                 <p style={{
                     paddingTop: "0.5rem",
                     color: "grey"
                 }}>
-                    {item.compare_at_price > 0 ? "" + numberFormat(Number(item.price)/100) : null}
+                    {item.compare_at_price && item.compare_at_price > 0 ? "" + numberFormat(Number(item.price ? item.price : 0)/100) : null}
                 </p>
             </div>
         </div>
