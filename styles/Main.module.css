@@ -267,7 +267,9 @@
     position: relative;
   }
 
-    .formItem input{
+    .formItem input,
+    .formItem option,
+    .formItem select {
         display: block;
         width: 400px;
         height: 40px;
@@ -277,10 +279,14 @@
         transition: all .3s ease;
         padding: 0 15px
     }
-    .formItem input:focus{
+    .formItem input:focus,
+    .formItem option:focus,
+    .formItem select:focus {
         border-color: var(--accent) !important;
     }
-    .formItem label{
+    .formItem label,
+    .formItem option,
+    .formItem select {
         position: absolute;
         cursor: text;
         z-index: 1;
