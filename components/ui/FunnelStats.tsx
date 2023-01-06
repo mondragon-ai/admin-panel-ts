@@ -247,10 +247,10 @@ export const FunnelStats: FunctionComponent<Props> = ({ANALYTICS}) => {
                                     return (
                                         <div className={`${styles.row}`} style={{background: "rgb(174 255 225)"}}>
                                             <div className={`${styles.col}`}>
-                                                <h4>{step.recurring_count ? Number(step.recurring_count) : Number(0/100)}</h4>
+                                                <h4>{step.earnings ? numberFormat(Number(step.earnings)/100) :numberFormat(Number(0/100))}</h4>
                                             </div>
                                             <div className={`${styles.col}`}>
-                                                <h4>{step.recurring_value ? numberFormat(step.recurring_value/100) : numberFormat(0/100)}</h4>
+                                                <h4>{step.earnings_unique ? numberFormat(step.earnings_unique/100) : numberFormat(0/100)}</h4>
                                             </div>
                                         </div>
                                     )

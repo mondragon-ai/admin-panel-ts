@@ -75,9 +75,9 @@ export  const FunnelDailyAnalytics = (props: any) => {
 
 export const getServerSideProps: GetServerSideProps = async ({params}) => {
     const { funnel } = params as ParsedUrlQuery;
-    // const LIVE_SERVER = "https://us-central1-impowered-funnel.cloudfunctions.net/funnel/analytics/funnels";
-    const DEV_SERVER = "http://localhost:5001/impowered-funnel/us-central1/funnel/analytics/funnels";
-    const result = await impoweredRequest(DEV_SERVER, "POST",{fun_uuid: funnel});
+    const LIVE_SERVER = "https://us-central1-impowered-funnel.cloudfunctions.net/funnel/analytics/funnels";
+    // const DEV_SERVER = "http://localhost:5001/impowered-funnel/us-central1/funnel/analytics/funnels";
+    const result = await impoweredRequest(LIVE_SERVER, "POST",{fun_uuid: funnel});
 
     if (!result) {
         throw new Error("Fetching anaytics");

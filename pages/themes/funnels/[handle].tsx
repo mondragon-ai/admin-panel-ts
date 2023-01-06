@@ -208,7 +208,7 @@ export const FunnelDetail: FunctionComponent<FunnelProps> = ({funnels}) => {
                                                                                 ...funnel,
                                                                                 title: e.target.value
                                                                             })}
-                                                                            value={"/" + ( step.products ? steps.filter(s => (step.order + 1) === s.order)[0].name : "")}
+                                                                            // value={"/" + ( steps ? steps.filter(s => (step.order + 1) === s.order)[0].name : "")}
                                                                             type="text"
                                                                             name="title" />
                                                                         <label htmlFor="title" style={{ 
@@ -238,11 +238,12 @@ export const FunnelDetail: FunctionComponent<FunnelProps> = ({funnels}) => {
                                                 >
                                                     <div  className={`${styles.col}`}>
                                                         <div  className={`${styles.col}`}>
-                                                            <h3 style={{paddingBottom: "2rem"}}>Products</h3>
+                                                            <h3 style={{padding: "2rem 0"}}>Products</h3>
                                                             {
                                                                 step.products && step.products.map(product => {
                                                                    return (
-                                                                        <div key={product.title}  className={`${styles.row}`}>
+                                                                        <div key={product.variant_id}  className={`${styles.col}`}>
+                                                                            <Underline width={100} />
                                                                             <VariantRow item={product} />
                                                                         </div>
                                                                     )
@@ -251,12 +252,12 @@ export const FunnelDetail: FunctionComponent<FunnelProps> = ({funnels}) => {
                                                         </div>
                                                         <div  className={`${styles.row}`}>
                                                             
-                                                            <div className={`${styles.formItem} ${styles.row}`}
+                                                            <div className={`${styles.formItem} ${styles.col}`}
                                                                 style={{
-                                                                    width: window.innerWidth > 720 ? "33%" : "100%",
+                                                                    width: "100%",
                                                                     padding: "2rem 0px"
                                                                 }}>
-                                                                <p style={{padding: 0, width: "90%"}}>Use Bump?</p>
+                                                                <p style={{margin: "1rem 0", width: "90%"}}>Use Bump?</p>
                                                                 <div className={`${styles.formItem} ${styles.row}`}
                                                                     style={{padding: 0, width: "10%"}} id="">
                                                                     <div 
@@ -309,7 +310,7 @@ export const FunnelDetail: FunctionComponent<FunnelProps> = ({funnels}) => {
                                                                                 ...funnel,
                                                                                 title: e.target.value
                                                                             })}
-                                                                            value={"/" + ( steps ? steps.filter(s => (step.order + 1) === s.order)[0].name : "")}
+                                                                            // value={"/" + ( steps ? steps.filter(s => (step.order + 1) === s.order)[0].name : "")}
                                                                             type="text"
                                                                             name="title" />
                                                                         <label htmlFor="title" style={{ 
@@ -339,11 +340,12 @@ export const FunnelDetail: FunctionComponent<FunnelProps> = ({funnels}) => {
                                                 >
                                                     <div  className={`${styles.col}`}>
                                                         <div  className={`${styles.col}`}>
-                                                            <h3 style={{paddingBottom: "2rem"}}>Products</h3>
+                                                            <h3 style={{padding: "2rem 0"}}>Products</h3>
                                                             {
                                                                 step.products && step.products.map(product => {
                                                                    return (
-                                                                        <div key={product.title}  className={`${styles.row}`}>
+                                                                        <div key={product.variant_id}  className={`${styles.col}`}>
+                                                                            <Underline width={100} />
                                                                             <VariantRow item={product} />
                                                                         </div>
                                                                     )
@@ -386,7 +388,7 @@ export const FunnelDetail: FunctionComponent<FunnelProps> = ({funnels}) => {
                                                                                 color: "white",
                                                                                 width: "100%"
                                                                             }}
-                                                                            value={"/" + ( steps? steps.filter(s => (step.order + 1) === s.order)[0].name : "")}
+                                                                            // value={"/" + ( steps? steps.filter(s => (step.order + 1) === s.order)[0].name : "")}
                                                                             type="text"
                                                                             name="title" />
                                                                         <label htmlFor="title" style={{ 
@@ -403,7 +405,7 @@ export const FunnelDetail: FunctionComponent<FunnelProps> = ({funnels}) => {
                                                                                 color: "white",
                                                                                 width: "100%"
                                                                             }}
-                                                                            value={"/" + ( steps ? steps.filter(s => (step.order + 2) === s.order || (step.order + 1) === s.order)[0].name : "")}
+                                                                            // value={"/" + ( steps ? steps.filter(s => (step.order + 2) === s.order || (step.order + 1) === s.order)[0].name : "")}
                                                                             type="text"
                                                                             name="title" />
                                                                         <label htmlFor="title" style={{ 

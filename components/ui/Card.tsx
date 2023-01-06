@@ -247,7 +247,7 @@ export const CreateHeader: React.FC<CardHeaderProps> = ({
                                     cursor: "pointer"
                                 }}  
                                 className={`${styles.tag}`}>Previous</p> : null}
-                            {next !== ""  && next != "SAVE" && next !== "OPTIONS" && next !== "UPDATE" ? <p 
+                            {next !== ""  && next != "SAVE" && next !== "OPTIONS" && next !== "UPDATE"  && next !== "FUNNEL" ? <p 
                                 onClick={() =>  handleNav(next as string)}
                                 style={{
                                     marginLeft: "0.5rem",
@@ -261,7 +261,7 @@ export const CreateHeader: React.FC<CardHeaderProps> = ({
                                 onClick={() =>  handleSave(
                                     resource as string, 
                                     redirect as string,
-                                    data,
+                                    data as any,
                                     request_key as string,
                                 )}
                                 style={{

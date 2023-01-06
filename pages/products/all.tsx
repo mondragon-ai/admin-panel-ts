@@ -215,9 +215,6 @@ export const getServerSideProps: GetServerSideProps = async () => {
         throw new Error("Product list error");
     }
 
-    console.log(" ==> SERVER SIDE");
-    console.log(result);
-
     let products = [{}] as Product[];
     let size = 0;
 
