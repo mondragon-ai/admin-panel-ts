@@ -25,6 +25,7 @@
     "next": "13.0.1",
     "nextjs-progressbar": "^0.0.16",
     "react": "18.2.0",
+    "react-date-picker": "^9.1.0",
     "react-dom": "18.2.0",
     "typescript": "4.8.4"
   }

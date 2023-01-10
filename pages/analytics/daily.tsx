@@ -10,8 +10,8 @@ import { AnalyticsHeader } from "../../components/ui/headers/AnalyticsHeader";
 // import Underline from "../../components/ui/Underline";
 import { GetServerSideProps } from "next";
 import { impoweredRequest } from "../../lib/helpers/requests";
-import { Analytics } from "../../lib/types/analytics";
-import { FunctionComponent, useState } from "react";
+import { Analytics, FunnelAnalytics } from "../../lib/types/analytics";
+import { FunctionComponent, SetStateAction, useState } from "react";
 
 export type DailyAnalyticsProp = {
     daily: Analytics
@@ -55,7 +55,7 @@ export const Daily: FunctionComponent<DailyAnalyticsProp> = ({daily}) => {
 
     return (
         <div className={`${styles.col}`}>
-        <AnalyticsHeader title="Analytics" createTxt="" createPage=""/> 
+        <AnalyticsHeader title="Analytics" setAnalytics={setAnalytics} ANALYTICS={analytics} fun_uuid={""} /> 
             <main className={`${styles.col}`}>
                 <div className={`${styles.col} ${styles.container}`}>
                     <div className={`${styles.row} ${styles.mobileContainer} ${styles.analyticCard}`}>

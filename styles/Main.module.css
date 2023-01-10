@@ -600,7 +600,7 @@
     font-size: 40px;
   }
   .allItemHeader > div:nth-last-child(1) {
-    width: 30%;
+    width: 45%;
     justify-content: flex-end;
   }
 
@@ -616,7 +616,7 @@
     margin-left: 1rem;
   }
   .allItemHeader > div:nth-last-child(2) {
-    width: 30%;
+    width: 45%;
   }
   .allItemHeader{
     justify-content: space-between;

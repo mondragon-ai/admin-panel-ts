@@ -3,16 +3,17 @@ import {AnalyticsHeader} from "../../../components/ui/headers/AnalyticsHeader";
 import { FunnelStats } from "../../../components/ui/FunnelStats";
 import { GetServerSideProps } from "next";
 import { impoweredRequest } from "../../../lib/helpers/requests";
-import { DailyFunnel, FunnelAnalytics } from "../../../lib/types/analytics";
+import { FunnelAnalytics } from "../../../lib/types/analytics";
 import { numberFormat } from "../../../lib/helpers/formatters";
 import { ParsedUrlQuery } from "querystring";
+import { useState } from "react";
+import { useRouter } from "next/router";
 
 export  const FunnelDailyAnalytics = (props: any) => {
 
     console.log(" ==> CLIENT SIDE");
-    const ANALYTICS: FunnelAnalytics = props.data;
+    const [ANALYTICS, setAnalytics] = useState<FunnelAnalytics>(props.data);
     console.log(ANALYTICS);
-
 
 
     if (!ANALYTICS) {
@@ -26,10 +27,12 @@ export  const FunnelDailyAnalytics = (props: any) => {
         total_earnings,
     } = ANALYTICS;
 
+    const router = useRouter();
+    const {funnel} = router.query
 
     return (
         <div className={`${styles.col}`}>
-            <AnalyticsHeader title="Funnel Analytics" createTxt="" createPage=""/> 
+            <AnalyticsHeader title="Funnel Analytics" ANALYTICS={ANALYTICS} setAnalytics={setAnalytics} fun_uuid={funnel as string} /> 
             <main className={`${styles.col} ${styles.container}`}>
                 <div className={`${styles.col} ${styles.card} `}>
                     <div 
